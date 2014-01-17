@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="desktop_rows_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="dock_columns_entries">
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="folder_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_rows_entries">
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+</resources>

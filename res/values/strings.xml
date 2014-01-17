@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GEM Xperia Xposed</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="launcher">Xperia Launcher</string>
+    <string name="restart_launcher">Restart Launcher</string>
+    <string name="restart_launcher_summary">Restart launcher for changes to take effect (requires ROOT). You may need to reboot the phone if the launcher will stop working properly after restart.</string>
+    
+    <string name="launcher_general">General</string>
+    <string name="condensed_font">Condensed Font</string>
+    <string name="all_widgets_resizable">All Widgets Resizable</string>
+    
+    <string name="launcher_desktop">Desktop</string>
+    <string name="transparent_desktop">Transparency</string>
+    <string name="transparent_desktop_summary">Transparent status and navigation bars.</string>
+    <string name="desktop_rows">Rows</string>
+    <string name="desktop_rows_default">4</string>
+    <string name="desktop_columns">Columns</string>
+    <string name="desktop_columns_default">4</string>
+    <string name="desktop_multiline_labels">Multi-Line Labels</string>
+    <string name="desktop_autohide_pagination">Auto-Hide Page Indicator</string>
+    
+    <string name="launcher_dock">Dock</string>
+    <string name="dock_columns">Columns</string>
+    <string name="dock_columns_default">5</string>
+    <string name="disable_dock_stage">Hide Stage</string>
+    <string name="disable_dock_reflection">Hide Reflection</string>
+    <string name="large_dock_reflection">Large Reflection</string>
+    
+    <string name="launcher_folders">Folders</string>
+    <string name="folder_columns">Columns</string>
+    <string name="folder_columns_default">4</string>
+    <string name="folder_multiline_labels">Multi-Line Labels</string>
+    
+    <string name="launcher_drawer">Drawer</string>
+    <string name="transparent_drawer">Transparency</string>
+    <string name="transparent_drawer_summary">Transparent status bar, navigation bar and drawer background.</string>
+    <string name="drawer_rows">Rows</string>
+    <string name="drawer_rows_default">5</string>
+    <string name="drawer_columns">Columns</string>
+    <string name="drawer_columns_default">4</string>
+    <string name="disable_drawer_backplate">Hide Backplate</string>
+    
+    <string name="lockscreen">Xperia Lockscreen</string>
+    <string name="reboot_phone">Note</string>
+    <string name="reboot_phone_summary">
+        You need to reboot the phone for changes to take effect. Lockscreen modifications are dangerous: in case of a bootloop, 
+        you\'ll need to temporarily disable Xposed Framework by flashing Xposed-Disabler-Recovery.zip from the recovery. 
+    </string>
+    <string name="transparent_lockscreen">Transparent Status Bar</string>
+    <string name="hide_shortcuts">Hide Shortcut Icons</string>
+    <string name="hide_hint_arrows">Hide Hint Arrows</string>
+    <string name="hint_text">Hint Text</string>
+    <string name="hint_text_summary">Empty string to show the default hint, whitespace to hide the hint.</string>
+    <string name="carrier_text">Carrier Label</string>
+    <string name="hint_carrier_summary">Empty string to show the default carrier label, whitespace to hide the carrier label.</string>
+    <string name="more_unlock_blinds">Small Blinds</string>
+    <string name="folder_disable_background_dim">Disable Background Dimming</string>
+    <string name="enable_standard_lockscreen">Enable AOSP Lockscreen</string>
+    <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support, customizable via GravityBox.</string>
+    <string name="all_widgets_resizable_summary">When resizing Sony stock widgets, you may need to restart the launcher for the widget to rescale properly.</string>
+</resources>
