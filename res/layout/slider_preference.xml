@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:gravity="center_vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="20dp"
+    android:paddingTop="6dip"
+    android:paddingBottom="6dip"
+    android:baselineAligned="false">
+
+    <TextView
+        android:id="@+android:id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:ellipsize="marquee"
+        android:fadingEdge="horizontal" />
+
+    <TextView 
+        android:id="@+android:id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@android:id/title"
+        android:layout_alignStart="@android:id/title"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorSecondary"
+        android:maxLines="4" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@android:id/summary"
+        android:layout_alignLeft="@android:id/title">
+
+        <TextView
+            android:id="@+id/slider_preference_current"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:maxWidth="48dp"
+            android:minWidth="48dp"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    	<Button
+    	    android:id="@+id/slider_preference_minus"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center"
+    	    android:minHeight="24dp"
+    	    android:minWidth="24dp"
+    	    android:text="&#x276e;"
+    	    android:textColor="@android:color/holo_blue_light" />
+
+        <SeekBar
+            android:id="@+id/slider_preference_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="50" />
+
+    	<Button
+    	    android:id="@+id/slider_preference_plus"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center"
+    	    android:minHeight="24dp"
+    	    android:minWidth="24dp"
+    	    android:text="&#x276f;"
+    	    android:textColor="@android:color/holo_blue_light" />
+
+    </LinearLayout>
+    
+</RelativeLayout>

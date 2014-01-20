@@ -4,22 +4,23 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
-    <dimen name="small_icon_image_width">44.0dip</dimen>
-    <dimen name="small_icon_image_height">44.0dip</dimen>
-    <dimen name="small_icon_label_text_size">11.0sp</dimen>
+    <dimen name="icon_image_width">44.0dip</dimen>
+    <dimen name="icon_image_height">44.0dip</dimen>
+    <dimen name="icon_label_text_size">11.0sp</dimen>
     
-    <dimen name="desktopx5_desktop_cell_width">69.0dip</dimen>
-    <dimen name="desktopx6_desktop_cell_width">60.0dip</dimen>
-    <dimen name="desktop5x_desktop_cell_height">96.0dip</dimen>
-    <dimen name="desktop6x_desktop_cell_height">82.0dip</dimen>
+    <dimen name="desktop_cell_width_port">96.0dip</dimen>
+    <dimen name="desktop_cell_width_land">128.0dip</dimen>
+    <dimen name="desktop_cell_height_port">122.0dip</dimen>
+    <dimen name="desktop_cell_height_land">90.0dip</dimen>
+    <item type="dimen" name="desktop_cell_width">@dimen/desktop_cell_width_port</item>
+    <item type="dimen" name="desktop_cell_height">@dimen/desktop_cell_height_port</item>
     
-    <dimen name="dock7_stage_cell_width">52.0dip</dimen>
-    <dimen name="dock7_stage_cell_height">55.0dip</dimen>
+    <dimen name="stage_cell_width">52.0dip</dimen>
+    <dimen name="stage_cell_height">55.0dip</dimen>
 
-    <dimen name="drawerx5_apptray_cell_width">69.0dip</dimen>
-    <dimen name="drawerx6_apptray_cell_width">60.0dip</dimen>
-    <dimen name="drawer6x_apptray_cell_height">90.0dip</dimen>
+    <dimen name="apptray_cell_width">96.0dip</dimen>
+    <dimen name="apptray_cell_height">106.0dip</dimen>
 
-    <dimen name="large_stage_mirror_size">20.0dip</dimen>
+    <dimen name="stage_mirror_size">10.0dip</dimen>
     
 </resources>

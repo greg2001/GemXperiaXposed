@@ -8,6 +8,8 @@
     <string name="restart_launcher_summary">Restart launcher for changes to take effect (requires ROOT). You may need to reboot the phone if the launcher will stop working properly after restart.</string>
     
     <string name="launcher_general">General</string>
+    <string name="launcher_icon_size">Icon Size</string>
+    <string name="launcher_label_text_size">Label Text Size</string>
     <string name="condensed_font">Condensed Font</string>
     <string name="all_widgets_resizable">All Widgets Resizable</string>
     
@@ -49,6 +51,7 @@
         you\'ll need to temporarily disable Xposed Framework by flashing Xposed-Disabler-Recovery.zip from the recovery. 
     </string>
     <string name="transparent_lockscreen">Transparent Status Bar</string>
+    <string name="hide_widget_backplate">Hide Widget Backplate</string>
     <string name="hide_shortcuts">Hide Shortcut Icons</string>
     <string name="hide_hint_arrows">Hide Hint Arrows</string>
     <string name="hint_text">Hint Text</string>

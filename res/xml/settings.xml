@@ -4,7 +4,23 @@
         <Preference android:key="key_restart_launcher"
                     android:title="@string/restart_launcher" 
                     android:summary="@string/restart_launcher_summary"/> 
-        <PreferenceCategory android:title="@string/launcher_general">        
+        <PreferenceCategory android:title="@string/launcher_general">
+            <com.gem.xperiaxposed.SliderPreference
+                android:key="key_launcher_icon_size"
+                android:title="@string/launcher_icon_size"
+				android:defaultValue="100" 
+                minimum="50"
+                maximum="100"
+                step="1"
+                currentValueFormat="%d%%"/>
+            <com.gem.xperiaxposed.SliderPreference
+                android:key="key_launcher_label_text_size"
+                android:title="@string/launcher_label_text_size"
+                android:defaultValue="100"
+                minimum="50"
+                maximum="100"
+                step="1"
+                currentValueFormat="%d%%"/>
             <CheckBoxPreference
                 android:key="key_condensed_font"
                 android:title="@string/condensed_font"
@@ -122,6 +138,10 @@
             android:title="@string/enable_standard_lockscreen"
             android:summary="@string/enable_standard_lockscreen_summary"
             android:disableDependentsState="true"
+            android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="key_hide_widget_backplate"
+            android:title="@string/hide_widget_backplate"
             android:defaultValue="false"/>
         <CheckBoxPreference
             android:key="key_hide_shortcuts"

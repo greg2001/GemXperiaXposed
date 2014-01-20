@@ -95,34 +95,31 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
     if(param.packageName.equals(SE_HOME))
     {
-      boolean smallIcons = false;
-      XModuleResources res = XModuleResources.createInstance(MODULE_PATH, param.res);
+      ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
       prefs.reload();
-      
-      if("5".equals(prefs.getString("key_desktop_rows", "4")))
+
+      int desktopRows = Integer.parseInt(prefs.getString("key_desktop_rows", "4"));
+      if(desktopRows != 4)
       {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_rows", 5);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_height", res.fwd(R.dimen.desktop5x_desktop_cell_height));
-      }
-      else if("6".equals(prefs.getString("key_desktop_rows", "4")))
-      {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_rows", 6);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_height", res.fwd(R.dimen.desktop6x_desktop_cell_height));
+//      unfortunately, way too small 
+//      float height = param.res.getDimension(param.res.getIdentifier("desktop_cell_height", "dimen", SE_HOME));
+        float height = res.getDimension(R.dimen.desktop_cell_height);
+        height *= 4.0/desktopRows;
+        res.setDimension(R.dimen.desktop_cell_height, height);
+
+        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_rows", desktopRows);
+        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_height", res.fwd(R.dimen.desktop_cell_height));
       }
 
-      if("5".equals(prefs.getString("key_desktop_columns", "4")))
+      int desktopColumns = Integer.parseInt(prefs.getString("key_desktop_columns", "4"));
+      if(desktopColumns != 4)
       {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_columns", 5);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_width", res.fwd(R.dimen.desktopx5_desktop_cell_width));
-      }
-      else if("6".equals(prefs.getString("key_desktop_columns", "4")))
-      {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_columns", 6);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_width", res.fwd(R.dimen.desktopx6_desktop_cell_width));
+        float width = param.res.getDimension(param.res.getIdentifier("desktop_cell_width", "dimen", SE_HOME));
+        width *= 4.0/desktopColumns;
+        res.setDimension(R.dimen.desktop_cell_width, width);
+
+        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_columns", desktopColumns);
+        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_width", res.fwd(R.dimen.desktop_cell_width));
       }
       
       if(prefs.getBoolean("key_desktop_multiline_labels", false))
@@ -130,44 +127,76 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       if(prefs.getBoolean("key_desktop_autohide_pagination", false))
         param.res.setReplacement(SE_HOME, "bool", "desktop_pagination_autohide", true);
 
-      if("7".equals(prefs.getString("key_dock_columns", "5")))
+      int dockColumns = Integer.parseInt(prefs.getString("key_dock_columns", "5"));
+      if(dockColumns != 5)
       {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "stage_grid_columns", 7);
-        param.res.setReplacement(SE_HOME, "integer", "max_stage_items", 6);
-        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_width", res.fwd(R.dimen.dock7_stage_cell_width));
-        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_height", res.fwd(R.dimen.dock7_stage_cell_height));
+        float width = param.res.getDimension(param.res.getIdentifier("stage_cell_width", "dimen", SE_HOME));
+        width *= 5.0/dockColumns;
+        res.setDimension(R.dimen.stage_cell_width, width);
+
+        param.res.setReplacement(SE_HOME, "integer", "stage_grid_columns", dockColumns);
+        param.res.setReplacement(SE_HOME, "integer", "max_stage_items", dockColumns-1);
+        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_width", res.fwd(R.dimen.stage_cell_width));
+        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_height", res.fwd(R.dimen.stage_cell_height));
       }
       
-      if("6".equals(prefs.getString("key_drawer_rows", "5")))
+      int drawerRows = Integer.parseInt(prefs.getString("key_drawer_rows", "5"));
+      if(drawerRows != 5)
       {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_rows", 6);
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_height", res.fwd(R.dimen.drawer6x_apptray_cell_height));
+//      unfortunately, way too small 
+//      float height = param.res.getDimension(param.res.getIdentifier("apptray_cell_height", "dimen", SE_HOME));
+        float height = res.getDimension(R.dimen.apptray_cell_height);
+        height *= 5.0/drawerRows;
+        res.setDimension(R.dimen.apptray_cell_height, height);
+
+        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_rows", drawerRows);
+        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_height", res.fwd(R.dimen.apptray_cell_height));
       }
+
+      int drawerColumns = Integer.parseInt(prefs.getString("key_drawer_columns", "4"));
+      if(drawerColumns != 4)
+      {
+        float width = param.res.getDimension(param.res.getIdentifier("apptray_cell_width", "dimen", SE_HOME));
+        width *= 4.0/drawerColumns;
+        res.setDimension(R.dimen.apptray_cell_width, width);
+
+        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_columns", drawerColumns);
+        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_width", res.fwd(R.dimen.apptray_cell_width));
+      }
+      
+      int iconSize = prefs.getInt("key_launcher_icon_size", 100);
+      if(iconSize != 100)
+      {
+        float width = param.res.getDimension(param.res.getIdentifier("icon_image_width", "dimen", SE_HOME));
+        width *= iconSize/100.0;
+        res.setDimension(R.dimen.icon_image_width, width);
         
-      if("5".equals(prefs.getString("key_drawer_columns", "4")))
-      {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_columns", 5);
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_width", res.fwd(R.dimen.drawerx5_apptray_cell_width));
+        float height = param.res.getDimension(param.res.getIdentifier("icon_image_height", "dimen", SE_HOME));
+        height *= iconSize/100.0;
+        res.setDimension(R.dimen.icon_image_height, height);
+        
+        param.res.setReplacement(SE_HOME, "dimen", "icon_image_width", res.fwd(R.dimen.icon_image_height));
+        param.res.setReplacement(SE_HOME, "dimen", "icon_image_height", res.fwd(R.dimen.icon_image_height));
       }
-      else if("6".equals(prefs.getString("key_drawer_columns", "4")))
+
+      int textSize = prefs.getInt("key_launcher_label_text_size", 100);
+      if(textSize != 100)
       {
-        smallIcons = true;
-        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_columns", 6);
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_width", res.fwd(R.dimen.drawerx6_apptray_cell_width));
+        float size = param.res.getDimension(param.res.getIdentifier("icon_label_text_size", "dimen", SE_HOME));
+        size *= textSize/100.0;
+        res.setDimension(R.dimen.icon_label_text_size, size);
+        
+        param.res.setReplacement(SE_HOME, "dimen", "icon_label_text_size", res.fwd(R.dimen.icon_label_text_size));
       }
-      
-      if(smallIcons)
-      {
-        param.res.setReplacement(SE_HOME, "dimen", "icon_image_width", res.fwd(R.dimen.small_icon_image_height));
-        param.res.setReplacement(SE_HOME, "dimen", "icon_image_height", res.fwd(R.dimen.small_icon_image_height));
-        param.res.setReplacement(SE_HOME, "dimen", "icon_label_text_size", res.fwd(R.dimen.small_icon_label_text_size));
-      }
-      
+
       if(prefs.getBoolean("key_large_dock_reflection", false))
-        param.res.setReplacement(SE_HOME, "dimen", "stage_mirror_size", res.fwd(R.dimen.large_stage_mirror_size));
+      {
+        float size = param.res.getDimension(param.res.getIdentifier("stage_mirror_size", "dimen", SE_HOME));
+        size *= 2;
+        res.setDimension(R.dimen.stage_mirror_size, size);
+
+        param.res.setReplacement(SE_HOME, "dimen", "stage_mirror_size", res.fwd(R.dimen.stage_mirror_size));
+      }
     }
   }
 
@@ -266,51 +295,32 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         }
       });
     }    
+
+    if(prefs.getBoolean("key_hide_widget_backplate", false))
+    {
+      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardWidgetFrame", param.classLoader, "getBackgroundDrawable", Resources.class, new XC_MethodReplacement()
+      {
+        @Override
+        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        {
+          return new ColorDrawable(0);
+        }
+      });
+      findAndHookMethod(KEYGUARD_PACKAGE + ".CameraWidgetFrame", param.classLoader, "getBackgroundDrawable", Resources.class, new XC_MethodReplacement()
+      {
+        @Override
+        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        {
+          return new ColorDrawable(0);
+        }
+      });
+    }
   }
 
   ////////////////////////////////////////////////////////////
 
   private void hookLockscreen(XC_LoadPackage.LoadPackageParam param)
   {
-/*    
-    if(prefs.getBoolean("key_transparent_lockscreen", false))
-    {
-      findAndHookMethod("com.sonymobile.lockscreen.xperia.WallpaperHelper", param.classLoader, "setWallpaper", Bitmap.class, int.class, new XC_MethodReplacement()
-      {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
-        {
-          
-          View rootView = (View)getObjectField(param.thisObject, "mRootView");
-          ImageView imageView = (ImageView)rootView.findViewById(getIntField(param.thisObject, "mBackgroundImageViewId"));
-          Object blindsManager = getObjectField(param.thisObject, "mBlindsManager");
-
-          rootView.setBackgroundColor(0);
-          imageView.setBackgroundColor(0);
-          imageView.setImageAlpha(0);
-          XposedBridge.log("!!!!! hacking lockscreen " + rootView.getWidth() + " " + rootView.getHeight() + " " + imageView.getWidth() + " " + imageView.getHeight());
-          
-          
-          Resources res = imageView.getContext().getResources();
-          Bitmap wallpaper = BitmapFactory.decodeResource(res, res.getIdentifier("default_wallpaper", "drawable", SE_LOCK));
-          wallpaper = Bitmap.createBitmap(wallpaper.getWidth(), wallpaper.getHeight(), Bitmap.Config.ARGB_8888);
-          Canvas canvas = new Canvas(wallpaper);
-          Paint transPainter = new Paint();
-          transPainter.setColor(Color.TRANSPARENT);
-//          transPainter.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-          canvas.drawRect(0, 0, wallpaper.getWidth(), wallpaper.getHeight(), transPainter);
-
-          callMethod(blindsManager, "suppressBlinds");
-          imageView.setImageBitmap(wallpaper);
-//          imageView.setImageResource(0x7f020002);
-          callMethod(blindsManager, "reenableBlinds");
-
-          XposedBridge.log("!!!!! lockscreen hacked");
-          return null;
-        }
-      });
-    }
-*/    
   }
   
 ////////////////////////////////////////////////////////////
