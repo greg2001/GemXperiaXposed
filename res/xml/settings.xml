@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
     <PreferenceScreen android:title="@string/launcher">
-        <Preference android:key="key_restart_launcher"
-                    android:title="@string/restart_launcher" 
-                    android:summary="@string/restart_launcher_summary"/> 
+        <Preference 
+            android:key="key_restart_launcher"
+            android:title="@string/restart_launcher" 
+            android:summary="@string/restart_launcher_summary"/>
+         
         <PreferenceCategory android:title="@string/launcher_general">
             <com.gem.xperiaxposed.SliderPreference
                 android:key="key_launcher_icon_size"
@@ -31,6 +34,7 @@
                 android:summary="@string/all_widgets_resizable_summary"
                 android:defaultValue="false"/>
             </PreferenceCategory>
+            
         <PreferenceCategory android:title="@string/launcher_desktop">        
             <CheckBoxPreference
                 android:key="key_transparent_desktop"
@@ -60,6 +64,7 @@
                 android:title="@string/desktop_autohide_pagination"
                 android:defaultValue="false"/>
             </PreferenceCategory>
+            
         <PreferenceCategory android:title="@string/launcher_dock">        
             <ListPreference
                 android:key="key_dock_columns"
@@ -75,12 +80,15 @@
             <CheckBoxPreference
                 android:key="key_disable_dock_reflection"
                 android:title="@string/disable_dock_reflection"
+                android:disableDependentsState="true"
                 android:defaultValue="false"/>
             <CheckBoxPreference
                 android:key="key_large_dock_reflection"
                 android:title="@string/large_dock_reflection"
+                android:dependency="key_disable_dock_reflection"
                 android:defaultValue="false"/>
             </PreferenceCategory>
+            
         <PreferenceCategory android:title="@string/launcher_folders">        
             <ListPreference
                 android:key="key_folder_columns"
@@ -98,6 +106,7 @@
                 android:title="@string/folder_disable_background_dim"
                 android:defaultValue="false"/>
             </PreferenceCategory>
+            
         <PreferenceCategory android:title="@string/launcher_drawer">        
             <CheckBoxPreference
                 android:key="key_transparent_drawer"
@@ -126,9 +135,10 @@
     </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/lockscreen">
-        <Preference android:title="@string/reboot_phone" 
-                    android:summary="@string/reboot_phone_summary"
-                    style="?android:preferenceInformationStyle" />
+        <Preference 
+            android:title="@string/reboot_phone_lockscreen" 
+            android:summary="@string/reboot_phone_summary_lockscreen"
+            style="?android:preferenceInformationStyle" />
         <CheckBoxPreference
             android:key="key_transparent_lockscreen"
             android:title="@string/transparent_lockscreen"
@@ -169,4 +179,53 @@
             android:dependency="key_enable_standard_lockscreen"
             android:defaultValue="false"/>
     </PreferenceScreen>
+    
+    <PreferenceScreen android:title="@string/systemui">
+        <PreferenceCategory android:title="@string/systemui_colors">        
+	        <Preference 
+				android:key="key_restart_systemui"
+	            android:title="@string/restart_systemui" 
+	            android:summary="@string/restart_systemui_summary"/>
+	        <net.margaritov.preference.colorpicker.ColorPickerPreference 
+	             android:key="key_systemui_dark_background"
+	             android:title="@string/systemui_dark_background"
+	             alphaSlider="true"
+	             android:defaultValue="0xff000000"/>
+		    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+	             android:key="key_systemui_light_background"
+	             android:title="@string/systemui_light_background"
+	             alphaSlider="true"
+	             android:defaultValue="0xff4d4d4d"/>
+		    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+	             android:key="key_systemui_translucent_background"
+	             android:title="@string/systemui_translucent_background"
+	             alphaSlider="true"
+	             android:defaultValue="0x99000000"/>
+	        <Preference 
+				android:key="key_reset_to_default"
+	            android:title="@string/reset_to_default"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/systemui_appearance">        
+	        <CheckBoxPreference
+	            android:key="key_systemui_enable_appearance_customization"
+	            android:title="@string/systemui_enable_appearance_customization"
+	            android:summary="@string/systemui_enable_appearance_customization_summary"
+	            android:defaultValue="false"/>
+		    <ListPreference
+		        android:key="key_systemui_rounded_corners"
+		        android:title="@string/systemui_rounded_corners"
+		        android:dialogTitle="@string/systemui_rounded_corners"
+		        android:entries="@array/systemui_rounded_corners_entries"
+		        android:entryValues="@array/systemui_rounded_corners_values"
+		        android:defaultValue="@string/systemui_rounded_corners_default"            
+                android:dependency="key_systemui_enable_appearance_customization"/>
+	        <Preference 
+	            android:title="@string/systemui_app_settings"
+                android:dependency="key_systemui_enable_appearance_customization">
+	            <intent android:action=".AppListActivity"/>
+	        </Preference>
+        </PreferenceCategory>
+	</PreferenceScreen>    
+    
 </PreferenceScreen>

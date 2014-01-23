@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Color Picker -->
+    <string name="dialog_color_picker">Color Picker</string>
+    <string name="press_color_to_apply">Press on Color to apply</string>
+    
     <string name="app_name">GEM Xperia Xposed</string>
+    <string name="app_list_loading">Loading apps, please wait</string>
     <string name="action_settings">Settings</string>
     
     <string name="launcher">Xperia Launcher</string>
@@ -45,8 +50,8 @@
     <string name="disable_drawer_backplate">Hide Backplate</string>
     
     <string name="lockscreen">Xperia Lockscreen</string>
-    <string name="reboot_phone">Note</string>
-    <string name="reboot_phone_summary">
+    <string name="reboot_phone_lockscreen">Note</string>
+    <string name="reboot_phone_summary_lockscreen">
         You need to reboot the phone for changes to take effect. Lockscreen modifications are dangerous: in case of a bootloop, 
         you\'ll need to temporarily disable Xposed Framework by flashing Xposed-Disabler-Recovery.zip from the recovery. 
     </string>
@@ -63,4 +68,26 @@
     <string name="enable_standard_lockscreen">Enable AOSP Lockscreen</string>
     <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support, customizable via GravityBox.</string>
     <string name="all_widgets_resizable_summary">When resizing Sony stock widgets, you may need to restart the launcher for the widget to rescale properly.</string>
+    
+    <string name="systemui">SystemUI</string>
+    <string name="systemui_colors">Colors</string>
+    <string name="restart_systemui">Restart SystemUI</string>
+    <string name="restart_systemui_summary">Restart SystemUI for changes to take effect (requires ROOT). You may need to reboot the phone if SystemUI will stop working properly after restart.</string>
+    <string name="systemui_dark_background">Dark Background</string>
+    <string name="systemui_light_background">Light Background</string>
+    <string name="systemui_translucent_background">Translucent Background</string>
+    <string name="reset_to_default">Reset to Default</string>
+
+    <string name="systemui_appearance">Appearance</string>
+    <string name="systemui_enable_appearance_customization">Enable Customizations</string>
+    <string name="systemui_enable_appearance_customization_summary">Requires reboot.</string>
+    <string name="systemui_rounded_corners">Rounded Corners in All Apps</string>
+    
+    <string name="systemui_app_settings">App Settings</string>
+    <string name="systemui_app_settings_note">Note</string>
+    <string name="systemui_app_settings_note_summary">Transparent/translucent SystemUI works only for applications supporting transparency, e.g. launchers.</string>
+    <string name="systemui_app_color">SystemUI Appearance</string>
+    <string name="systemui_app_rounded_corners">Rounded corners</string>
+    <string name="systemui_color_default">Default</string>
+    <string name="systemui_rounded_corners_default">Default</string>
 </resources>

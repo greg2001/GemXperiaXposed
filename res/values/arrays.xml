@@ -28,4 +28,28 @@
         <item>5</item>
         <item>6</item>
     </string-array>
+    <string-array name="systemui_color_entries">
+        <item>Default</item>
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Translucent</item>
+        <item>Transparent</item>
+    </string-array>
+    <string-array name="systemui_color_values">
+        <item>Default</item>
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Translucent</item>
+        <item>Transparent</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_entries">
+        <item>Default</item>
+        <item>Enable</item>
+        <item>Disable</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_values">
+        <item>Default</item>
+        <item>Enable</item>
+        <item>Disable</item>
+    </string-array>
 </resources>

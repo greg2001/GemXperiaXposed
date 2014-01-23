@@ -1,22 +1,19 @@
 package com.gem.xperiaxposed;
 
-import android.annotation.*;
+import static com.gem.xperiaxposed.Util.*;
+import net.margaritov.preference.colorpicker.*;
 import android.app.*;
 import android.os.*;
 import android.preference.*;
 
 public class MainActivity extends Activity 
 {
-  @SuppressWarnings("deprecation")
-  @SuppressLint("WorldReadableFiles")
   @Override
   public void onCreate(Bundle savedInstanceState) 
   {
     super.onCreate(savedInstanceState);
-    
-    getSharedPreferences(this.getApplicationContext().getPackageName() + "_preferences", MODE_WORLD_READABLE)
-      .edit()
-      .commit();
+
+    makeSharedPreferencesWorldReadable(this);
     
     getFragmentManager()
       .beginTransaction()
@@ -32,6 +29,7 @@ class SettingsFragment extends PreferenceFragment
   {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.settings);
+    initPreferences(this);
     
     findPreference("key_restart_launcher").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() 
     {
@@ -40,7 +38,7 @@ class SettingsFragment extends PreferenceFragment
       {
         try
         {
-          Runtime.getRuntime().exec("su -c pkill com.sonyericsson.home").waitFor();
+          Runtime.getRuntime().exec("su -c pkill " + XposedMain.SE_HOME).waitFor();
         }
         catch(Exception ex)
         {
@@ -50,26 +48,33 @@ class SettingsFragment extends PreferenceFragment
       }
     });
     
-    initListPreference("key_dock_columns");
-    initListPreference("key_folder_columns");
-    initListPreference("key_desktop_rows");
-    initListPreference("key_desktop_columns");
-    initListPreference("key_drawer_rows");
-    initListPreference("key_drawer_columns");
-  }
-
-  private void initListPreference(String key)
-  {
-    ListPreference listPreference = (ListPreference)findPreference(key);
-    listPreference.setSummary(listPreference.getValue().toString());
-    listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
+    findPreference("key_restart_systemui").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() 
     {
       @Override
-      public boolean onPreferenceChange(Preference preference, Object newValue)
+      public boolean onPreferenceClick(Preference preference)
       {
-        preference.setSummary(newValue.toString());
+        try
+        {
+          Runtime.getRuntime().exec("su -c pkill " + XposedMain.SYSTEMUI).waitFor();
+        }
+        catch(Exception ex)
+        {
+          ex.printStackTrace();
+        }
         return true;
       }
     });
-  }  
+
+    findPreference("key_reset_to_default").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() 
+    {
+      @Override
+      public boolean onPreferenceClick(Preference preference)
+      {
+        ((ColorPickerPreference)findPreference("key_systemui_dark_background")).setValue(XposedMain.SYSTEM_UI_OPAQUE_BACKGROUND);      
+        ((ColorPickerPreference)findPreference("key_systemui_light_background")).setValue(XposedMain.SYSTEM_UI_LIGHT_BACKGROUND);      
+        ((ColorPickerPreference)findPreference("key_systemui_translucent_background")).setValue(XposedMain.SYSTEM_UI_TRANSPARENT_BACKGROUND);      
+        return true;
+      }
+    });
+  }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <Preference 
+        android:title="@string/systemui_app_settings_note" 
+        android:summary="@string/systemui_app_settings_note_summary"
+        style="?android:preferenceInformationStyle" />
+    <ListPreference
+        android:key="key_systemui_app_color"
+        android:title="@string/systemui_app_color"
+        android:dialogTitle="@string/systemui_app_color"
+        android:entries="@array/systemui_color_entries"
+        android:entryValues="@array/systemui_color_values"
+        android:defaultValue="@string/systemui_color_default"/>            
+    <ListPreference
+        android:key="key_systemui_app_rounded_corners"
+        android:title="@string/systemui_app_rounded_corners"
+        android:dialogTitle="@string/systemui_app_rounded_corners"
+        android:entries="@array/systemui_rounded_corners_entries"
+        android:entryValues="@array/systemui_rounded_corners_values"
+        android:defaultValue="@string/systemui_rounded_corners_default"/>            
+</PreferenceScreen>

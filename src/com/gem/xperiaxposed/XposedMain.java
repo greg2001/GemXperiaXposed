@@ -24,35 +24,70 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
 ////////////////////////////////////////////////////////////
   
-  private static final String ANDROID = "android";
-  private static final String SE_HOME = "com.sonyericsson.home";
-  private static final String SE_LOCK = "com.sonyericsson.lockscreen.uxpnxt";
-  private static final String KEYGUARD_PACKAGE = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) ?
+  public static final String ANDROID = "android";
+  public static final String SYSTEMUI = "com.android.systemui";
+  public static final String SE_HOME = "com.sonyericsson.home";
+  public static final String SE_LOCK = "com.sonyericsson.lockscreen.uxpnxt";
+  public static final String KEYGUARD_PACKAGE = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) ?
     "com.android.keyguard" : "com.android.internal.policy.impl.keyguard";
-  private static String MODULE_PATH;
-  private static XSharedPreferences prefs;
+  
+////////////////////////////////////////////////////////////
+  
+  public static final int SYSTEM_UI_TRANSPARENT_BACKGROUND      = 0x99000000;
+  public static final int SYSTEM_UI_OPAQUE_BACKGROUND           = 0xff000000;
+  public static final int SYSTEM_UI_LIGHT_BACKGROUND            = 0xff4d4d4d;
+  
+////////////////////////////////////////////////////////////
+
+  public static String MODULE_PATH;
+  public static XSharedPreferences prefs;
+
+////////////////////////////////////////////////////////////
+
+  public static int SYSTEM_UI_FLAG_TRANSPARENT = 0;
+  public static int SYSTEM_UI_FLAG_FULL_TRANSPARENCY = 0;
+  public static int SYSTEM_UI_FLAG_LIGHT = 0;
+  public static int SYSTEM_UI_FLAG_ROUNDED_CORNERS = 0;
+  public static int SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS = 0;
+  public static int SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION = 0;
+  
+  private static void initFlags()
+  {
+    SYSTEM_UI_FLAG_TRANSPARENT                  = getFlag("SYSTEM_UI_FLAG_TRANSPARENT");
+    SYSTEM_UI_FLAG_FULL_TRANSPARENCY            = getFlag("SYSTEM_UI_FLAG_FULL_TRANSPARENCY");
+    SYSTEM_UI_FLAG_LIGHT                        = getFlag("SYSTEM_UI_FLAG_LIGHT");
+    SYSTEM_UI_FLAG_ROUNDED_CORNERS              = getFlag("SYSTEM_UI_FLAG_ROUNDED_CORNERS");
+    SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS      = getFlag("SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS");
+    SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION          = getFlag("SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION");
+  }
+  
+  private static int getFlag(String flag)
+  {
+    try
+    {
+      return View.class.getField(flag).getInt(null);
+    }
+    catch(Exception ex)
+    {
+      return 0;
+    }
+  }
 
 ////////////////////////////////////////////////////////////
 
   @Override
   public void initZygote(IXposedHookZygoteInit.StartupParam param) throws Throwable
   {
+    initFlags();
+    
     MODULE_PATH = param.modulePath;
     prefs = new XSharedPreferences(XposedMain.class.getPackage().getName());
     prefs.makeWorldReadable();
 
     if(prefs.getBoolean("key_hide_shortcuts", false))
     {
-      XResources.DrawableLoader EMPTY_DRAWABLE = new XResources.DrawableLoader() 
-      {
-        @Override
-        public Drawable newDrawable(XResources res, int id) throws Throwable
-        {
-          return new ColorDrawable(0);
-        }
-      };
-      XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_camera_hint", EMPTY_DRAWABLE);
-      XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_other_widgets_hint", EMPTY_DRAWABLE);
+      XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_camera_hint", 0);
+      XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_other_widgets_hint", 0);
     }
   }
 
@@ -61,22 +96,39 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   @Override
   public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam param) throws Throwable
   {
+    if(param.packageName.equals(SYSTEMUI))
+    {
+      prefs.reload();
+      
+      int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
+      int system_ui_opaque_background = prefs.getInt("key_systemui_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
+      int system_ui_light_background = prefs.getInt("key_systemui_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
+
+      param.res.setReplacement(SYSTEMUI, "color", "system_ui_transparent_background", system_ui_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "color", "system_ui_opaque_background", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "color", "system_ui_light_background", system_ui_light_background);
+
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_light_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_light_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_opaque_background", system_ui_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_transparent_background", system_ui_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_light_background", system_ui_light_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_lights_out_background", system_ui_opaque_background);
+    }
     if(param.packageName.equals(SE_LOCK))
     {
       prefs.reload();
       
       if(prefs.getBoolean("key_hide_hint_arrows", false))
       {
-        XResources.DrawableLoader EMPTY_DRAWABLE = new XResources.DrawableLoader() 
-        {
-          @Override
-          public Drawable newDrawable(XResources res, int id) throws Throwable
-          {
-            return new ColorDrawable(0);
-          }
-        };
-        param.res.setReplacement(SE_LOCK, "drawable", "arrow_unlock_hint_down", EMPTY_DRAWABLE);
-        param.res.setReplacement(SE_LOCK, "drawable", "arrow_unlock_hint_up", EMPTY_DRAWABLE);
+        param.res.setReplacement(SE_LOCK, "drawable", "arrow_unlock_hint_down", 0);
+        param.res.setReplacement(SE_LOCK, "drawable", "arrow_unlock_hint_up", 0);
       }
 
       String hintText = prefs.getString("key_hint_text", "");
@@ -92,8 +144,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         param.res.setReplacement(SE_LOCK, "integer", "blinds_affected_by_touch", 10);
       }
     }    
-
-    if(param.packageName.equals(SE_HOME))
+    else if(param.packageName.equals(SE_HOME))
     {
       ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
       prefs.reload();
@@ -208,6 +259,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(param.packageName.equals(ANDROID))
     {
       prefs.reload();
+      hookWindowManager(param);
       hookKeyguard(param);
     }
     else if(param.packageName.equals(SE_LOCK))
@@ -229,10 +281,93 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   
 ////////////////////////////////////////////////////////////
 
+  private void hookWindowManager(XC_LoadPackage.LoadPackageParam param)
+  {
+    if(prefs.getBoolean("key_systemui_enable_appearance_customization", false))
+    {
+      try {
+      findAndHookMethod("com.android.internal.policy.impl.PhoneWindowManager", param.classLoader, "filterSystemUiVisibility", int.class, int.class, new XC_MethodHook()
+      {
+        private String lastPackageName = null;
+        private int enableFlags = 0;  
+        private int disableFlags = 0;  
+        
+        private void updateRoundedCorners(String value)
+        {
+          if("Enable".equals(value))
+          {
+            enableFlags |= SYSTEM_UI_FLAG_ROUNDED_CORNERS;
+            disableFlags |= SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS;
+          }
+          else if("Disable".equals(value))
+          {
+            enableFlags |= SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS;
+            disableFlags |= SYSTEM_UI_FLAG_ROUNDED_CORNERS;
+          }
+        }
+        
+        private void updateAppearance(String value)
+        {
+          if("Dark".equals(value))
+          {
+            enableFlags |= 0;
+            disableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY | SYSTEM_UI_FLAG_LIGHT;
+          }
+          else if("Light".equals(value))
+          {
+            enableFlags |= SYSTEM_UI_FLAG_LIGHT;
+            disableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY;
+          }
+          else if("Translucent".equals(value))
+          {
+            enableFlags |= SYSTEM_UI_FLAG_TRANSPARENT;
+            disableFlags |= SYSTEM_UI_FLAG_FULL_TRANSPARENCY | SYSTEM_UI_FLAG_LIGHT;
+          }
+          else if("Transparent".equals(value))
+          {
+            enableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY;
+            disableFlags |= SYSTEM_UI_FLAG_LIGHT;
+          }
+        }
+        
+        private void updatePackage(MethodHookParam param)
+        {
+          Object mFocusedWindow = getObjectField(param.thisObject, "mFocusedWindow");
+          String packageName = (String)callMethod(mFocusedWindow, "getOwningPackage");
+          if(packageName == lastPackageName || (packageName != null && packageName.equals(lastPackageName)))
+            return;
+          
+          lastPackageName = packageName;
+          enableFlags = 0;
+          disableFlags = 0;
+  
+          prefs.reload();
+          updateRoundedCorners(prefs.getString("key_systemui_rounded_corners", "Default"));
+          updateRoundedCorners(prefs.getString("key_systemui_app_rounded_corners$" + packageName, "Default"));
+          updateAppearance(prefs.getString("key_systemui_app_color$" + packageName, "Default"));
+        }
+        
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          long time = System.currentTimeMillis();
+          updatePackage(param);
+          if(enableFlags != 0 || disableFlags != 0)
+            param.setResult(((Integer)param.getResult() | enableFlags) & ~disableFlags);
+          log("Package " + lastPackageName + " " + (System.currentTimeMillis() - time));
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+  }
+  
+////////////////////////////////////////////////////////////
+
   private void hookKeyguard(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_transparent_lockscreen", false))
     {
+      try {
       findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "onFinishInflate", new XC_MethodHook()
       {
         @Override
@@ -241,11 +376,13 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           setFullTransparent((View)param.thisObject, true);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
     
     final String carrierText = prefs.getString("key_carrier_text", "");
     if(!carrierText.isEmpty())
     {
+      try {
       findAndHookMethod(KEYGUARD_PACKAGE + ".CarrierText", param.classLoader, "updateCarrierText", 
                         findClass("com.android.internal.telephony.IccCardConstants.State", param.classLoader), 
                         CharSequence.class, CharSequence.class, new XC_MethodReplacement() 
@@ -257,10 +394,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           return null;
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
 
     if(prefs.getBoolean("key_enable_standard_lockscreen", false))
     {
+      try {
       findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardViewManager", param.classLoader, "maybeCreateKeyguardLocked", boolean.class, boolean.class, Bundle.class, new XC_MethodHook()
       {
         @Override
@@ -277,6 +416,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           }
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardSelectorView", param.classLoader, "onFinishInflate", new XC_MethodHook()
       {
         @Override
@@ -286,6 +427,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           setIntField(mGlowPadView, "mGravity", Gravity.CENTER);
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod(KEYGUARD_PACKAGE + ".ExternalLockScreen", param.classLoader, "validateExternalLockScreen", Context.class, ComponentName.class, new XC_MethodReplacement()
       {
         @Override
@@ -294,26 +437,21 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           return false;
         }
       });
+      } catch(Exception ex) { log(ex); }
     }    
 
     if(prefs.getBoolean("key_hide_widget_backplate", false))
     {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardWidgetFrame", param.classLoader, "getBackgroundDrawable", Resources.class, new XC_MethodReplacement()
+      try {
+      hookAllConstructors(findClass(KEYGUARD_PACKAGE + ".KeyguardWidgetFrame", param.classLoader), new XC_MethodHook()
       {
         @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
         {
-          return new ColorDrawable(0);
+          setObjectField(param.thisObject, "mBackgroundDrawable", new ColorDrawable(0));
         }
       });
-      findAndHookMethod(KEYGUARD_PACKAGE + ".CameraWidgetFrame", param.classLoader, "getBackgroundDrawable", Resources.class, new XC_MethodReplacement()
-      {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
-        {
-          return new ColorDrawable(0);
-        }
-      });
+      } catch(Exception ex) { log(ex); }
     }
   }
 
@@ -327,6 +465,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
   private void hookLauncherTransparency(XC_LoadPackage.LoadPackageParam param)
   {
+    try {
     findAndHookMethod("com.sonymobile.home.apptray.AppTrayPresenter", param.classLoader, "setSystemUiTransparent", boolean.class, new XC_MethodReplacement() 
     {
       @Override
@@ -335,13 +474,27 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         return null;
       }
     });
+    } catch(Exception ex) { log(ex); }
 
+    final int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
+    try {
+    findAndHookMethod("com.sonymobile.home.util.SystemUiExtensions", param.classLoader, "getSystemUiBackgroundColor", Context.class, new XC_MethodReplacement() 
+    {
+      @Override
+      protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+      {
+        return system_ui_transparent_background;
+      }
+    });
+    } catch(Exception ex) { log(ex); }
+    
     final boolean transparentDesktop = prefs.getBoolean("key_transparent_desktop", false);
     final boolean transparentDrawer = prefs.getBoolean("key_transparent_drawer", false);
 
     if(transparentDesktop)
     {
       // transparent SystemUI
+      try {
       hookAllConstructors(findClass("com.sonymobile.home.MainView", param.classLoader), new XC_MethodHook()
       {
         @Override
@@ -350,6 +503,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           setFullTransparent((View)param.thisObject, true);
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.ui.support.SystemUiVisibilityWrapper", param.classLoader, "apply", new XC_MethodHook() 
       {
         @Override
@@ -358,10 +513,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           callMethod(param.thisObject, "setFlag", getIntField(param.thisObject, "SYSTEM_UI_FLAG_FULL_TRANSPARENCY"), true);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
 
     if(transparentDrawer)
     {
+      try {
       hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayView", param.classLoader), new XC_MethodHook()
       {
         @Override
@@ -370,10 +527,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           setIntField(param.thisObject, "mBackgroundColor", 0);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
 
     if(transparentDrawer != transparentDesktop)
     {
+      try {
       findAndHookMethod("com.sonymobile.home.MainView", param.classLoader, "showApptray", boolean.class, new XC_MethodHook() 
       {
         @Override
@@ -383,6 +542,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
             setFullTransparent((View)param.thisObject, transparentDrawer);
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.MainView", param.classLoader, "showDesktop", boolean.class, new XC_MethodHook() 
       {
         @Override
@@ -392,10 +553,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
             setFullTransparent((View)param.thisObject, transparentDesktop);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
     
     if(transparentDesktop || transparentDrawer != transparentDesktop)
     {
+      try {
       findAndHookMethod("com.sonymobile.home.HomeFragment", param.classLoader, "setFocused", boolean.class, new XC_MethodHook() 
       {
         @Override
@@ -414,6 +577,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           }
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   }
   
@@ -424,6 +588,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(prefs.getBoolean("key_condensed_font", false))
     {
       final Typeface CONDENSED_FONT = Typeface.createFromFile("/system/fonts/RobotoCondensed-Regular.ttf");
+      try {
       findAndHookMethod("com.sonymobile.home.textview.TextViewUtilities", param.classLoader, "createTextView", 
                         Context.class, float.class, int.class,
                         new XC_MethodHook() 
@@ -434,6 +599,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           ((TextView)param.getResult()).getPaint().setTypeface(CONDENSED_FONT);
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.textview.TextViewUtilities", param.classLoader, "createTextView", 
                         Context.class, String.class, float.class, int.class, int.class, Rect.class, Typeface.class, int.class, 
                         new XC_MethodHook() 
@@ -444,6 +611,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           ((TextView)param.getResult()).getPaint().setTypeface(CONDENSED_FONT);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   }
   
@@ -453,6 +621,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(prefs.getBoolean("key_disable_dock_stage", false))
     {
+      try {
       findAndHookMethod("com.sonymobile.home.stage.StageView", param.classLoader, "updateBackground", new XC_MethodHook() 
       {
         @Override
@@ -461,10 +630,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           callMethod(getObjectField(param.thisObject, "mBackground"), "setBitmap", (Object)null);
         }
       });      
+      } catch(Exception ex) { log(ex); }
     }
       
     if(prefs.getBoolean("key_disable_dock_reflection", false))
     {
+      try {
       hookAllConstructors(findClass("com.sonymobile.home.bitmap.MirrorBitmapDrawable", param.classLoader), new XC_MethodHook()
       {
         @Override
@@ -473,6 +644,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           setBooleanField(param.thisObject, "mMirror", false);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   }
   
@@ -482,6 +654,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(prefs.getBoolean("key_disable_drawer_backplate", false))
     {
+      try {
       hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayPageView", param.classLoader), new XC_MethodHook()
       {
         @Override
@@ -491,6 +664,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           callMethod(getObjectField(param.thisObject, "mContent"), "removeChild", getObjectField(param.thisObject, "mUninstallBackplate"));
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   }
 
@@ -501,6 +675,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     final int folderColumns = Integer.parseInt(prefs.getString("key_folder_columns", "4"));
     if(folderColumns != 4)
     {
+      try {
       findAndHookMethod("com.sonymobile.home.folder.GridView", param.classLoader, "setCellWidth", float.class, new XC_MethodReplacement() 
       {
         @Override
@@ -510,10 +685,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           return null;
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
 
     if(prefs.getBoolean("key_folder_multiline_labels", false))
     {
+      try {
       findAndHookMethod("com.sonymobile.home.folder.OpenFolderAdapter", param.classLoader, "getItemView", int.class, new XC_MethodHook() 
       {
         @Override
@@ -528,6 +705,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           }
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.presenter.view.ItemViewCreatorBase", param.classLoader, "getItemViewTextLines", String.class, new XC_MethodHook() 
       {
         @Override
@@ -537,10 +716,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
             param.setResult(2);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
     
     if(prefs.getBoolean("key_folder_disable_background_dim", false))
     {
+      try {
       findAndHookMethod("com.sonymobile.home.folder.OpenFolderView$DimAnimation", param.classLoader, "onUpdate", float.class, float.class, new XC_MethodReplacement() 
       {
         @Override
@@ -549,6 +730,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           return null;
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   }
   
@@ -560,6 +742,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(prefs.getBoolean("key_all_widgets_resizable", false))
     {
+      try {
       findAndHookMethod("com.sonymobile.home.ui.widget.HomeAppWidgetManager", param.classLoader, "getResizeMode", int.class, new XC_MethodHook() 
       {
         @Override
@@ -568,6 +751,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           param.setResult(AppWidgetProviderInfo.RESIZE_BOTH);
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader, "createAppWidgetInfo", PackageManager.class, new XC_MethodHook() 
       {
         @Override
@@ -577,6 +762,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.cui.CuiWidgetLoadHelper", param.classLoader, "getVanillaSpanXY", Context.class, AppWidgetProviderInfo.class, new XC_MethodHook() 
       {
         @Override
@@ -586,6 +773,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.presenter.view.AdvWidgetItemView", param.classLoader, "setAdvancedWidget",
         findClass("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader),
         findClass("com.sonymobile.home.ui.widget.HomeAdvWidgetManager", param.classLoader),
@@ -603,6 +792,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           advWidgetSizes.put(param.args[0], new int[] { colSpan, rowSpan });
         }
       });
+      } catch(Exception ex) { log(ex); }
+      try {
       findAndHookMethod("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader, "getSpanXY", new XC_MethodHook() 
       {
         @Override
@@ -613,6 +804,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
             param.setResult(span);
         }
       });
+      } catch(Exception ex) { log(ex); }
     }
   } 
   
@@ -621,8 +813,13 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   private static void setFullTransparent(View view, boolean value) throws Throwable
   {
     if(value)
-      view.setSystemUiVisibility(view.getSystemUiVisibility() | View.class.getField("SYSTEM_UI_FLAG_FULL_TRANSPARENCY").getInt(null));
+      view.setSystemUiVisibility(view.getSystemUiVisibility() | SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
     else
-      view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.class.getField("SYSTEM_UI_FLAG_FULL_TRANSPARENCY").getInt(null));
+      view.setSystemUiVisibility(view.getSystemUiVisibility() & ~SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
   }
+
+////////////////////////////////////////////////////////////
+
 }
+
+////////////////////////////////////////////////////////////
