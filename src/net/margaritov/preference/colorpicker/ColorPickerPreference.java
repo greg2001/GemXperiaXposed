@@ -16,19 +16,15 @@
 
 package net.margaritov.preference.colorpicker;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
+import android.content.*;
+import android.content.res.*;
+import android.graphics.*;
 import android.graphics.Bitmap.Config;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.preference.Preference;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.os.*;
+import android.preference.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
 
 /**
  * A preference type that allows a user to choose a time
@@ -63,6 +59,12 @@ public class ColorPickerPreference
 		init(context, attrs);
 	}
 
+        @Override
+        public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                setPreviewColor();
+        }
+        
 	@Override
 	protected Object onGetDefaultValue(TypedArray a, int index) {
 		return a.getColor(index, Color.BLACK);
@@ -108,8 +110,8 @@ public class ColorPickerPreference
 		}
 		widgetFrameView.addView(iView);
 		widgetFrameView.setMinimumWidth(0);
-		iView.setBackground(new AlphaPatternDrawable((int)(5 * mDensity)));
-		iView.setImageBitmap(getPreviewBitmap());
+		iView.setBackground(isEnabled() ? new AlphaPatternDrawable((int)(5 * mDensity)) : null);
+		iView.setImageBitmap(isEnabled() ? getPreviewBitmap() : null);
 	}
 
 	private Bitmap getPreviewBitmap() {

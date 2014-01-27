@@ -22,6 +22,7 @@ import android.content.res.*;
 import android.graphics.*;
 import android.os.*;
 import android.text.*;
+import android.text.InputFilter;
 import android.view.*;
 import android.widget.*;
 

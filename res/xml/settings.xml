@@ -131,7 +131,11 @@
                 android:key="key_disable_drawer_backplate"
                 android:title="@string/disable_drawer_backplate"
                 android:defaultValue="false"/>
-        </PreferenceCategory>
+            <CheckBoxPreference
+                android:key="key_remember_drawer_page"
+                android:title="@string/remember_drawer_page"
+                android:defaultValue="false"/>
+            </PreferenceCategory>
     </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/lockscreen">
@@ -181,51 +185,99 @@
     </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/systemui">
-        <PreferenceCategory android:title="@string/systemui_colors">        
-	        <Preference 
+        <CheckBoxPreference
+            android:key="key_systemui_enable_appearance_customization"
+            android:title="@string/systemui_enable_appearance_customization"
+            android:summary="@string/systemui_enable_appearance_customization_summary"
+            android:defaultValue="false"/>
+	    <ListPreference
+	        android:key="key_systemui_rounded_corners"
+	        android:title="@string/systemui_rounded_corners"
+	        android:dialogTitle="@string/systemui_rounded_corners"
+	        android:entries="@array/systemui_rounded_corners_entries"
+	        android:entryValues="@array/systemui_rounded_corners_values"
+	        android:defaultValue="@string/systemui_rounded_corners_default"            
+            android:dependency="key_systemui_enable_appearance_customization"/>
+        <Preference 
+            android:title="@string/systemui_app_settings"
+               android:dependency="key_systemui_enable_appearance_customization">
+            <intent android:action=".AppListActivity"/>
+        </Preference>
+        <PreferenceScreen android:title="@string/systemui_colors">
+   	        <Preference 
 				android:key="key_restart_systemui"
 	            android:title="@string/restart_systemui" 
 	            android:summary="@string/restart_systemui_summary"/>
-	        <net.margaritov.preference.colorpicker.ColorPickerPreference 
-	             android:key="key_systemui_dark_background"
-	             android:title="@string/systemui_dark_background"
-	             alphaSlider="true"
-	             android:defaultValue="0xff000000"/>
-		    <net.margaritov.preference.colorpicker.ColorPickerPreference 
-	             android:key="key_systemui_light_background"
-	             android:title="@string/systemui_light_background"
-	             alphaSlider="true"
-	             android:defaultValue="0xff4d4d4d"/>
-		    <net.margaritov.preference.colorpicker.ColorPickerPreference 
-	             android:key="key_systemui_translucent_background"
-	             android:title="@string/systemui_translucent_background"
-	             alphaSlider="true"
-	             android:defaultValue="0x99000000"/>
 	        <Preference 
 				android:key="key_reset_to_default"
 	            android:title="@string/reset_to_default"/>
-        </PreferenceCategory>
-
-        <PreferenceCategory android:title="@string/systemui_appearance">        
-	        <CheckBoxPreference
-	            android:key="key_systemui_enable_appearance_customization"
-	            android:title="@string/systemui_enable_appearance_customization"
-	            android:summary="@string/systemui_enable_appearance_customization_summary"
-	            android:defaultValue="false"/>
-		    <ListPreference
-		        android:key="key_systemui_rounded_corners"
-		        android:title="@string/systemui_rounded_corners"
-		        android:dialogTitle="@string/systemui_rounded_corners"
-		        android:entries="@array/systemui_rounded_corners_entries"
-		        android:entryValues="@array/systemui_rounded_corners_values"
-		        android:defaultValue="@string/systemui_rounded_corners_default"            
-                android:dependency="key_systemui_enable_appearance_customization"/>
-	        <Preference 
-	            android:title="@string/systemui_app_settings"
-                android:dependency="key_systemui_enable_appearance_customization">
-	            <intent android:action=".AppListActivity"/>
-	        </Preference>
-        </PreferenceCategory>
-	</PreferenceScreen>    
+   	        <PreferenceCategory android:title="@string/systemui_status_colors">        
+		        <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_dark_background"
+		            android:title="@string/systemui_dark_background"
+		            alphaSlider="true"
+		            android:defaultValue="0xff000000"/>
+			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_light_background"
+		            android:title="@string/systemui_light_background"
+		            alphaSlider="true"
+		            android:defaultValue="0xff4d4d4d"/>
+			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_translucent_background"
+		            android:title="@string/systemui_translucent_background"
+		            alphaSlider="true"
+		            android:defaultValue="0x99000000"/>
+	        </PreferenceCategory>
+   	        <PreferenceCategory android:title="@string/systemui_nav_colors">        
+		        <CheckBoxPreference
+		            android:key="key_systemui_same_nav_colors"
+		            android:title="@string/systemui_same_nav_colors"
+                    android:disableDependentsState="true"
+		            android:defaultValue="true"/>
+   	            <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_nav_dark_background"
+		            android:title="@string/systemui_nav_dark_background"
+		            alphaSlider="true"
+                    android:dependency="key_systemui_same_nav_colors"
+		            android:defaultValue="0xff000000"/>
+			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_nav_light_background"
+		            android:title="@string/systemui_nav_light_background"
+		            alphaSlider="true"
+                    android:dependency="key_systemui_same_nav_colors"
+		            android:defaultValue="0xff4d4d4d"/>
+			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		            android:key="key_systemui_nav_translucent_background"
+		            android:title="@string/systemui_nav_translucent_background"
+		            alphaSlider="true"
+                    android:dependency="key_systemui_same_nav_colors"
+		            android:defaultValue="0x99000000"/>
+	        </PreferenceCategory>
+        </PreferenceScreen>
+	</PreferenceScreen>
+	    
+    <PreferenceScreen 
+        android:key="key_about"
+        android:title="@string/about">
+        <Preference
+            android:key="key_about_app" 
+            android:title="@string/app_name"
+            android:summary="@string/about_app_summary" >
+   	        <intent android:action="android.intent.action.VIEW" android:data="http://forum.xda-developers.com/showthread.php?t=2603569"/>
+   	    </Preference>
+        <Preference
+            android:key="key_about_xposed"
+            android:title="@string/about_xposed"
+            android:summary="@string/about_xposed_summary" >
+   	        <intent android:action="android.intent.action.VIEW" android:data="http://forum.xda-developers.com/showthread.php?t=1574401"/>
+   	    </Preference>
+   	    <ListPreference
+	        android:key="key_about_theme"
+	        android:title="@string/about_theme"
+	        android:dialogTitle="@string/about_theme"
+	        android:entries="@array/about_theme_entries"
+	        android:entryValues="@array/about_theme_values"
+	        android:defaultValue="@string/about_theme_default"/>
+    </PreferenceScreen>
     
 </PreferenceScreen>

@@ -48,6 +48,7 @@
     <string name="drawer_columns">Columns</string>
     <string name="drawer_columns_default">4</string>
     <string name="disable_drawer_backplate">Hide Backplate</string>
+    <string name="remember_drawer_page">Remember Current Page</string>
     
     <string name="lockscreen">Xperia Lockscreen</string>
     <string name="reboot_phone_lockscreen">Note</string>
@@ -73,12 +74,17 @@
     <string name="systemui_colors">Colors</string>
     <string name="restart_systemui">Restart SystemUI</string>
     <string name="restart_systemui_summary">Restart SystemUI for changes to take effect (requires ROOT). You may need to reboot the phone if SystemUI will stop working properly after restart.</string>
-    <string name="systemui_dark_background">Dark Background</string>
-    <string name="systemui_light_background">Light Background</string>
-    <string name="systemui_translucent_background">Translucent Background</string>
     <string name="reset_to_default">Reset to Default</string>
-
-    <string name="systemui_appearance">Appearance</string>
+    <string name="systemui_status_colors">Status Bar Colors</string>
+    <string name="systemui_dark_background">Dark</string>
+    <string name="systemui_light_background">Light</string>
+    <string name="systemui_translucent_background">Translucent</string>
+    <string name="systemui_nav_colors">Navigation Bar Colors</string>
+    <string name="systemui_same_nav_colors">Same as Status Bar</string>
+    <string name="systemui_nav_dark_background">Dark</string>
+    <string name="systemui_nav_light_background">Light</string>
+    <string name="systemui_nav_translucent_background">Translucent</string>
+    
     <string name="systemui_enable_appearance_customization">Enable Customizations</string>
     <string name="systemui_enable_appearance_customization_summary">Requires reboot.</string>
     <string name="systemui_rounded_corners">Rounded Corners in All Apps</string>
@@ -90,4 +96,11 @@
     <string name="systemui_app_rounded_corners">Rounded corners</string>
     <string name="systemui_color_default">Default</string>
     <string name="systemui_rounded_corners_default">Default</string>
+    
+    <string name="about">About</string>
+    <string name="about_app_summary">By greg2001@XDA. Touch to visit XDA thread.</string>
+    <string name="about_xposed">Xposed Framework</string>
+    <string name="about_xposed_summary">By rovo89@XDA. Touch to visit XDA thread.</string>
+    <string name="about_theme">Theme</string>
+    <string name="about_theme_default">light</string>
 </resources>

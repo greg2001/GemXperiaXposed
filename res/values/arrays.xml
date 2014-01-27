@@ -52,4 +52,12 @@
         <item>Enable</item>
         <item>Disable</item>
     </string-array>
+    <string-array name="about_theme_entries">
+        <item>Holo Light</item>
+        <item>Holo Dark</item>
+    </string-array>
+    <string-array name="about_theme_values">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
 </resources>

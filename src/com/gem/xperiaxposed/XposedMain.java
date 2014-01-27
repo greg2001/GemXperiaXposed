@@ -103,23 +103,34 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
       int system_ui_opaque_background = prefs.getInt("key_systemui_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
       int system_ui_light_background = prefs.getInt("key_systemui_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
+      int system_ui_nav_transparent_background = system_ui_transparent_background;
+      int system_ui_nav_opaque_background = system_ui_opaque_background;
+      int system_ui_nav_light_background = system_ui_light_background;
+      if(! prefs.getBoolean("key_systemui_same_nav_colors", true))
+      {
+        system_ui_nav_transparent_background = prefs.getInt("key_systemui_nav_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
+        system_ui_nav_opaque_background = prefs.getInt("key_systemui_nav_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
+        system_ui_nav_light_background = prefs.getInt("key_systemui_nav_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
+      }
 
       param.res.setReplacement(SYSTEMUI, "color", "system_ui_transparent_background", system_ui_transparent_background);
       param.res.setReplacement(SYSTEMUI, "color", "system_ui_opaque_background", system_ui_opaque_background);
       param.res.setReplacement(SYSTEMUI, "color", "system_ui_light_background", system_ui_light_background);
 
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_light_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_light_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_opaque_background);
       param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_opaque_background", system_ui_opaque_background);
       param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_transparent_background", system_ui_transparent_background);
       param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_light_background", system_ui_light_background);
       param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_lights_out_background", system_ui_opaque_background);
+
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_nav_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_nav_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_nav_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_nav_transparent_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_nav_light_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_nav_light_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_nav_opaque_background);
+      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_nav_opaque_background);
+      
     }
     if(param.packageName.equals(SE_LOCK))
     {
@@ -261,11 +272,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       prefs.reload();
       hookWindowManager(param);
       hookKeyguard(param);
-    }
-    else if(param.packageName.equals(SE_LOCK))
-    {
-      prefs.reload();
-      hookLockscreen(param);
     }
     else if(param.packageName.equals(SE_HOME))
     {
@@ -456,12 +462,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   }
 
   ////////////////////////////////////////////////////////////
-
-  private void hookLockscreen(XC_LoadPackage.LoadPackageParam param)
-  {
-  }
-  
-////////////////////////////////////////////////////////////
 
   private void hookLauncherTransparency(XC_LoadPackage.LoadPackageParam param)
   {
@@ -662,6 +662,20 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         {
           callMethod(getObjectField(param.thisObject, "mContent"), "removeChild", getObjectField(param.thisObject, "mDefaultBackplate"));
           callMethod(getObjectField(param.thisObject, "mContent"), "removeChild", getObjectField(param.thisObject, "mUninstallBackplate"));
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+
+    if(prefs.getBoolean("key_remember_drawer_page", false))
+    {
+      try {
+      findAndHookMethod("com.sonymobile.home.apptray.AppTrayView", param.classLoader, "gotoDefaultPage", new XC_MethodReplacement()
+      {
+        @Override
+        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        {
+          return null;
         }
       });
       } catch(Exception ex) { log(ex); }

@@ -55,15 +55,15 @@ public class Util
     }
   }
   
-  private static void initListPreference(ListPreference listPreference)
+  private static void initListPreference(final ListPreference listPreference)
   {
-    listPreference.setSummary(listPreference.getValue().toString());
+    listPreference.setSummary(listPreference.getEntry().toString());
     listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
     {
       @Override
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
-        preference.setSummary(newValue.toString());
+        listPreference.setSummary(listPreference.getEntry().toString());
         return true;
       }
     });
