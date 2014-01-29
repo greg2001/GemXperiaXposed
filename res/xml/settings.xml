@@ -41,14 +41,14 @@
                 android:title="@string/transparent_desktop"
                 android:summary="@string/transparent_desktop_summary"
                 android:defaultValue="false"/>
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_desktop_rows"
                 android:title="@string/desktop_rows"
                 android:dialogTitle="@string/desktop_rows"
                 android:entries="@array/desktop_rows_entries"
                 android:entryValues="@array/desktop_rows_entries"
                 android:defaultValue="@string/desktop_rows_default"/>            
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_desktop_columns"
                 android:title="@string/desktop_columns"
                 android:dialogTitle="@string/desktop_columns"
@@ -66,7 +66,7 @@
             </PreferenceCategory>
             
         <PreferenceCategory android:title="@string/launcher_dock">        
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_dock_columns"
                 android:title="@string/dock_columns"
                 android:dialogTitle="@string/dock_columns"
@@ -90,7 +90,7 @@
             </PreferenceCategory>
             
         <PreferenceCategory android:title="@string/launcher_folders">        
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_folder_columns"
                 android:title="@string/folder_columns"
                 android:dialogTitle="@string/folder_columns"
@@ -113,14 +113,14 @@
                 android:title="@string/transparent_drawer"
                 android:summary="@string/transparent_drawer_summary"
                 android:defaultValue="false"/>
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_drawer_rows"
                 android:title="@string/drawer_rows"
                 android:dialogTitle="@string/drawer_rows"
                 android:entries="@array/drawer_rows_entries"
                 android:entryValues="@array/drawer_rows_entries"
                 android:defaultValue="@string/drawer_rows_default"/>            
-            <ListPreference
+            <com.gem.xperiaxposed.ListPreference
                 android:key="key_drawer_columns"
                 android:title="@string/drawer_columns"
                 android:dialogTitle="@string/drawer_columns"
@@ -185,24 +185,6 @@
     </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/systemui">
-        <CheckBoxPreference
-            android:key="key_systemui_enable_appearance_customization"
-            android:title="@string/systemui_enable_appearance_customization"
-            android:summary="@string/systemui_enable_appearance_customization_summary"
-            android:defaultValue="false"/>
-	    <ListPreference
-	        android:key="key_systemui_rounded_corners"
-	        android:title="@string/systemui_rounded_corners"
-	        android:dialogTitle="@string/systemui_rounded_corners"
-	        android:entries="@array/systemui_rounded_corners_entries"
-	        android:entryValues="@array/systemui_rounded_corners_values"
-	        android:defaultValue="@string/systemui_rounded_corners_default"            
-            android:dependency="key_systemui_enable_appearance_customization"/>
-        <Preference 
-            android:title="@string/systemui_app_settings"
-               android:dependency="key_systemui_enable_appearance_customization">
-            <intent android:action=".AppListActivity"/>
-        </Preference>
         <PreferenceScreen android:title="@string/systemui_colors">
    	        <Preference 
 				android:key="key_restart_systemui"
@@ -212,48 +194,82 @@
 				android:key="key_reset_to_default"
 	            android:title="@string/reset_to_default"/>
    	        <PreferenceCategory android:title="@string/systemui_status_colors">        
-		        <net.margaritov.preference.colorpicker.ColorPickerPreference 
+			    <com.gem.xperiaxposed.ListPreference
+			        android:key="key_systemui_status_color_set"
+			        android:title="@string/systemui_status_color_set"
+			        android:dialogTitle="@string/systemui_status_color_set"
+			        android:entries="@array/systemui_status_color_set_entries"
+			        android:entryValues="@array/systemui_status_color_set_values"
+                    enableDependentsState="custom"
+			        android:defaultValue="@string/systemui_status_color_set_default"/>
+   	            <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_dark_background"
 		            android:title="@string/systemui_dark_background"
 		            alphaSlider="true"
+                    android:dependency="key_systemui_status_color_set"
 		            android:defaultValue="0xff000000"/>
 			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_light_background"
 		            android:title="@string/systemui_light_background"
 		            alphaSlider="true"
+                    android:dependency="key_systemui_status_color_set"
 		            android:defaultValue="0xff4d4d4d"/>
 			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_translucent_background"
 		            android:title="@string/systemui_translucent_background"
 		            alphaSlider="true"
+                    android:dependency="key_systemui_status_color_set"
 		            android:defaultValue="0x99000000"/>
 	        </PreferenceCategory>
    	        <PreferenceCategory android:title="@string/systemui_nav_colors">        
-		        <CheckBoxPreference
-		            android:key="key_systemui_same_nav_colors"
-		            android:title="@string/systemui_same_nav_colors"
-                    android:disableDependentsState="true"
-		            android:defaultValue="true"/>
+			    <com.gem.xperiaxposed.ListPreference
+			        android:key="key_systemui_nav_color_set"
+			        android:title="@string/systemui_nav_color_set"
+			        android:dialogTitle="@string/systemui_nav_color_set"
+			        android:entries="@array/systemui_nav_color_set_entries"
+			        android:entryValues="@array/systemui_nav_color_set_values"
+                    enableDependentsState="custom"
+			        android:defaultValue="@string/systemui_nav_color_set_default"/>
    	            <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_nav_dark_background"
 		            android:title="@string/systemui_nav_dark_background"
 		            alphaSlider="true"
-                    android:dependency="key_systemui_same_nav_colors"
+                    android:dependency="key_systemui_nav_color_set"
 		            android:defaultValue="0xff000000"/>
 			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_nav_light_background"
 		            android:title="@string/systemui_nav_light_background"
 		            alphaSlider="true"
-                    android:dependency="key_systemui_same_nav_colors"
+                    android:dependency="key_systemui_nav_color_set"
 		            android:defaultValue="0xff4d4d4d"/>
 			    <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		            android:key="key_systemui_nav_translucent_background"
 		            android:title="@string/systemui_nav_translucent_background"
 		            alphaSlider="true"
-                    android:dependency="key_systemui_same_nav_colors"
+                    android:dependency="key_systemui_nav_color_set"
 		            android:defaultValue="0x99000000"/>
 	        </PreferenceCategory>
         </PreferenceScreen>
+
+   	    <PreferenceCategory android:title="@string/systemui_appearance">        
+	        <CheckBoxPreference
+	            android:key="key_systemui_enable_appearance_customization"
+	            android:title="@string/systemui_enable_appearance_customization"
+	            android:summary="@string/systemui_enable_appearance_customization_summary"
+	            android:defaultValue="false"/>
+	        <Preference 
+	            android:title="@string/systemui_global_settings"
+	            android:dependency="key_systemui_enable_appearance_customization">
+	            <intent android:action=".AppSettingsActivity">
+	                <extra android:name="title" android:value="@string/systemui_global_settings"/>
+	            </intent>
+	        </Preference>
+	        <Preference 
+	            android:title="@string/systemui_app_settings"
+	            android:dependency="key_systemui_enable_appearance_customization">
+	            <intent android:action=".AppListActivity"/>
+	        </Preference>
+	    </PreferenceCategory>
 	</PreferenceScreen>
 	    
     <PreferenceScreen 
@@ -271,7 +287,7 @@
             android:summary="@string/about_xposed_summary" >
    	        <intent android:action="android.intent.action.VIEW" android:data="http://forum.xda-developers.com/showthread.php?t=1574401"/>
    	    </Preference>
-   	    <ListPreference
+   	    <com.gem.xperiaxposed.ListPreference
 	        android:key="key_about_theme"
 	        android:title="@string/about_theme"
 	        android:dialogTitle="@string/about_theme"

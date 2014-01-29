@@ -19,12 +19,7 @@ public class Util
       .commit();
   }
 
-  public static void initPreferences(PreferenceFragment pf)
-  {
-    initPreferences(pf, null);
-  }
-
-  public static void initPreferences(PreferenceFragment pf, String category)
+  public static void setPreferenceCategory(PreferenceFragment pf, String category)
   {
     initPreferenceGroup(pf.getPreferenceScreen(), category);
   }
@@ -48,24 +43,8 @@ public class Util
     for(int i = 0; i < ps.getPreferenceCount(); ++i)
     {
       Preference p = ps.getPreference(i);
-      if(p instanceof ListPreference)
-        initListPreference((ListPreference)p);
-      else if(p instanceof PreferenceGroup)
+      if(p instanceof PreferenceGroup)
         initPreferenceGroup((PreferenceGroup)p, category);
     }
   }
-  
-  private static void initListPreference(final ListPreference listPreference)
-  {
-    listPreference.setSummary(listPreference.getEntry().toString());
-    listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
-    {
-      @Override
-      public boolean onPreferenceChange(Preference preference, Object newValue)
-      {
-        listPreference.setSummary(listPreference.getEntry().toString());
-        return true;
-      }
-    });
-  }  
 }

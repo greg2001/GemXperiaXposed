@@ -32,7 +32,6 @@ class SettingsFragment extends PreferenceFragment
   {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.settings);
-    initPreferences(this);
     
     try
     {
@@ -82,13 +81,12 @@ class SettingsFragment extends PreferenceFragment
       @Override
       public boolean onPreferenceClick(Preference preference)
       {
-        ((CheckBoxPreference)findPreference("key_systemui_same_nav_colors")).setChecked(true);      
-        ((ColorPickerPreference)findPreference("key_systemui_dark_background")).setValue(XposedMain.SYSTEM_UI_OPAQUE_BACKGROUND);      
-        ((ColorPickerPreference)findPreference("key_systemui_light_background")).setValue(XposedMain.SYSTEM_UI_LIGHT_BACKGROUND);      
-        ((ColorPickerPreference)findPreference("key_systemui_translucent_background")).setValue(XposedMain.SYSTEM_UI_TRANSPARENT_BACKGROUND);      
-        ((ColorPickerPreference)findPreference("key_systemui_nav_dark_background")).setValue(XposedMain.SYSTEM_UI_OPAQUE_BACKGROUND);      
-        ((ColorPickerPreference)findPreference("key_systemui_nav_light_background")).setValue(XposedMain.SYSTEM_UI_LIGHT_BACKGROUND);      
-        ((ColorPickerPreference)findPreference("key_systemui_nav_translucent_background")).setValue(XposedMain.SYSTEM_UI_TRANSPARENT_BACKGROUND);      
+        ((ColorPickerPreference)findPreference("key_systemui_dark_background")).resetValue();      
+        ((ColorPickerPreference)findPreference("key_systemui_light_background")).resetValue();      
+        ((ColorPickerPreference)findPreference("key_systemui_translucent_background")).resetValue();      
+        ((ColorPickerPreference)findPreference("key_systemui_nav_dark_background")).resetValue();      
+        ((ColorPickerPreference)findPreference("key_systemui_nav_light_background")).resetValue();      
+        ((ColorPickerPreference)findPreference("key_systemui_nav_translucent_background")).resetValue();      
         return true;
       }
     });

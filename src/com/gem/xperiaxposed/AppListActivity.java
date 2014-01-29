@@ -130,18 +130,31 @@ class AppListFragment extends PreferenceFragment
         p.setKey(info.packageName);
         p.setTitle(info.name);
         p.setSummary(info.packageName);
-        p.setIntent(new Intent(getActivity(), AppSettingsActivity.class).putExtra("info", info));
+        p.setIntent(new Intent(getActivity(), AppSettingsActivity.class).putExtra("title", info.name).putExtra("packageName", info.packageName));
         new AsyncTask<Void, Void, Drawable>()
         {
           @Override
           protected Drawable doInBackground(Void... params) 
           {
-            return info.loadIcon(getActivity().getPackageManager());
+            try
+            {
+              return info.loadIcon(getActivity().getPackageManager());
+            }
+            catch(Throwable ex)
+            {
+              return null;
+            }
           }
           @Override
           protected void onPostExecute(Drawable result)
           {
-            p.setIcon(result);
+            try
+            {
+              p.setIcon(result);
+            }
+            catch(Throwable ex)
+            {
+            }
           }
         }.execute();
         getPreferenceScreen().addPreference(p);

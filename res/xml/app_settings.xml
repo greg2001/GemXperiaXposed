@@ -4,14 +4,14 @@
         android:title="@string/systemui_app_settings_note" 
         android:summary="@string/systemui_app_settings_note_summary"
         style="?android:preferenceInformationStyle" />
-    <ListPreference
+    <com.gem.xperiaxposed.ListPreference
         android:key="key_systemui_app_color"
         android:title="@string/systemui_app_color"
         android:dialogTitle="@string/systemui_app_color"
         android:entries="@array/systemui_color_entries"
         android:entryValues="@array/systemui_color_values"
         android:defaultValue="@string/systemui_color_default"/>            
-    <ListPreference
+    <com.gem.xperiaxposed.ListPreference
         android:key="key_systemui_app_rounded_corners"
         android:title="@string/systemui_app_rounded_corners"
         android:dialogTitle="@string/systemui_app_rounded_corners"

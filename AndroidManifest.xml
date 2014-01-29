@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gem.xperiaxposed"
     android:versionCode="2"
-    android:versionName="2.1" >
+    android:versionName="2.2" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -24,6 +24,7 @@
         </activity>
         <activity
             android:name=".AppListActivity"
+            android:label="@string/systemui_app_settings"
             android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name=".AppListActivity" />

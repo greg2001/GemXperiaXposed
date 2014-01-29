@@ -100,37 +100,45 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     {
       prefs.reload();
       
+      boolean status_bar_custom = "custom".equals(prefs.getString("key_systemui_status_color_set", "custom"));
+      boolean nav_bar_custom = "custom".equals(prefs.getString("key_systemui_nav_color_set", "status"));
+      boolean nav_bar_same = "status".equals(prefs.getString("key_systemui_nav_color_set", "status"));
+      
       int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
       int system_ui_opaque_background = prefs.getInt("key_systemui_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
       int system_ui_light_background = prefs.getInt("key_systemui_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
       int system_ui_nav_transparent_background = system_ui_transparent_background;
       int system_ui_nav_opaque_background = system_ui_opaque_background;
       int system_ui_nav_light_background = system_ui_light_background;
-      if(! prefs.getBoolean("key_systemui_same_nav_colors", true))
+      if(!nav_bar_same)
       {
         system_ui_nav_transparent_background = prefs.getInt("key_systemui_nav_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
         system_ui_nav_opaque_background = prefs.getInt("key_systemui_nav_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
         system_ui_nav_light_background = prefs.getInt("key_systemui_nav_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
       }
-
-      param.res.setReplacement(SYSTEMUI, "color", "system_ui_transparent_background", system_ui_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "color", "system_ui_opaque_background", system_ui_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "color", "system_ui_light_background", system_ui_light_background);
-
-      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_opaque_background", system_ui_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_transparent_background", system_ui_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_light_background", system_ui_light_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_lights_out_background", system_ui_opaque_background);
-
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_nav_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_nav_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_nav_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_nav_transparent_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_nav_light_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_nav_light_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_nav_opaque_background);
-      param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_nav_opaque_background);
       
+      if(status_bar_custom)
+      {
+        param.res.setReplacement(SYSTEMUI, "color", "system_ui_transparent_background", system_ui_transparent_background);
+        param.res.setReplacement(SYSTEMUI, "color", "system_ui_opaque_background", system_ui_opaque_background);
+        param.res.setReplacement(SYSTEMUI, "color", "system_ui_light_background", system_ui_light_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_opaque_background", system_ui_opaque_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_transparent_background", system_ui_transparent_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_light_background", system_ui_light_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_lights_out_background", system_ui_opaque_background);
+      }
+
+      if(nav_bar_custom || (status_bar_custom && nav_bar_same))
+      {
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_nav_opaque_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_nav_opaque_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_nav_transparent_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_nav_transparent_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_nav_light_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_nav_light_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_nav_opaque_background);
+        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_nav_opaque_background);
+      }
     }
     if(param.packageName.equals(SE_LOCK))
     {
@@ -348,8 +356,9 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           disableFlags = 0;
   
           prefs.reload();
-          updateRoundedCorners(prefs.getString("key_systemui_rounded_corners", "Default"));
+          updateRoundedCorners(prefs.getString("key_systemui_app_rounded_corners", "Default"));
           updateRoundedCorners(prefs.getString("key_systemui_app_rounded_corners$" + packageName, "Default"));
+          updateAppearance(prefs.getString("key_systemui_app_color", "Default"));
           updateAppearance(prefs.getString("key_systemui_app_color$" + packageName, "Default"));
         }
         

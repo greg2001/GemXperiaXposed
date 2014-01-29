@@ -40,6 +40,7 @@ public class ColorPickerPreference
 	View mView;
 	ColorPickerDialog mDialog;
 	private int mValue = Color.BLACK;
+	private int mDefaultValue;
 	private float mDensity = 0;
 	private boolean mAlphaSliderEnabled = false;
 	private boolean mHexValueEnabled = false;
@@ -67,7 +68,7 @@ public class ColorPickerPreference
         
 	@Override
 	protected Object onGetDefaultValue(TypedArray a, int index) {
-		return a.getColor(index, Color.BLACK);
+	        return mDefaultValue = a.getColor(index, Color.BLACK);
 	}
 
 	@Override
@@ -148,13 +149,25 @@ public class ColorPickerPreference
 		}
 	}
 
+        public void setDefaultValue(Object defaultValue) {
+                super.setDefaultValue(mDefaultValue = (defaultValue != null) ? (Integer) defaultValue : Color.BLACK);
+        }
+
+        public int getDefaultValue() {
+                return mDefaultValue;
+        }
+
 	public void setValue(int color) {
-	    if (isPersistent()) {
-	        persistInt(color);
-	    }
-	    mValue = color;
-	    setPreviewColor();
-	}
+          if (isPersistent()) {
+              persistInt(color);
+          }
+          mValue = color;
+          setPreviewColor();
+        }
+
+        public void resetValue() {
+          setValue(mDefaultValue);
+        }
 
 	public boolean onPreferenceClick(Preference preference) {
 		showDialog(null);

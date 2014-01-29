@@ -75,21 +75,28 @@
     <string name="restart_systemui">Restart SystemUI</string>
     <string name="restart_systemui_summary">Restart SystemUI for changes to take effect (requires ROOT). You may need to reboot the phone if SystemUI will stop working properly after restart.</string>
     <string name="reset_to_default">Reset to Default</string>
-    <string name="systemui_status_colors">Status Bar Colors</string>
+    
+    <string name="systemui_status_colors">Status Bar</string>
+    <string name="systemui_status_color_set">Color Set</string>
+    <string name="systemui_status_color_set_default">custom</string>
     <string name="systemui_dark_background">Dark</string>
     <string name="systemui_light_background">Light</string>
     <string name="systemui_translucent_background">Translucent</string>
-    <string name="systemui_nav_colors">Navigation Bar Colors</string>
+    
+    <string name="systemui_nav_colors">Navigation Bar</string>
+    <string name="systemui_nav_color_set">Color Set</string>
+    <string name="systemui_nav_color_set_default">status</string>
     <string name="systemui_same_nav_colors">Same as Status Bar</string>
     <string name="systemui_nav_dark_background">Dark</string>
     <string name="systemui_nav_light_background">Light</string>
     <string name="systemui_nav_translucent_background">Translucent</string>
     
+    <string name="systemui_appearance">Appearance</string>
     <string name="systemui_enable_appearance_customization">Enable Customizations</string>
     <string name="systemui_enable_appearance_customization_summary">Requires reboot.</string>
-    <string name="systemui_rounded_corners">Rounded Corners in All Apps</string>
-    
+    <string name="systemui_global_settings">Global Settings</string>
     <string name="systemui_app_settings">App Settings</string>
+
     <string name="systemui_app_settings_note">Note</string>
     <string name="systemui_app_settings_note_summary">Transparent/translucent SystemUI works only for applications supporting transparency, e.g. launchers.</string>
     <string name="systemui_app_color">SystemUI Appearance</string>
