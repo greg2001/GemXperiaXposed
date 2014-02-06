@@ -1,0 +1,5 @@
+<resources>
+    <!-- Xperia Home -->
+    <string name="app_tray_drawer_list_item_categories_hidden">"Caché"</string>
+    <string name="app_tray_drawer_list_item_categories_settings">"Paramètres"</string>
+</resources>

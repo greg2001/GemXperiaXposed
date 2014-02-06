@@ -1,7 +1,5 @@
 package com.gem.xperiaxposed;
 
-import static com.gem.xperiaxposed.Util.*;
-
 import java.util.*;
 
 import android.app.*;
@@ -11,17 +9,17 @@ import android.graphics.drawable.*;
 import android.os.*;
 import android.preference.*;
 
+import com.gem.util.*;
+
 ////////////////////////////////////////////////////////////
 
-public class AppListActivity extends Activity 
+public class AppListActivity extends GemActivity 
 {
   @Override
   public void onCreate(Bundle savedInstanceState) 
   {
     super.onCreate(savedInstanceState);
 
-    makeSharedPreferencesWorldReadable(this);
-     
     getFragmentManager()
       .beginTransaction()
       .replace(android.R.id.content, new AppListFragment())
@@ -31,7 +29,7 @@ public class AppListActivity extends Activity
 
 ////////////////////////////////////////////////////////////
 
-class AppListFragment extends PreferenceFragment
+class AppListFragment extends GemPreferenceFragment
 {
   public static final String PREFIX = "\u2714 ";
   
@@ -130,7 +128,7 @@ class AppListFragment extends PreferenceFragment
         p.setKey(info.packageName);
         p.setTitle(info.name);
         p.setSummary(info.packageName);
-        p.setIntent(new Intent(getActivity(), AppSettingsActivity.class).putExtra("title", info.name).putExtra("packageName", info.packageName));
+        p.setIntent(new Intent(getActivity(), AppSettingsActivity.class).putExtra("title", info.name).putExtra("category", info.packageName));
         new AsyncTask<Void, Void, Drawable>()
         {
           @Override

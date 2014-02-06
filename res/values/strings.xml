@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Xperia Home -->
+    <string name="app_tray_drawer_list_item_categories_hidden">Hidden</string>
+    <string name="app_tray_drawer_list_item_categories_settings">Settings</string>
+    
     <!-- Color Picker -->
     <string name="dialog_color_picker">Color Picker</string>
     <string name="press_color_to_apply">Press on Color to apply</string>
@@ -8,15 +13,21 @@
     <string name="app_list_loading">Loading apps, please wait</string>
     <string name="action_settings">Settings</string>
     
-    <string name="launcher">Xperia Launcher</string>
-    <string name="restart_launcher">Restart Launcher</string>
-    <string name="restart_launcher_summary">Restart launcher for changes to take effect (requires ROOT). You may need to reboot the phone if the launcher will stop working properly after restart.</string>
+    <string name="launcher">Launcher Settings</string>
+    <string name="restart_launcher">Restart launcher</string>
+    <string name="restart_launcher_summary">Restart launcher for changes to take effect (requires ROOT).</string>
+    
+    <string name="launcher_experimental">Experimental</string>
+    <string name="enable_experimental">Enable experimental features</string>
+    <string name="experimental_tutorial">Tutorial</string>
+    <string name="experimental_tutorial_summary">Click here so see how it works.</string>
     
     <string name="launcher_general">General</string>
-    <string name="launcher_icon_size">Icon Size</string>
-    <string name="launcher_label_text_size">Label Text Size</string>
-    <string name="condensed_font">Condensed Font</string>
-    <string name="all_widgets_resizable">All Widgets Resizable</string>
+    <string name="launcher_icon_size">Icon size</string>
+    <string name="launcher_label_text_size">Label text size</string>
+    <string name="condensed_font">Condensed font</string>
+    <string name="all_widgets_resizable">All widgets resizable</string>
+    <string name="all_widgets_resizable_summary">When resizing Sony stock widgets, you may need to restart the launcher for the widget to rescale properly.</string>
     
     <string name="launcher_desktop">Desktop</string>
     <string name="transparent_desktop">Transparency</string>
@@ -25,66 +36,63 @@
     <string name="desktop_rows_default">4</string>
     <string name="desktop_columns">Columns</string>
     <string name="desktop_columns_default">4</string>
-    <string name="desktop_multiline_labels">Multi-Line Labels</string>
-    <string name="desktop_autohide_pagination">Auto-Hide Page Indicator</string>
+    <string name="desktop_multiline_labels">Multi-line labels</string>
+    <string name="desktop_autohide_pagination">Auto-hide page indicator</string>
     
     <string name="launcher_dock">Dock</string>
     <string name="dock_columns">Columns</string>
     <string name="dock_columns_default">5</string>
-    <string name="disable_dock_stage">Hide Stage</string>
-    <string name="disable_dock_reflection">Hide Reflection</string>
-    <string name="large_dock_reflection">Large Reflection</string>
+    <string name="disable_dock_stage">Hide stage</string>
+    <string name="disable_dock_reflection">Hide reflection</string>
+    <string name="large_dock_reflection">Large reflection</string>
     
     <string name="launcher_folders">Folders</string>
     <string name="folder_columns">Columns</string>
     <string name="folder_columns_default">4</string>
-    <string name="folder_multiline_labels">Multi-Line Labels</string>
+    <string name="folder_multiline_labels">Multi-line labels</string>
     
     <string name="launcher_drawer">Drawer</string>
     <string name="transparent_drawer">Transparency</string>
     <string name="transparent_drawer_summary">Transparent status bar, navigation bar and drawer background.</string>
+    <string name="menu_dark_bars">Dark bars for side menu</string>
     <string name="drawer_rows">Rows</string>
     <string name="drawer_rows_default">5</string>
     <string name="drawer_columns">Columns</string>
     <string name="drawer_columns_default">4</string>
-    <string name="disable_drawer_backplate">Hide Backplate</string>
-    <string name="remember_drawer_page">Remember Current Page</string>
+    <string name="disable_drawer_backplate">Hide backplate</string>
+    <string name="remember_drawer_page">Remember current page</string>
     
-    <string name="lockscreen">Xperia Lockscreen</string>
+    <string name="lockscreen">Lockscreen Settings</string>
     <string name="reboot_phone_lockscreen">Note</string>
-    <string name="reboot_phone_summary_lockscreen">
-        You need to reboot the phone for changes to take effect. Lockscreen modifications are dangerous: in case of a bootloop, 
-        you\'ll need to temporarily disable Xposed Framework by flashing Xposed-Disabler-Recovery.zip from the recovery. 
-    </string>
-    <string name="transparent_lockscreen">Transparent Status Bar</string>
-    <string name="hide_widget_backplate">Hide Widget Backplate</string>
-    <string name="hide_shortcuts">Hide Shortcut Icons</string>
-    <string name="hide_hint_arrows">Hide Hint Arrows</string>
-    <string name="hint_text">Hint Text</string>
+    <string name="reboot_phone_summary_lockscreen">You need to reboot the phone for changes to take effect.</string>
+    <string name="transparent_lockscreen">Transparent status bar</string>
+    <string name="hide_widget_backplate">Hide widget backplate</string>
+    <string name="hide_shortcuts">Hide shortcut icons</string>
+    <string name="hide_hint_arrows">Hide hint arrows</string>
+    <string name="hint_text">Hint text</string>
     <string name="hint_text_summary">Empty string to show the default hint, whitespace to hide the hint.</string>
-    <string name="carrier_text">Carrier Label</string>
+    <string name="carrier_text">Carrier label</string>
     <string name="hint_carrier_summary">Empty string to show the default carrier label, whitespace to hide the carrier label.</string>
-    <string name="more_unlock_blinds">Small Blinds</string>
-    <string name="folder_disable_background_dim">Disable Background Dimming</string>
-    <string name="enable_standard_lockscreen">Enable AOSP Lockscreen</string>
-    <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support, customizable via GravityBox.</string>
-    <string name="all_widgets_resizable_summary">When resizing Sony stock widgets, you may need to restart the launcher for the widget to rescale properly.</string>
+    <string name="more_unlock_blinds">Small blinds</string>
+    <string name="folder_disable_background_dim">Disable background bimming</string>
+    <string name="enable_standard_lockscreen">Enable AOSP lockscreen</string>
+    <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support.</string>
     
-    <string name="systemui">SystemUI</string>
+    <string name="systemui">SystemUI Settings</string>
     <string name="systemui_colors">Colors</string>
     <string name="restart_systemui">Restart SystemUI</string>
-    <string name="restart_systemui_summary">Restart SystemUI for changes to take effect (requires ROOT). You may need to reboot the phone if SystemUI will stop working properly after restart.</string>
-    <string name="reset_to_default">Reset to Default</string>
+    <string name="restart_systemui_summary">Restart SystemUI for changes to take effect (requires ROOT).</string>
+    <string name="reset_to_default">Reset to default</string>
     
     <string name="systemui_status_colors">Status Bar</string>
-    <string name="systemui_status_color_set">Color Set</string>
+    <string name="systemui_status_color_set">Color set</string>
     <string name="systemui_status_color_set_default">custom</string>
     <string name="systemui_dark_background">Dark</string>
     <string name="systemui_light_background">Light</string>
     <string name="systemui_translucent_background">Translucent</string>
     
     <string name="systemui_nav_colors">Navigation Bar</string>
-    <string name="systemui_nav_color_set">Color Set</string>
+    <string name="systemui_nav_color_set">Color set</string>
     <string name="systemui_nav_color_set_default">status</string>
     <string name="systemui_same_nav_colors">Same as Status Bar</string>
     <string name="systemui_nav_dark_background">Dark</string>
@@ -92,14 +100,14 @@
     <string name="systemui_nav_translucent_background">Translucent</string>
     
     <string name="systemui_appearance">Appearance</string>
-    <string name="systemui_enable_appearance_customization">Enable Customizations</string>
+    <string name="systemui_enable_appearance_customization">Enable customizations</string>
     <string name="systemui_enable_appearance_customization_summary">Requires reboot.</string>
-    <string name="systemui_global_settings">Global Settings</string>
-    <string name="systemui_app_settings">App Settings</string>
+    <string name="systemui_global_settings">Global settings</string>
+    <string name="systemui_app_settings">App settings</string>
 
     <string name="systemui_app_settings_note">Note</string>
     <string name="systemui_app_settings_note_summary">Transparent/translucent SystemUI works only for applications supporting transparency, e.g. launchers.</string>
-    <string name="systemui_app_color">SystemUI Appearance</string>
+    <string name="systemui_app_color">SystemUI appearance</string>
     <string name="systemui_app_rounded_corners">Rounded corners</string>
     <string name="systemui_color_default">Default</string>
     <string name="systemui_rounded_corners_default">Default</string>
@@ -110,4 +118,10 @@
     <string name="about_xposed_summary">By rovo89@XDA. Touch to visit XDA thread.</string>
     <string name="about_theme">Theme</string>
     <string name="about_theme_default">light</string>
+    
+    <string name="experimental_settings">Settings Menu Item</string>
+    <string name="experimental_alphabetical_badge">Alphabetical Mode Badge</string>
+    <string name="experimental_hide_app">Hide App</string>
+    <string name="experimental_hidden_apps">Hidden Apps</string>
+    <string name="experimental_unhide_app">Unhide App</string>
 </resources>

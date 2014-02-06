@@ -14,6 +14,9 @@ import android.graphics.drawable.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
+
+import com.gem.xperiaxposed.home.*;
+
 import de.robv.android.xposed.*;
 import de.robv.android.xposed.callbacks.*;
 
@@ -267,6 +270,16 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
         param.res.setReplacement(SE_HOME, "dimen", "stage_mirror_size", res.fwd(R.dimen.stage_mirror_size));
       }
+
+      if(prefs.getBoolean("key_enable_experimental", false))
+      {
+        param.res.setReplacement(Ids.home_apptray_dropzone_hide, res.fwd(R.drawable.home_apptray_dropzone_hide));
+        param.res.setReplacement(Ids.home_apptray_dropzone_unhide, res.fwd(R.drawable.home_apptray_dropzone_unhide));
+        param.res.setReplacement(Ids.app_tray_drawer_list_item_categories_hidden, res.fwd(R.string.app_tray_drawer_list_item_categories_hidden));
+        param.res.setReplacement(Ids.app_tray_drawer_list_item_categories_settings, res.fwd(R.string.app_tray_drawer_list_item_categories_settings));
+        param.res.setReplacement(Ids.drawer_icn_hidden, res.fwd(R.drawable.drawer_icn_hidden));
+        param.res.setReplacement(Ids.drawer_icn_settings, res.fwd(R.drawable.drawer_icn_settings));
+      }
     }
   }
 
@@ -290,6 +303,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       hookLauncherDrawer(param);
       hookLauncherFolders(param);
       hookLauncherWidgets(param);
+      hookLauncherExperimental(param);
     }
   }
   
@@ -320,7 +334,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           }
         }
         
-        private void updateAppearance(String value)
+        private void updateColor(String value)
         {
           if("Dark".equals(value))
           {
@@ -356,20 +370,27 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           disableFlags = 0;
   
           prefs.reload();
-          updateRoundedCorners(prefs.getString("key_systemui_app_rounded_corners", "Default"));
-          updateRoundedCorners(prefs.getString("key_systemui_app_rounded_corners$" + packageName, "Default"));
-          updateAppearance(prefs.getString("key_systemui_app_color", "Default"));
-          updateAppearance(prefs.getString("key_systemui_app_color$" + packageName, "Default"));
+          
+          String corners = prefs.getString("key_systemui_app_rounded_corners$" + packageName, "Default");
+          if("Default".equals(corners))
+            corners = prefs.getString("key_systemui_app_rounded_corners", "Default");
+          updateRoundedCorners(corners);
+          
+          if(!ANDROID.equals(packageName))
+          {
+            String color = prefs.getString("key_systemui_app_color$" + packageName, "Default");
+            if("Default".equals(color))
+              color = prefs.getString("key_systemui_app_color", "Default");
+            updateColor(color);
+          }
         }
         
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
         {
-          long time = System.currentTimeMillis();
           updatePackage(param);
           if(enableFlags != 0 || disableFlags != 0)
             param.setResult(((Integer)param.getResult() | enableFlags) & ~disableFlags);
-          log("Package " + lastPackageName + " " + (System.currentTimeMillis() - time));
         }
       });
       } catch(Exception ex) { log(ex); }
@@ -474,17 +495,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
   private void hookLauncherTransparency(XC_LoadPackage.LoadPackageParam param)
   {
-    try {
-    findAndHookMethod("com.sonymobile.home.apptray.AppTrayPresenter", param.classLoader, "setSystemUiTransparent", boolean.class, new XC_MethodReplacement() 
-    {
-      @Override
-      protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
-      {
-        return null;
-      }
-    });
-    } catch(Exception ex) { log(ex); }
-
     final int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
     try {
     findAndHookMethod("com.sonymobile.home.util.SystemUiExtensions", param.classLoader, "getSystemUiBackgroundColor", Context.class, new XC_MethodReplacement() 
@@ -497,10 +507,24 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     });
     } catch(Exception ex) { log(ex); }
     
+    if(!prefs.getBoolean("key_menu_dark_bars", false))
+    {
+      try {
+      findAndHookMethod("com.sonymobile.home.apptray.AppTrayPresenter", param.classLoader, "setSystemUiTransparent", boolean.class, new XC_MethodReplacement() 
+      {
+        @Override
+        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        {
+          return null;
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+
     final boolean transparentDesktop = prefs.getBoolean("key_transparent_desktop", false);
     final boolean transparentDrawer = prefs.getBoolean("key_transparent_drawer", false);
 
-    if(transparentDesktop)
+    if(transparentDesktop || transparentDrawer)
     {
       // transparent SystemUI
       try {
@@ -509,38 +533,10 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
         {
-          setFullTransparent((View)param.thisObject, true);
+          setFullTransparent((View)param.thisObject, transparentDesktop);
         }
       });
       } catch(Exception ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.ui.support.SystemUiVisibilityWrapper", param.classLoader, "apply", new XC_MethodHook() 
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-        {
-          callMethod(param.thisObject, "setFlag", getIntField(param.thisObject, "SYSTEM_UI_FLAG_FULL_TRANSPARENCY"), true);
-        }
-      });
-      } catch(Exception ex) { log(ex); }
-    }
-
-    if(transparentDrawer)
-    {
-      try {
-      hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayView", param.classLoader), new XC_MethodHook()
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
-        {
-          setIntField(param.thisObject, "mBackgroundColor", 0);
-        }
-      });
-      } catch(Exception ex) { log(ex); }
-    }
-
-    if(transparentDrawer != transparentDesktop)
-    {
       try {
       findAndHookMethod("com.sonymobile.home.MainView", param.classLoader, "showApptray", boolean.class, new XC_MethodHook() 
       {
@@ -563,10 +559,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         }
       });
       } catch(Exception ex) { log(ex); }
-    }
-    
-    if(transparentDesktop || transparentDrawer != transparentDesktop)
-    {
       try {
       findAndHookMethod("com.sonymobile.home.HomeFragment", param.classLoader, "setFocused", boolean.class, new XC_MethodHook() 
       {
@@ -584,6 +576,43 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
                 setFullTransparent((View)mainView, transparentDrawer);
             }
           }
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+      try {
+      findAndHookMethod("com.sonymobile.ui.support.SystemUiVisibilityWrapper", param.classLoader, "apply", new XC_MethodHook() 
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          Object mainView = getObjectField(param.thisObject, "mView");
+          if(mainView != null)
+          {
+            if((Boolean)callMethod(mainView, "isDesktopOpen"))
+            {
+              if(transparentDesktop)
+                callMethod(param.thisObject, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
+            }
+            else if((Boolean)callMethod(mainView, "isAppTrayOpen"))
+            {
+              if(transparentDrawer)
+                callMethod(param.thisObject, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
+            }
+          }
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+
+    if(transparentDrawer)
+    {
+      try {
+      hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayView", param.classLoader), new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          setIntField(param.thisObject, "mBackgroundColor", 0);
         }
       });
       } catch(Exception ex) { log(ex); }
@@ -828,6 +857,24 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         }
       });
       } catch(Exception ex) { log(ex); }
+    }
+  } 
+  
+////////////////////////////////////////////////////////////
+  
+  private void hookLauncherExperimental(XC_LoadPackage.LoadPackageParam param) throws Exception
+  {
+    if(prefs.getBoolean("key_enable_experimental", false))
+    {
+      ClassLoader moduleClassLoader = getClass().getClassLoader();
+      ClassLoader xposedClassLoader = moduleClassLoader.getParent();
+      ClassLoader packageClassLoader = param.classLoader;
+      
+      ReflectionUtils.addToClassPath(packageClassLoader, MODULE_PATH, true);
+      ReflectionUtils.setParentClassLoader(packageClassLoader, xposedClassLoader);
+      ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader);
+      
+      com.gem.xperiaxposed.home.Hooks.installHooks();
     }
   } 
   

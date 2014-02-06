@@ -1,4 +1,4 @@
-package com.gem.xperiaxposed;
+package com.gem.util;
 
 import android.content.*;
 import android.content.res.*;
@@ -8,7 +8,9 @@ import android.util.*;
 import android.view.*;
 import android.widget.*;
 
-public class SliderPreference extends Preference implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, Runnable
+import com.gem.xperiaxposed.*;
+
+public class GemSliderPreference extends Preference implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, Runnable
 {
   private int minimum = 0;
   private int maximum = 100;
@@ -28,7 +30,7 @@ public class SliderPreference extends Preference implements SeekBar.OnSeekBarCha
   private boolean repeating = false;
   private Handler handler = new Handler();
 
-  public SliderPreference(Context context, AttributeSet attrs)
+  public GemSliderPreference(Context context, AttributeSet attrs)
   {
     super(context, attrs);
     if(attrs != null)

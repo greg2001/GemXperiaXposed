@@ -1,0 +1,5 @@
+<resources>
+    <!-- Xperia Home -->
+    <string name="app_tray_drawer_list_item_categories_hidden">"隐藏"</string>
+    <string name="app_tray_drawer_list_item_categories_settings">"设置"</string>
+</resources>

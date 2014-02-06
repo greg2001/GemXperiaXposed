@@ -7,8 +7,23 @@
             android:title="@string/restart_launcher" 
             android:summary="@string/restart_launcher_summary"/>
          
+        <PreferenceCategory android:title="@string/launcher_experimental">
+            <CheckBoxPreference
+                android:key="key_enable_experimental"
+                android:title="@string/enable_experimental"
+                android:defaultValue="false"/>
+	        <Preference 
+	            android:key="key_experimental_tutorial"
+	            android:title="@string/experimental_tutorial" 
+	            android:summary="@string/experimental_tutorial_summary">
+	            <intent android:action=".ExperimentalTutorialActivity">
+	                <extra android:name="title" android:value="@string/experimental_tutorial"/>
+                </intent>
+	        </Preference>
+	    </PreferenceCategory>
+	    
         <PreferenceCategory android:title="@string/launcher_general">
-            <com.gem.xperiaxposed.SliderPreference
+            <com.gem.util.GemSliderPreference
                 android:key="key_launcher_icon_size"
                 android:title="@string/launcher_icon_size"
 				android:defaultValue="100" 
@@ -16,7 +31,7 @@
                 maximum="100"
                 step="1"
                 currentValueFormat="%d%%"/>
-            <com.gem.xperiaxposed.SliderPreference
+            <com.gem.util.GemSliderPreference
                 android:key="key_launcher_label_text_size"
                 android:title="@string/launcher_label_text_size"
                 android:defaultValue="100"
@@ -41,14 +56,14 @@
                 android:title="@string/transparent_desktop"
                 android:summary="@string/transparent_desktop_summary"
                 android:defaultValue="false"/>
-            <com.gem.xperiaxposed.ListPreference
+            <com.gem.util.GemListPreference
                 android:key="key_desktop_rows"
                 android:title="@string/desktop_rows"
                 android:dialogTitle="@string/desktop_rows"
                 android:entries="@array/desktop_rows_entries"
                 android:entryValues="@array/desktop_rows_entries"
                 android:defaultValue="@string/desktop_rows_default"/>            
-            <com.gem.xperiaxposed.ListPreference
+            <com.gem.util.GemListPreference
                 android:key="key_desktop_columns"
                 android:title="@string/desktop_columns"
                 android:dialogTitle="@string/desktop_columns"
@@ -66,7 +81,7 @@
             </PreferenceCategory>
             
         <PreferenceCategory android:title="@string/launcher_dock">        
-            <com.gem.xperiaxposed.ListPreference
+            <com.gem.util.GemListPreference
                 android:key="key_dock_columns"
                 android:title="@string/dock_columns"
                 android:dialogTitle="@string/dock_columns"
@@ -90,7 +105,7 @@
             </PreferenceCategory>
             
         <PreferenceCategory android:title="@string/launcher_folders">        
-            <com.gem.xperiaxposed.ListPreference
+            <com.gem.util.GemListPreference
                 android:key="key_folder_columns"
                 android:title="@string/folder_columns"
                 android:dialogTitle="@string/folder_columns"
@@ -113,14 +128,18 @@
                 android:title="@string/transparent_drawer"
                 android:summary="@string/transparent_drawer_summary"
                 android:defaultValue="false"/>
-            <com.gem.xperiaxposed.ListPreference
+            <CheckBoxPreference
+                android:key="key_menu_dark_bars"
+                android:title="@string/menu_dark_bars"
+                android:defaultValue="false"/>
+            <com.gem.util.GemListPreference
                 android:key="key_drawer_rows"
                 android:title="@string/drawer_rows"
                 android:dialogTitle="@string/drawer_rows"
                 android:entries="@array/drawer_rows_entries"
                 android:entryValues="@array/drawer_rows_entries"
                 android:defaultValue="@string/drawer_rows_default"/>            
-            <com.gem.xperiaxposed.ListPreference
+            <com.gem.util.GemListPreference
                 android:key="key_drawer_columns"
                 android:title="@string/drawer_columns"
                 android:dialogTitle="@string/drawer_columns"
@@ -194,7 +213,7 @@
 				android:key="key_reset_to_default"
 	            android:title="@string/reset_to_default"/>
    	        <PreferenceCategory android:title="@string/systemui_status_colors">        
-			    <com.gem.xperiaxposed.ListPreference
+			    <com.gem.util.GemListPreference
 			        android:key="key_systemui_status_color_set"
 			        android:title="@string/systemui_status_color_set"
 			        android:dialogTitle="@string/systemui_status_color_set"
@@ -222,7 +241,7 @@
 		            android:defaultValue="0x99000000"/>
 	        </PreferenceCategory>
    	        <PreferenceCategory android:title="@string/systemui_nav_colors">        
-			    <com.gem.xperiaxposed.ListPreference
+			    <com.gem.util.GemListPreference
 			        android:key="key_systemui_nav_color_set"
 			        android:title="@string/systemui_nav_color_set"
 			        android:dialogTitle="@string/systemui_nav_color_set"
@@ -287,7 +306,7 @@
             android:summary="@string/about_xposed_summary" >
    	        <intent android:action="android.intent.action.VIEW" android:data="http://forum.xda-developers.com/showthread.php?t=1574401"/>
    	    </Preference>
-   	    <com.gem.xperiaxposed.ListPreference
+   	    <com.gem.util.GemListPreference
 	        android:key="key_about_theme"
 	        android:title="@string/about_theme"
 	        android:dialogTitle="@string/about_theme"

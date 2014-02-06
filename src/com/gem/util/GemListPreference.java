@@ -1,20 +1,21 @@
-package com.gem.xperiaxposed;
+package com.gem.util;
 
 import android.content.*;
+import android.preference.*;
 import android.util.*;
 
-public class ListPreference extends android.preference.ListPreference
+public class GemListPreference extends ListPreference
 {
   private String enableDependentsState = null;
   
-  public ListPreference(Context context, AttributeSet attrs)
+  public GemListPreference(Context context, AttributeSet attrs)
   {
     super(context, attrs);
     if(attrs != null)
       enableDependentsState = attrs.getAttributeValue(null, "enableDependentsState");
   }
   
-  public ListPreference(Context context) 
+  public GemListPreference(Context context) 
   {
     this(context, null);
   }
