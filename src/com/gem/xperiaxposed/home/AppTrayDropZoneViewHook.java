@@ -1,6 +1,7 @@
-package com.sonymobile.home.apptray;
+package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.home.Hooks.*;
+import static com.sonymobile.flix.components.Component.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
 import java.util.*;
@@ -10,17 +11,17 @@ import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 
-import com.gem.xperiaxposed.home.*;
-import com.sonyericsson.home.*;
+import com.gem.xperiaxposed.*;
+import com.sonyericsson.home.R;
 import com.sonymobile.flix.components.*;
 import com.sonymobile.flix.components.util.*;
 import com.sonymobile.flix.debug.*;
+import com.sonymobile.home.apptray.*;
 import com.sonymobile.home.data.*;
 import com.sonymobile.home.transfer.*;
 
-public class AppTrayDropZoneView extends Component
+public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
 {
-  private AppTrayDropZoneSpaceCallback mAppTrayDropZoneSpaceCallback;
   private Bitmap mDropZoneBg;
   private Bitmap mHideBitmap;
   private Bitmap mUnhideBitmap;
@@ -30,19 +31,17 @@ public class AppTrayDropZoneView extends Component
   private Component mHideDropArea;
   private Image mIcon;
   private Image mHideIcon;
-  
-  public AppTrayDropZoneView(Scene scene, int id, int daid)
+
+  public AppTrayDropZoneViewHook(final AppTrayDropZoneView _this)
   {
-    super(scene);
-    setId(id);
-    mBackground = new Image(mScene);
-    mHideBackground = new Image(mScene);
-    mDropArea = new Component(mScene);
-    mDropArea.setId(daid);
-    mHideDropArea = new Component(mScene);
+    super(_this);
+    mBackground = getField(_this, "mBackground");
+    mHideBackground = new Image(_this.getScene());
+    mDropArea = getField(_this, "mDropArea");
+    mHideDropArea = new Component(_this.getScene());
     mHideDropArea.setId(Ids.hide_drop_area);
-    mIcon = new Image(mScene);
-    mHideIcon = new Image(mScene);
+    mIcon = getField(_this, "mIcon");
+    mHideIcon = new Image(_this.getScene());
     
     mHideDropArea.setProperty(DropTarget.PROPERTY_DROP_TARGET, new DropTarget()
     {
@@ -54,8 +53,8 @@ public class AppTrayDropZoneView extends Component
         {
           if(transferable.getItem() instanceof ActivityItem)
           {
-            SharedPreferences prefs = getScene().getContext().getSharedPreferences("hidden", 0);
-            AppTray appTray = getAppTray(AppTrayDropZoneView.this);
+            SharedPreferences prefs = _this.getScene().getContext().getSharedPreferences("hidden", 0);
+            AppTray appTray = getAppTray(_this);
             boolean hide = appTray.getPresenter().getSorter().getSortMode() != HIDDEN;
 
             String packageName = transferable.getItem().getPackageName();
@@ -97,19 +96,14 @@ public class AppTrayDropZoneView extends Component
       }
     });
     
-    getListeners().addChangeListener(new ComponentListeners.ChangeListenerAdapter()
+    _this.getListeners().addChangeListener(new ComponentListeners.ChangeListenerAdapter()
     {
       public void onVisibilityChanged(Component component, boolean visible)
       {
         if(visible)
         {
-          if((mAppTrayDropZoneSpaceCallback != null) && !mAppTrayDropZoneSpaceCallback.isSpaceAvailable())
-            mBackground.setBitmap(R.drawable.home_apptray_dropzone_full);
-          else
-            mBackground.setBitmap(mDropZoneBg);
-
           mHideDropArea.setBackgroundColor(0);
-          if(getAppTray(AppTrayDropZoneView.this).getPresenter().getSorter().getSortMode() == HIDDEN)
+          if(getAppTray(_this).getPresenter().getSorter().getSortMode() == HIDDEN)
             mHideIcon.setBitmap(mUnhideBitmap);
           else
             mHideIcon.setBitmap(mHideBitmap);
@@ -118,38 +112,24 @@ public class AppTrayDropZoneView extends Component
     });
   }
   
-  public Component getDropArea()
+  public Object before_onAddedTo(Component parent)
   {
-    return mDropArea;
+    _this.addChild(mDropArea);
+    _this.addChild(mHideDropArea);
+    _this.addChild(mBackground);
+    _this.addChild(mHideBackground);
+    _this.addChild(mIcon);
+    _this.addChild(mHideIcon);
+    _this.updateConfiguration();
+    return VOID;
   }
   
-  public void onAddedTo(Component parent)
+  public Object before_updateConfiguration()
   {
-    addChild(mDropArea);
-    addChild(mHideDropArea);
-    addChild(mBackground);
-    addChild(mHideBackground);
-    addChild(mIcon);
-    addChild(mHideIcon);
-    updateConfiguration();
-  }
-  
-  public void onDestroy()
-  {
-    mAppTrayDropZoneSpaceCallback = null;
-  }
-  
-  public void setAppTrayDropZoneSpaceCallback(AppTrayDropZoneSpaceCallback callback)
-  {
-    mAppTrayDropZoneSpaceCallback = callback;
-  }
-  
-  public void updateConfiguration()
-  {
-    Scene scene = getScene();
+    Scene scene = _this.getScene();
     Resources res = scene.getContext().getResources();
     
-    setSize(scene.getWidth(), res.getDimension(R.dimen.dropzone_height));
+    _this.setSize(scene.getWidth(), res.getDimension(R.dimen.dropzone_height));
     mDropZoneBg = BitmapFactory.decodeResource(res, R.drawable.home_apptray_dropzone);
     mHideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_hide)).getBitmap();
     mUnhideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_unhide)).getBitmap();
@@ -165,16 +145,12 @@ public class AppTrayDropZoneView extends Component
     mIcon.setBitmap(R.drawable.home_apptray_dropzone_home);
     mHideIcon.setBitmap(mHideBitmap);
 
-    Layouter.place(mDropArea, LEFT, BOTTOM, this, LEFT, BOTTOM);
-    Layouter.place(mHideDropArea, RIGHT, BOTTOM, this, RIGHT, BOTTOM);
-    Layouter.place(mBackground, CENTER, BOTTOM, this, 0.25f, BOTTOM);
-    Layouter.place(mHideBackground, CENTER, BOTTOM, this, 0.75f, BOTTOM);
-    Layouter.place(mIcon, CENTER, BOTTOM, this, 0.25f, BOTTOM);
-    Layouter.place(mHideIcon, CENTER, BOTTOM, this, 0.75f, BOTTOM);
-  }
-  
-  public static interface AppTrayDropZoneSpaceCallback
-  {
-    public boolean isSpaceAvailable();
+    Layouter.place(mDropArea, LEFT, BOTTOM, _this, LEFT, BOTTOM);
+    Layouter.place(mHideDropArea, RIGHT, BOTTOM, _this, RIGHT, BOTTOM);
+    Layouter.place(mBackground, CENTER, BOTTOM, _this, 0.25f, BOTTOM);
+    Layouter.place(mHideBackground, CENTER, BOTTOM, _this, 0.75f, BOTTOM);
+    Layouter.place(mIcon, CENTER, BOTTOM, _this, 0.25f, BOTTOM);
+    Layouter.place(mHideIcon, CENTER, BOTTOM, _this, 0.75f, BOTTOM);
+    return VOID;
   }
 }

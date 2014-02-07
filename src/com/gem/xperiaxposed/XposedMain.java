@@ -870,7 +870,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       ClassLoader xposedClassLoader = moduleClassLoader.getParent();
       ClassLoader packageClassLoader = param.classLoader;
       
-      ReflectionUtils.addToClassPath(packageClassLoader, MODULE_PATH, true);
       ReflectionUtils.setParentClassLoader(packageClassLoader, xposedClassLoader);
       ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader);
       

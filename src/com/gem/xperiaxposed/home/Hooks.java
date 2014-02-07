@@ -44,6 +44,12 @@ public class Hooks
     HIDDEN = SortMode.valueOf("HIDDEN");
     APPTRAY_DRAWER_ITEM_TYPE_HIDDEN = AppTrayDrawerItemType.valueOf("APPTRAY_DRAWER_ITEM_TYPE_HIDDEN");
     APPTRAY_DRAWER_ITEM_TYPE_SETTINGS = AppTrayDrawerItemType.valueOf("APPTRAY_DRAWER_ITEM_TYPE_SETTINGS");
+    
+    /*
+     * AppTray drop zone 
+     */
+
+    ClassHook.hookClass(AppTrayDropZoneView.class, AppTrayDropZoneViewHook.class);
 
     /*
      * Hide/unhide drop zone registration 
@@ -420,6 +426,7 @@ public class Hooks
     return getField(o, "m" + clazz.getSimpleName());
   }
 
+  @SuppressWarnings("unchecked")
   static <T> T getField(Object o, String name)
   {
     return (T)getObjectField(o, name);

@@ -74,7 +74,7 @@
     <string name="carrier_text">Carrier label</string>
     <string name="hint_carrier_summary">Empty string to show the default carrier label, whitespace to hide the carrier label.</string>
     <string name="more_unlock_blinds">Small blinds</string>
-    <string name="folder_disable_background_dim">Disable background bimming</string>
+    <string name="folder_disable_background_dim">Disable background dimming</string>
     <string name="enable_standard_lockscreen">Enable AOSP lockscreen</string>
     <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support.</string>
     
