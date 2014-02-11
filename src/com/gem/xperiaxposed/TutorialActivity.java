@@ -2,6 +2,7 @@ package com.gem.xperiaxposed;
 
 import java.util.*;
 
+import android.content.res.*;
 import android.os.*;
 import android.support.v4.app.*;
 import android.support.v4.view.*;
@@ -11,8 +12,9 @@ import android.widget.*;
 import com.gem.util.*;
 import com.viewpagerindicator.*;
 
-public class ExperimentalTutorialActivity extends GemActivity
+public class TutorialActivity extends GemActivity
 {
+  
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
@@ -28,12 +30,16 @@ public class ExperimentalTutorialActivity extends GemActivity
   
   private List<Fragment> getFragments()
   {
+    TypedArray titles = getResources().obtainTypedArray(getResources().getIdentifier(getIntent().getStringExtra("titles"), "array", getPackageName()));
+    TypedArray drawables = getResources().obtainTypedArray(getResources().getIdentifier(getIntent().getStringExtra("drawables"), "array", getPackageName()));
+    
     List<Fragment> list = new ArrayList<Fragment>();
-    list.add(PageFragment.newInstance(R.drawable.experimental_settings, R.string.experimental_settings));
-    list.add(PageFragment.newInstance(R.drawable.experimental_alphabetical_badge, R.string.experimental_alphabetical_badge));
-    list.add(PageFragment.newInstance(R.drawable.experimental_hide_app, R.string.experimental_hide_app));
-    list.add(PageFragment.newInstance(R.drawable.experimental_hidden_apps, R.string.experimental_hidden_apps));
-    list.add(PageFragment.newInstance(R.drawable.experimental_unhide_app, R.string.experimental_unhide_app));
+    for(int i = 0; i < titles.length(); ++i)
+      list.add(PageFragment.newInstance(drawables.getResourceId(i, 0), titles.getString(i)));
+    
+    titles.recycle();
+    drawables.recycle();
+    
     return list;
   }
   
@@ -56,7 +62,7 @@ public class ExperimentalTutorialActivity extends GemActivity
     @Override
     public String getPageTitle(int position)
     {
-      return getResources().getString(((PageFragment)getItem(position)).getTitle());
+      return ((PageFragment)getItem(position)).getTitle();
     }
 */
     @Override
@@ -72,19 +78,19 @@ class PageFragment extends Fragment
   public static final String EXTRA_IMAGE = "EXTRA_IMAGE";
   public static final String EXTRA_TEXT = "EXTRA_TEXT";
 
-  static final PageFragment newInstance(int image, int text)
+  static final PageFragment newInstance(int image, String text)
   {
     PageFragment f = new PageFragment();
     Bundle bdl = new Bundle(2);
     bdl.putInt(EXTRA_IMAGE, image);
-    bdl.putInt(EXTRA_TEXT, text);
+    bdl.putString(EXTRA_TEXT, text);
     f.setArguments(bdl);
     return f;
   }
   
-  public int getTitle()
+  public String getTitle()
   {
-    return getArguments().getInt(EXTRA_TEXT);
+    return getArguments().getString(EXTRA_TEXT);
   }
 
   public int getImage()

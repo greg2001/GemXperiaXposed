@@ -12,14 +12,36 @@
                 android:key="key_enable_experimental"
                 android:title="@string/enable_experimental"
                 android:defaultValue="false"/>
-	        <Preference 
-	            android:key="key_experimental_tutorial"
-	            android:title="@string/experimental_tutorial" 
-	            android:summary="@string/experimental_tutorial_summary">
-	            <intent android:action=".ExperimentalTutorialActivity">
-	                <extra android:name="title" android:value="@string/experimental_tutorial"/>
-                </intent>
-	        </Preference>
+	        <PreferenceScreen android:title="@string/experimental_tutorial">
+		        <Preference android:title="@string/settings_menu">
+		            <intent android:action=".TutorialActivity">
+		                <extra android:name="title" android:value="@string/settings_menu"/>
+		                <extra android:name="titles" android:value="tutorial_settings_menu_titles"/>
+		                <extra android:name="drawables" android:value="tutorial_settings_menu_drawables"/>
+		            </intent>
+		        </Preference>
+		        <Preference android:title="@string/alphabetical_badge">
+		            <intent android:action=".TutorialActivity">
+		                <extra android:name="title" android:value="@string/alphabetical_badge"/>
+		                <extra android:name="titles" android:value="tutorial_alphabetical_badge_titles"/>
+		                <extra android:name="drawables" android:value="tutorial_alphabetical_badge_drawables"/>
+		            </intent>
+		        </Preference>
+		        <Preference android:title="@string/hide_apps">
+		            <intent android:action=".TutorialActivity">
+		                <extra android:name="title" android:value="@string/hide_apps"/>
+		                <extra android:name="titles" android:value="tutorial_hide_apps_titles"/>
+		                <extra android:name="drawables" android:value="tutorial_hide_apps_drawables"/>
+		            </intent>
+		        </Preference>
+		        <Preference android:title="@string/unread_count"> 
+		            <intent android:action=".TutorialActivity">
+		                <extra android:name="title" android:value="@string/unread_count"/>
+		                <extra android:name="titles" android:value="tutorial_unread_count_titles"/>
+		                <extra android:name="drawables" android:value="tutorial_unread_count_drawables"/>
+		            </intent>
+		        </Preference>
+		    </PreferenceScreen>
 	    </PreferenceCategory>
 	    
         <PreferenceCategory android:title="@string/launcher_general">

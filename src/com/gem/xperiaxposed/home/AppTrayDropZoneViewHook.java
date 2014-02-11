@@ -2,11 +2,6 @@ package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.home.Hooks.*;
 import static com.sonymobile.flix.components.Component.*;
-import static de.robv.android.xposed.XposedHelpers.*;
-
-import java.util.*;
-
-import android.content.*;
 import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
@@ -32,16 +27,16 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
   private Image mIcon;
   private Image mHideIcon;
 
-  public AppTrayDropZoneViewHook(final AppTrayDropZoneView _this)
+  public AppTrayDropZoneViewHook(final AppTrayDropZoneView thiz)
   {
-    super(_this);
-    mBackground = getField(_this, "mBackground");
-    mHideBackground = new Image(_this.getScene());
-    mDropArea = getField(_this, "mDropArea");
-    mHideDropArea = new Component(_this.getScene());
+    super(thiz);
+    mBackground = getField(thiz, "mBackground");
+    mHideBackground = new Image(thiz.getScene());
+    mDropArea = getField(thiz, "mDropArea");
+    mHideDropArea = new Component(thiz.getScene());
     mHideDropArea.setId(Ids.hide_drop_area);
-    mIcon = getField(_this, "mIcon");
-    mHideIcon = new Image(_this.getScene());
+    mIcon = getField(thiz, "mIcon");
+    mHideIcon = new Image(thiz.getScene());
     
     mHideDropArea.setProperty(DropTarget.PROPERTY_DROP_TARGET, new DropTarget()
     {
@@ -53,19 +48,10 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
         {
           if(transferable.getItem() instanceof ActivityItem)
           {
-            SharedPreferences prefs = _this.getScene().getContext().getSharedPreferences("hidden", 0);
-            AppTray appTray = getAppTray(_this);
-            boolean hide = appTray.getPresenter().getSorter().getSortMode() != HIDDEN;
-
-            String packageName = transferable.getItem().getPackageName();
-            if(hide)
-              prefs.edit().putBoolean(packageName, true).commit();
-            else
-              prefs.edit().remove(packageName).commit();
-            
+            AppTray appTray = getAppTray(thiz);
             AppTrayModel model = appTray.getModel();
-            model.updateModel(new ArrayList<Item>());
-            callMethod(model, "notifyAppTrayModelAppListener", model.getTotalNumberOfActivities(), model.getNumberOfDownloadedActivities());
+            AppTrayModelHook modelHook = AppTrayModelHook.getHook(model);
+            modelHook.setHidden(transferable.getItem(), appTray.getPresenter().getSorter().getSortMode() != HIDDEN);
           }
         }
         catch(Exception ex)
@@ -96,14 +82,14 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
       }
     });
     
-    _this.getListeners().addChangeListener(new ComponentListeners.ChangeListenerAdapter()
+    thiz.getListeners().addChangeListener(new ComponentListeners.ChangeListenerAdapter()
     {
       public void onVisibilityChanged(Component component, boolean visible)
       {
         if(visible)
         {
           mHideDropArea.setBackgroundColor(0);
-          if(getAppTray(_this).getPresenter().getSorter().getSortMode() == HIDDEN)
+          if(getAppTray(thiz).getPresenter().getSorter().getSortMode() == HIDDEN)
             mHideIcon.setBitmap(mUnhideBitmap);
           else
             mHideIcon.setBitmap(mHideBitmap);
@@ -114,22 +100,22 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
   
   public Object before_onAddedTo(Component parent)
   {
-    _this.addChild(mDropArea);
-    _this.addChild(mHideDropArea);
-    _this.addChild(mBackground);
-    _this.addChild(mHideBackground);
-    _this.addChild(mIcon);
-    _this.addChild(mHideIcon);
-    _this.updateConfiguration();
+    thiz.addChild(mDropArea);
+    thiz.addChild(mHideDropArea);
+    thiz.addChild(mBackground);
+    thiz.addChild(mHideBackground);
+    thiz.addChild(mIcon);
+    thiz.addChild(mHideIcon);
+    thiz.updateConfiguration();
     return VOID;
   }
   
   public Object before_updateConfiguration()
   {
-    Scene scene = _this.getScene();
+    Scene scene = thiz.getScene();
     Resources res = scene.getContext().getResources();
     
-    _this.setSize(scene.getWidth(), res.getDimension(R.dimen.dropzone_height));
+    thiz.setSize(scene.getWidth(), res.getDimension(R.dimen.dropzone_height));
     mDropZoneBg = BitmapFactory.decodeResource(res, R.drawable.home_apptray_dropzone);
     mHideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_hide)).getBitmap();
     mUnhideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_unhide)).getBitmap();
@@ -145,12 +131,12 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
     mIcon.setBitmap(R.drawable.home_apptray_dropzone_home);
     mHideIcon.setBitmap(mHideBitmap);
 
-    Layouter.place(mDropArea, LEFT, BOTTOM, _this, LEFT, BOTTOM);
-    Layouter.place(mHideDropArea, RIGHT, BOTTOM, _this, RIGHT, BOTTOM);
-    Layouter.place(mBackground, CENTER, BOTTOM, _this, 0.25f, BOTTOM);
-    Layouter.place(mHideBackground, CENTER, BOTTOM, _this, 0.75f, BOTTOM);
-    Layouter.place(mIcon, CENTER, BOTTOM, _this, 0.25f, BOTTOM);
-    Layouter.place(mHideIcon, CENTER, BOTTOM, _this, 0.75f, BOTTOM);
+    Layouter.place(mDropArea, LEFT, BOTTOM, thiz, LEFT, BOTTOM);
+    Layouter.place(mHideDropArea, RIGHT, BOTTOM, thiz, RIGHT, BOTTOM);
+    Layouter.place(mBackground, CENTER, BOTTOM, thiz, 0.25f, BOTTOM);
+    Layouter.place(mHideBackground, CENTER, BOTTOM, thiz, 0.75f, BOTTOM);
+    Layouter.place(mIcon, CENTER, BOTTOM, thiz, 0.25f, BOTTOM);
+    Layouter.place(mHideIcon, CENTER, BOTTOM, thiz, 0.75f, BOTTOM);
     return VOID;
   }
 }

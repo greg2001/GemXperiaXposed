@@ -78,4 +78,43 @@
         <item>system</item>
         <item>status</item>
     </string-array>
+    
+    <string-array name="tutorial_settings_menu_titles">
+        <item></item>
+    </string-array>
+    <array name="tutorial_settings_menu_drawables">
+        <item>@drawable/experimental_settings</item>
+    </array>
+    
+    <string-array name="tutorial_alphabetical_badge_titles">
+        <item></item>
+    </string-array>
+    <array name="tutorial_alphabetical_badge_drawables">
+        <item>@drawable/experimental_alphabetical_badge</item>
+    </array>
+    
+    <string-array name="tutorial_hide_apps_titles">
+        <item>Hide App</item>
+        <item>Hidden Apps</item>
+        <item>Unhide App</item>
+    </string-array>
+    <array name="tutorial_hide_apps_drawables">
+        <item>@drawable/experimental_hide_app</item>
+        <item>@drawable/experimental_hidden_apps</item>
+        <item>@drawable/experimental_unhide_app</item>
+    </array>
+    
+    <string-array name="tutorial_unread_count_titles">
+        <item></item>
+        <item>Install Missed It!</item>
+        <item>Enable Notification Access</item>
+        <item>Configure Missed It!</item>
+    </string-array>
+    <array name="tutorial_unread_count_drawables">
+        <item>@drawable/experimental_unread_badges</item>
+        <item>@drawable/experimental_install_missedit</item>
+        <item>@drawable/experimental_enable_missedit</item>
+        <item>@drawable/experimental_configure_missedit</item>
+    </array>
+    
 </resources>

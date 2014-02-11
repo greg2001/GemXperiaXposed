@@ -18,8 +18,9 @@ import com.sonymobile.home.apptray.*;
 import com.sonymobile.home.apptray.AppTrayDrawerAdapter.AppTrayDrawerItemData;
 import com.sonymobile.home.apptray.AppTrayDrawerLoadHelper.AppTrayDrawerItemType;
 import com.sonymobile.home.apptray.AppTrayPreferenceManager.SortMode;
+import com.sonymobile.home.badge.*;
 import com.sonymobile.home.data.*;
-import com.sonymobile.home.model.*;
+import com.sonymobile.home.storage.*;
 
 import de.robv.android.xposed.*;
 
@@ -33,6 +34,7 @@ public class Hooks
   public static AppTrayDrawerItemType APPTRAY_DRAWER_ITEM_TYPE_SETTINGS;
   public static int numberOfActivities = 0;
   public static int numberOfHiddenActivities = 0;
+  public static MissedItReceiver missedItReceiver = null;
   
 ////////////////////////////////////////////////////////////
   
@@ -46,10 +48,29 @@ public class Hooks
     APPTRAY_DRAWER_ITEM_TYPE_SETTINGS = AppTrayDrawerItemType.valueOf("APPTRAY_DRAWER_ITEM_TYPE_SETTINGS");
     
     /*
+     * MissedIt broadcast receiver
+     */
+    
+    try {
+    findAndHookMethod(StorageManager.class, "getBadgeManager",
+      Context.class,
+      new XC_MethodHook() 
+    {
+      @Override
+      protected void afterHookedMethod(MethodHookParam param) throws Throwable
+      {
+        if(param.getResult() != null && missedItReceiver == null)
+          missedItReceiver = new MissedItReceiver((Context)param.args[0], (BadgeManager)param.getResult());
+      }
+    });
+    } catch(Exception ex) { log(ex); }
+    
+    /*
      * AppTray drop zone 
      */
 
     ClassHook.hookClass(AppTrayDropZoneView.class, AppTrayDropZoneViewHook.class);
+    ClassHook.hookClass(AppTrayModel.class, AppTrayModelHook.class);
 
     /*
      * Hide/unhide drop zone registration 
@@ -97,29 +118,17 @@ public class Hooks
         AppTraySorter sorter = getField(getAppTray(param.thisObject), AppTraySorter.class);
         if(sorter.getSortMode() == SortMode.OWN_ORDER)
         {
-          List<Item> items = new ArrayList<Item>((List<Item>)param.args[0]);
-          filterAppTrayItems(sorter, items);
-          param.args[0] = items;
+          if(param.args[0] != null)
+          {
+            List<Item> items = new ArrayList<Item>((List<Item>)param.args[0]);
+            filterAppTrayItems(sorter, items);
+            param.args[0] = items;
+          }
         }
       }
     });
     } catch(Exception ex) { log(ex); }
 
-    try {
-    findAndHookMethod(AppTrayModel.class, "updateModelAndItems",
-      List.class,
-      List.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        updateModelAndItems((AppTrayModel)param.thisObject, (List<Item>)param.args[0], (List<Item>)param.args[1]);
-      }
-    });
-    } catch(Exception ex) { log(ex); }
-    
-    
     try {
     findAndHookMethod(AppTraySorter.class, "sort",
       AppTrayPreferenceManager.SortMode.class,
@@ -204,30 +213,6 @@ public class Hooks
      */
     
     try {
-    findAndHookMethod(AppTrayModel.class, "getTotalNumberOfActivities",
-      new XC_MethodReplacement()
-      {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
-        {
-          return getTotalNumberOfActivities(getField(param.thisObject, PackageHandler.class));
-        }
-      });
-    } catch(Exception ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTrayModel.class, "getNumberOfDownloadedActivities",
-      new XC_MethodReplacement()
-      {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
-        {
-          return getNumberOfDownloadedActivities(getField(param.thisObject, PackageHandler.class));
-        }
-      });
-    } catch(Exception ex) { log(ex); }
-
-    try {
     findAndHookMethod(AppTrayDrawerAdapter.class, "updateNumberOfMostUsedItems",
       int.class,
       new XC_MethodHook()
@@ -246,12 +231,11 @@ public class Hooks
   
   public static boolean filterAppTrayItems(AppTraySorter sorter, List<Item> items)
   {
-    Context context = getContext(getObjectField(sorter, "mPreferences"));
-    SharedPreferences prefs = context.getSharedPreferences("hidden", 0);
+    AppTrayModel appTrayModel = getField(sorter, "mOwnOrderModel");
+    AppTrayModelHook appTrayModelHook = AppTrayModelHook.getHook(appTrayModel);
     for(Iterator<Item> i = items.iterator(); i.hasNext(); )
     {
-      Item item = i.next();
-      if(prefs.getBoolean(item.getPackageName(), false))
+      if(appTrayModelHook.isHidden(i.next()))
       {
         if(sorter.getSortMode() != HIDDEN)
           i.remove();
@@ -263,16 +247,6 @@ public class Hooks
       }
     }
     return !items.isEmpty();
-  }
-  
-  public static void updateModelAndItems(AppTrayModel model, List<Item> list1, List<Item> list2)
-  {
-    Context context = getContext(getObjectField(model, "mPreferences"));
-    SharedPreferences prefs = context.getSharedPreferences("hidden", 0);
-    List<Item> items = getField(model, "mItems");
-    for(Item item: items)
-      if(prefs.getBoolean(item.getPackageName(), false) && !list1.contains(item))
-        list1.add(item);
   }
   
   public static void injectAppTrayDrawerItems(AppTrayDrawerLoadHelper loadHelper, SortMode sortMode, Map<String, List<AppTrayDrawerItemData>> map)
@@ -359,31 +333,6 @@ public class Hooks
       callMethod(presenter, "launchApplication", data.mIntent);
     else if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_HIDDEN)
       callMethod(presenter, "handleSortModeItemClicked", HIDDEN);
-  }
-  
-  public static int getNumberOfDownloadedActivities(PackageHandler packageHandler)
-  {
-    SharedPreferences prefs = getContext(packageHandler).getSharedPreferences("hidden", 0);
-    int i = 0;
-    for(ActivityItem item: packageHandler.getActivityItemSet())
-      if(packageHandler.isPackageDownloaded(item.getPackageName()) && !prefs.getBoolean(item.getPackageName(), false))
-        ++i;
-    return i;
-  }
-  
-  public static int getTotalNumberOfActivities(PackageHandler packageHandler)
-  {
-    SharedPreferences prefs = getContext(packageHandler).getSharedPreferences("hidden", 0);
-    numberOfActivities = 0;
-    numberOfHiddenActivities = 0;
-    for(ActivityItem item: packageHandler.getActivityItemSet())
-    {
-      if(!prefs.getBoolean(item.getPackageName(), false))
-        ++numberOfActivities;
-      else
-        ++numberOfHiddenActivities;
-    }
-    return numberOfActivities;
   }
   
   public static boolean updateNumberOfActivities(AppTrayDrawerAdapter adapter)

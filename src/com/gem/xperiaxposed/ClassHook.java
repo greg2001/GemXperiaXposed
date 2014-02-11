@@ -22,11 +22,22 @@ public class ClassHook<ClassToHook>
 
 ////////////////////////////////////////////////////////////
   
-  public final ClassToHook _this;
+  public final ClassToHook thiz;
+  public MethodHookParam param;
   
-  public ClassHook(final ClassToHook _this)
+  public ClassHook(final ClassToHook thiz)
   {
-    this._this = _this;
+    this.thiz = thiz;
+  }
+  
+////////////////////////////////////////////////////////////
+
+  private static final String KEY = "CLASSHOOK";
+  
+  @SuppressWarnings("unchecked")
+  public static <ClassToHook, T extends ClassHook<ClassToHook>> T getHook(ClassToHook o)
+  {
+    return (T)getAdditionalInstanceField(o, KEY);
   }
   
 ////////////////////////////////////////////////////////////
@@ -34,7 +45,6 @@ public class ClassHook<ClassToHook>
   @SuppressWarnings("unchecked")
   public static <ClassToHook> void hookClass(final Class<ClassToHook> classToHook, final Class<? extends ClassHook<ClassToHook>> classHook)
   {
-    final String KEY = classHook.getName();
     hookAllConstructors(classToHook, new XC_MethodHook()
     {
       @Override
@@ -66,21 +76,13 @@ public class ClassHook<ClassToHook>
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable
         {
           if(beforeMethod != null)
-          {
-            ClassHook<ClassToHook> hook = (ClassHook<ClassToHook>)getAdditionalInstanceField(param.thisObject, KEY);
-            if(hook != null)
-              updateResult(param, beforeMethod.invoke(hook, param.args));
-          }
+            invokeHook(beforeMethod, param);
         }
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
         {
           if(afterMethod != null)
-          {
-            ClassHook<ClassToHook> hook = (ClassHook<ClassToHook>)getAdditionalInstanceField(param.thisObject, KEY);
-            if(hook != null)
-              updateResult(param, afterMethod.invoke(hook, param.args));
-          }
+            invokeHook(afterMethod, param);
         }
       };
       
@@ -124,16 +126,29 @@ public class ClassHook<ClassToHook>
     return methodPairs;
   }
 
-  private static void updateResult(MethodHookParam param, Object result)
+  private static void invokeHook(Method method, MethodHookParam param) throws Exception
   {
-    if(result != null)
+    ClassHook<?> hook = getHook(param.thisObject);
+    if(hook != null)
     {
-      if(result instanceof Throwable)
-        param.setThrowable((Throwable)result);
-      else if(result == NULL)
-        param.setResult(null);
-      else
-        param.setResult(result);
+      MethodHookParam save = hook.param;
+      hook.param = param;
+      try
+      {
+        Object result = method.invoke(hook, param.args);
+        if(result == null)
+          ;
+        else if(result instanceof Throwable)
+          param.setThrowable((Throwable)result);
+        else if(result == NULL)
+          param.setResult(null);
+        else
+          param.setResult(result);
+      }
+      finally
+      {
+        hook.param = save;
+      }
     }
   }
   

@@ -20,7 +20,10 @@
     <string name="launcher_experimental">Experimental</string>
     <string name="enable_experimental">Enable experimental features</string>
     <string name="experimental_tutorial">Tutorial</string>
-    <string name="experimental_tutorial_summary">Click here so see how it works.</string>
+    <string name="settings_menu">Settings Menu Item</string>
+    <string name="alphabetical_badge">Alphabetical Mode Badge</string>
+    <string name="hide_apps">Hide Apps</string>
+    <string name="unread_count">Unread Count Badges</string>
     
     <string name="launcher_general">General</string>
     <string name="launcher_icon_size">Icon size</string>
@@ -119,9 +122,4 @@
     <string name="about_theme">Theme</string>
     <string name="about_theme_default">light</string>
     
-    <string name="experimental_settings">Settings Menu Item</string>
-    <string name="experimental_alphabetical_badge">Alphabetical Mode Badge</string>
-    <string name="experimental_hide_app">Hide App</string>
-    <string name="experimental_hidden_apps">Hidden Apps</string>
-    <string name="experimental_unhide_app">Unhide App</string>
 </resources>

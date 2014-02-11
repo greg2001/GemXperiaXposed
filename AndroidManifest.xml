@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gem.xperiaxposed"
-    android:versionCode="030100"
-    android:versionName="3.1" >
+    android:versionCode="030200"
+    android:versionName="3.2" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -40,10 +40,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ExperimentalTutorialActivity"
+            android:name=".TutorialActivity"
             android:configChanges="orientation|screenSize" >
             <intent-filter>
-                <action android:name=".ExperimentalTutorialActivity" />
+                <action android:name=".TutorialActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
