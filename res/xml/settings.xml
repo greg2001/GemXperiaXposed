@@ -176,6 +176,14 @@
                 android:key="key_remember_drawer_page"
                 android:title="@string/remember_drawer_page"
                 android:defaultValue="false"/>
+            <com.gem.util.GemSliderPreference
+                android:key="key_drawer_menu_opacity"
+                android:title="@string/drawer_menu_opacity"
+				android:defaultValue="100" 
+                minimum="0"
+                maximum="100"
+                step="1"
+                currentValueFormat="%d%%"/>
             </PreferenceCategory>
     </PreferenceScreen>
     
@@ -193,6 +201,10 @@
             android:title="@string/enable_standard_lockscreen"
             android:summary="@string/enable_standard_lockscreen_summary"
             android:disableDependentsState="true"
+            android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="key_slide_before_unlock"
+            android:title="@string/slide_before_unlock"
             android:defaultValue="false"/>
         <CheckBoxPreference
             android:key="key_hide_widget_backplate"

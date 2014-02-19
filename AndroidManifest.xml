@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gem.xperiaxposed"
-    android:versionCode="030200"
-    android:versionName="3.2" >
+    android:versionCode="030300"
+    android:versionName="3.3" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -49,7 +49,7 @@
         </activity>
         <meta-data android:value="true" android:name="xposedmodule"/>
         <meta-data android:value="2.0*" android:name="xposedminversion"/>
-        <meta-data android:value="Various Xperia Launcher and Lockscreen tweaks" android:name="xposeddescription"/>
+        <meta-data android:value="Xperia Launcher, Lockscreen and SystemUI tweaks" android:name="xposeddescription"/>
     </application>
 
 </manifest>

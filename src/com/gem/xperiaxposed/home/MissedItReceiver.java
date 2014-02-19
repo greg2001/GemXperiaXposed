@@ -1,5 +1,8 @@
 package com.gem.xperiaxposed.home;
 
+import static com.gem.xperiaxposed.home.Hooks.*;
+import static de.robv.android.xposed.XposedHelpers.*;
+
 import java.util.*;
 
 import android.content.*;
@@ -8,13 +11,14 @@ import android.text.*;
 
 import com.sonymobile.flix.debug.*;
 import com.sonymobile.home.badge.*;
+import com.sonymobile.home.data.*;
 
 public class MissedItReceiver extends BroadcastReceiver
 {
   private BadgeManager badgeManager;
   private Map<String, Integer> gmail = new HashMap<String, Integer>();
   private Map<String, Integer> k9mail = new HashMap<String, Integer>();
-  private Map<ComponentName, Integer> apps = new HashMap<ComponentName, Integer>();
+  private Map<ActivityItem, Integer> apps = new HashMap<ActivityItem, Integer>();
   
   public MissedItReceiver(Context context, BadgeManager badgeManager)
   {
@@ -107,7 +111,7 @@ public class MissedItReceiver extends BroadcastReceiver
                 {
                   ComponentName comp = ComponentName.unflattenFromString(name);
                   int count = b2.getInt("COUNT", 0);
-                  apps.put(comp, count);
+                  apps.put(new ActivityItem(comp.getPackageName(), comp.getClassName()), count);
                 }
                 catch(Exception ex)
                 {
@@ -158,7 +162,7 @@ public class MissedItReceiver extends BroadcastReceiver
           {
             ComponentName comp = ComponentName.unflattenFromString(name);
             int count = intent.getIntExtra("COUNT", 0);
-            apps.put(comp, count);
+            apps.put(new ActivityItem(comp.getPackageName(), comp.getClassName()), count);
           }
           catch(Exception ex)
           {
@@ -170,21 +174,27 @@ public class MissedItReceiver extends BroadcastReceiver
       int gmailCount = 0;
       for(int c: gmail.values())
         gmailCount += c;
-      apps.put(gmailName, gmailCount);
+      apps.put(new ActivityItem(gmailName.getPackageName(), gmailName.getClassName()), gmailCount);
       
       ComponentName k9mailName = new ComponentName("com.fsck.k9", "com.fsck.k9.activity.Accounts");
       int k9mailCount = 0;
       for(int c: k9mail.values())
         k9mailCount += c;
-      apps.put(k9mailName, k9mailCount);
+      apps.put(new ActivityItem(k9mailName.getPackageName(), k9mailName.getClassName()), k9mailCount);
       
-      for(Map.Entry<ComponentName, Integer> e: apps.entrySet())
+      Map<ActivityItem, String> badgeMap = getField(badgeManager, "mBadgeMap");
+      for(Map.Entry<ActivityItem, Integer> e: apps.entrySet())
       {
-        Intent i = new Intent();
-        i.putExtra("com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME", e.getKey().getPackageName());
-        i.putExtra("com.sonyericsson.home.intent.extra.badge.ACTIVITY_NAME", e.getKey().getClassName());
-        i.putExtra("com.sonyericsson.home.intent.extra.badge.MESSAGE", Integer.toString(e.getValue()));
-        badgeManager.onReceive(i);
+        String o = badgeMap.get(e.getKey());
+        String n = e.getValue() > 0 ? Integer.toString(e.getValue()) : null;
+        if(!TextUtils.equals(o, n))
+        {
+          if(n != null)
+            badgeMap.put(e.getKey(), n);
+          else
+            badgeMap.remove(e.getKey());
+          callMethod(badgeManager, "notifyBadgeChanged", e.getKey());
+        }
       }
     }
     catch(Exception ex)

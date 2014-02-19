@@ -305,6 +305,11 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       hookLauncherWidgets(param);
       hookLauncherExperimental(param);
     }
+    else if(param.packageName.equals(SE_LOCK))
+    {
+      prefs.reload();
+      hookLockscreen(param);
+    }
   }
   
 ////////////////////////////////////////////////////////////
@@ -489,9 +494,73 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       });
       } catch(Exception ex) { log(ex); }
     }
+    
+    if(prefs.getBoolean("key_slide_before_unlock", false))
+    {
+      try {
+      final Object SecurityModeNone = getStaticObjectField(findClass(KEYGUARD_PACKAGE + ".KeyguardSecurityModel$SecurityMode", param.classLoader), "None");
+      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "showPrimarySecurityScreen", boolean.class, new XC_MethodHook()
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          callMethod(param.thisObject, "showSecurityScreen", SecurityModeNone);
+          param.setResult(null);
+        }
+      });
+      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "showNextSecurityScreenOrFinish", boolean.class, new XC_MethodHook()
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          if(!(Boolean)param.args[0])
+          {
+            Object mode = callMethod(getObjectField(param.thisObject, "mSecurityModel"), "getSecurityMode");
+            if(mode != SecurityModeNone)
+            {
+              callMethod(param.thisObject, "showSecurityScreen", mode);
+              param.setResult(null);
+            }
+          }
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
   }
 
-  ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+  private void hookLockscreen(XC_LoadPackage.LoadPackageParam param)
+  {
+    if(prefs.getBoolean("key_slide_before_unlock", false) && !prefs.getBoolean("key_enable_standard_lockscreen", false))
+    {
+      try {
+      findAndHookMethod("com.sonymobile.lockscreen.xperia.widget.blindslayout.BlindsRelativeLayout", param.classLoader, "onExitTransitionFinished", 
+        new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          setBooleanField(param.thisObject, "mSkipDraw", false);
+          setBooleanField(param.thisObject, "mDrawingBlinds", false);
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+      try {
+      findAndHookMethod("com.sonymobile.lockscreen.xperia.FadeAllUnlockTransitionStrategy", param.classLoader, "startUnlockTransition",
+        new XC_MethodHook()
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          param.setResult(null);
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+  }
+  
+////////////////////////////////////////////////////////////
 
   private void hookLauncherTransparency(XC_LoadPackage.LoadPackageParam param)
   {
@@ -714,6 +783,26 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
         {
           return null;
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+
+    final int drawer_menu_opacity = prefs.getInt("key_drawer_menu_opacity", 100);
+    if(drawer_menu_opacity != 100)
+    {
+      try {
+      findAndHookMethod("com.sonymobile.home.apptray.AppTrayDrawerView", param.classLoader, "initialize", 
+        float.class,
+        float.class,
+        float.class,
+        new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          View menu = (View)getObjectField(param.thisObject, "mListView");
+          menu.getBackground().setAlpha((int)(2.55 * drawer_menu_opacity));
         }
       });
       } catch(Exception ex) { log(ex); }

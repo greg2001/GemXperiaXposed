@@ -64,11 +64,13 @@
     <string name="drawer_columns_default">4</string>
     <string name="disable_drawer_backplate">Hide backplate</string>
     <string name="remember_drawer_page">Remember current page</string>
+    <string name="drawer_menu_opacity">Navigation menu opacity</string>
     
     <string name="lockscreen">Lockscreen Settings</string>
     <string name="reboot_phone_lockscreen">Note</string>
     <string name="reboot_phone_summary_lockscreen">You need to reboot the phone for changes to take effect.</string>
     <string name="transparent_lockscreen">Transparent status bar</string>
+    <string name="slide_before_unlock">Slide before unlock</string>
     <string name="hide_widget_backplate">Hide widget backplate</string>
     <string name="hide_shortcuts">Hide shortcut icons</string>
     <string name="hide_hint_arrows">Hide hint arrows</string>
