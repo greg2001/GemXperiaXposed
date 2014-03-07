@@ -3,22 +3,49 @@ package com.gem.xperiaxposed;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
-import java.util.*;
+import java.util.WeakHashMap;
 
-import android.appwidget.*;
-import android.content.*;
-import android.content.pm.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.XResources;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewManager;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
-import com.gem.xperiaxposed.home.*;
+import com.gem.xperiaxposed.home.Ids;
+import com.sonymobile.flix.components.Scene;
+import com.sonymobile.flix.util.Animation;
+import com.sonymobile.home.MainView;
+import com.sonymobile.home.apptray.AppTray;
+import com.sonymobile.home.apptray.AppTrayPageIndicatorView;
+import com.sonymobile.home.apptray.AppTrayPresenter;
+import com.sonymobile.home.apptray.AppTrayView;
+import com.sonymobile.home.data.Item;
+import com.sonymobile.home.desktop.Desktop;
+import com.sonymobile.home.desktop.DesktopView;
+import com.sonymobile.home.presenter.view.IconLabelView;
+import com.sonymobile.home.presenter.view.ItemViewCreatorBase;
+import com.sonymobile.home.ui.pageview.PageViewInteractionListener;
 
-import de.robv.android.xposed.*;
-import de.robv.android.xposed.callbacks.*;
+import de.robv.android.xposed.IXposedHookInitPackageResources;
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 ////////////////////////////////////////////////////////////
 
@@ -260,8 +287,10 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         res.setDimension(R.dimen.icon_label_text_size, size);
         
         param.res.setReplacement(SE_HOME, "dimen", "icon_label_text_size", res.fwd(R.dimen.icon_label_text_size));
+        param.res.setReplacement(SE_HOME, "dimen", "desktop_icon_label_max_text_size", res.fwd(R.dimen.icon_label_text_size));
+        param.res.setReplacement(SE_HOME, "dimen", "apptray_icon_label_max_text_size", res.fwd(R.dimen.icon_label_text_size));
       }
-
+      
       if(prefs.getBoolean("key_large_dock_reflection", false))
       {
         float size = param.res.getDimension(param.res.getIdentifier("stage_mirror_size", "dimen", SE_HOME));
@@ -296,9 +325,25 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     }
     else if(param.packageName.equals(SE_HOME))
     {
+      try
+      {
+        ClassLoader moduleClassLoader = getClass().getClassLoader();
+        ClassLoader xposedClassLoader = moduleClassLoader.getParent();
+        ClassLoader packageClassLoader = param.classLoader;
+        
+        ReflectionUtils.setParentClassLoader(packageClassLoader, xposedClassLoader);
+        ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader);
+      }
+      catch(Exception ex)
+      {
+        log(ex);
+      }
+
       prefs.reload();
       hookLauncherTransparency(param);
       hookLauncherFont(param);
+      hookLauncherLayout(param);
+      hookLauncherDesktop(param);
       hookLauncherDock(param);
       hookLauncherDrawer(param);
       hookLauncherFolders(param);
@@ -724,6 +769,101 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   
 ////////////////////////////////////////////////////////////
 
+  private void hookLauncherLayout(XC_LoadPackage.LoadPackageParam param)
+  {
+    final boolean desktop_disable_pagination = prefs.getBoolean("key_desktop_disable_pagination", false);
+    final boolean drawer_disable_pagination = prefs.getBoolean("key_drawer_disable_pagination", false);
+    if(desktop_disable_pagination || drawer_disable_pagination)
+    {
+      try {
+      findAndHookMethod(MainView.class, "onSceneCreated", 
+        Scene.class,
+        int.class,
+        int.class,
+        new XC_MethodHook() 
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          MainView mainView = (MainView)param.thisObject;
+          if(desktop_disable_pagination)
+          {
+            Desktop desktop = (Desktop)getObjectField(mainView, "mDesktop");
+            desktop.getView().removeChild(desktop.getPresenter().getPageIndicatorView());
+          }
+          if(drawer_disable_pagination)
+          {
+            AppTray appTray = (AppTray)getObjectField(mainView, "mAppTray");
+            appTray.getView().removeChild(appTray.getPresenter().getPageIndicatorView());
+          }
+        }
+      });      
+      } catch(Exception ex) { log(ex); }
+    }
+
+    final boolean desktop_disable_labels = prefs.getBoolean("key_desktop_disable_labels", false);
+    final boolean folder_disable_labels = prefs.getBoolean("key_folder_disable_labels", false);
+    final boolean drawer_disable_labels = prefs.getBoolean("key_drawer_disable_labels", false);
+    if(desktop_disable_labels || folder_disable_labels || drawer_disable_labels)
+    {
+      try {
+      findAndHookMethod(ItemViewCreatorBase.class, "includedLabel", 
+        Item.class,
+        new XC_MethodHook() 
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          Item item = (Item)param.args[0];
+          String name = item.getPageViewName();
+          if(desktop_disable_labels && "desktop".equals(name))
+            param.setResult(false);
+          if(folder_disable_labels && "folder".equals(name))
+            param.setResult(false);
+          if(drawer_disable_labels && "apptray".equals(name))
+            param.setResult(false);
+        }
+      });      
+      } catch(Exception ex) { log(ex); }
+
+      try {
+      findAndHookMethod(IconLabelView.class, "setMaxTextSize", 
+        int.class,
+        new XC_MethodHook() 
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          if(! getBooleanField(param.thisObject, "mIncludedLabel"))
+            param.setResult(null);
+        }
+      });      
+      } catch(Exception ex) { log(ex); }
+    }
+  }
+  
+////////////////////////////////////////////////////////////
+  
+  private void hookLauncherDesktop(XC_LoadPackage.LoadPackageParam param)
+  {
+    final int desktop_animation = Integer.valueOf(prefs.getString("key_desktop_animation", "0"));
+    if(desktop_animation != 0)
+    {
+      try {
+      hookAllConstructors(DesktopView.class, new XC_MethodHook() 
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          setIntField(param.thisObject, "mAnimNbr", desktop_animation);
+        }
+      });      
+      } catch(Exception ex) { log(ex); }
+    }
+  }
+  
+////////////////////////////////////////////////////////////
+
   private void hookLauncherDock(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_disable_dock_stage", false))
@@ -803,6 +943,84 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         {
           View menu = (View)getObjectField(param.thisObject, "mListView");
           menu.getBackground().setAlpha((int)(2.55 * drawer_menu_opacity));
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+    }
+
+    if(prefs.getBoolean("key_drawer_autohide_pagination", false))
+    {
+      try {
+      hookAllConstructors(AppTrayPageIndicatorView.class, new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          callMethod(param.thisObject, "setAutoHide", true);
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+      try {
+      findAndHookMethod(AppTrayPresenter.class, "setView",
+        AppTrayView.class,
+        new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          final AppTrayView view = (AppTrayView)param.args[0];
+          final AppTrayPresenter presenter = (AppTrayPresenter)param.thisObject;
+          view.addInteractionListener(new PageViewInteractionListener()
+          {
+            @Override
+            public void onInteractionStart()
+            {
+              presenter.getPageIndicatorView().onInteractionStart();
+            }
+            @Override
+            public void onInteractionEnd()
+            {
+              presenter.getPageIndicatorView().onInteractionEnd();
+            }
+          });
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+      try {
+      findAndHookMethod(AppTrayPageIndicatorView.class, "setTitle",
+        String.class,
+        new XC_MethodHook()
+      {
+        @Override
+        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        {
+          final AppTrayPageIndicatorView indicator = (AppTrayPageIndicatorView)param.thisObject;
+          ((Animation)getObjectField(indicator, "mPageIndicatorAnimation")).addListener(new Animation.Listener()
+          {
+            @Override
+            public void onStart(Animation arg0)
+            {
+              indicator.onInteractionStart();
+            }
+            @Override
+            public void onFinish(Animation arg0)
+            {
+              indicator.onInteractionEnd();
+            }
+          });
+        }
+      });
+      } catch(Exception ex) { log(ex); }
+      try {
+      findAndHookMethod(AppTrayPresenter.class, "onAppTrayDrawerVisibilityChanged",
+        float.class,
+        new XC_MethodHook()
+      {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        {
+          callMethod(param.thisObject, "setSystemUiTransparent", (Float)param.args[0] <= 0.05);
+          param.setResult(null);
         }
       });
       } catch(Exception ex) { log(ex); }
@@ -955,13 +1173,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(prefs.getBoolean("key_enable_experimental", false))
     {
-      ClassLoader moduleClassLoader = getClass().getClassLoader();
-      ClassLoader xposedClassLoader = moduleClassLoader.getParent();
-      ClassLoader packageClassLoader = param.classLoader;
-      
-      ReflectionUtils.setParentClassLoader(packageClassLoader, xposedClassLoader);
-      ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader);
-      
       com.gem.xperiaxposed.home.Hooks.installHooks();
     }
   } 

@@ -39,8 +39,12 @@
     <string name="desktop_rows_default">4</string>
     <string name="desktop_columns">Columns</string>
     <string name="desktop_columns_default">4</string>
+    <string name="desktop_disable_labels">Disable labels</string>
     <string name="desktop_multiline_labels">Multi-line labels</string>
+    <string name="desktop_disable_pagination">Disable page indicator</string>
     <string name="desktop_autohide_pagination">Auto-hide page indicator</string>
+    <string name="desktop_animation">Scroll animation</string>
+    <string name="desktop_animation_default">0</string>
     
     <string name="launcher_dock">Dock</string>
     <string name="dock_columns">Columns</string>
@@ -52,19 +56,23 @@
     <string name="launcher_folders">Folders</string>
     <string name="folder_columns">Columns</string>
     <string name="folder_columns_default">4</string>
-    <string name="folder_multiline_labels">Multi-line labels</string>
+    <string name="folder_disable_labels">@string/desktop_disable_labels</string>
+    <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
     
     <string name="launcher_drawer">Drawer</string>
     <string name="transparent_drawer">Transparency</string>
     <string name="transparent_drawer_summary">Transparent status bar, navigation bar and drawer background.</string>
-    <string name="menu_dark_bars">Dark bars for side menu</string>
     <string name="drawer_rows">Rows</string>
     <string name="drawer_rows_default">5</string>
     <string name="drawer_columns">Columns</string>
     <string name="drawer_columns_default">4</string>
+    <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
+    <string name="drawer_disable_pagination">@string/desktop_disable_pagination</string>
+    <string name="drawer_autohide_pagination">@string/desktop_autohide_pagination</string>
     <string name="disable_drawer_backplate">Hide backplate</string>
     <string name="remember_drawer_page">Remember current page</string>
     <string name="drawer_menu_opacity">Navigation menu opacity</string>
+    <string name="menu_dark_bars">Navigation menu dark bars</string>
     
     <string name="lockscreen">Lockscreen Settings</string>
     <string name="reboot_phone_lockscreen">Note</string>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- !!!!! don't translate _values and _drawables arrays !!!!! -->
+    <string-array name="desktop_rows_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="dock_columns_entries">
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="folder_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_rows_entries">
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="systemui_color_entries">
+        <item>默認</item>
+        <item>暗色系</item>
+        <item>亮色系</item>
+        <item>半透明</item>
+        <item>全透明</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_entries">
+        <item>默認</item>
+        <item>啟用</item>
+        <item>關閉</item>
+    </string-array>
+    <string-array name="about_theme_entries">
+        <item>亮色系</item>
+        <item>暗色系</item>
+    </string-array>
+    <string-array name="systemui_status_color_set_entries">
+        <item>自定義</item>
+        <item>隨系統或主題</item>
+    </string-array>
+    <string-array name="systemui_nav_color_set_entries">
+        <item>自定義</item>
+        <item>隨系統或主題</item>
+        <item>隨狀態欄</item>
+    </string-array>
+    <string-array name="tutorial_settings_menu_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_alphabetical_badge_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_hide_apps_titles">
+        <item>隱藏不常用應用程式</item>
+        <item>增加隱藏選項</item>
+        <item>解除隱藏狀態</item>
+    </string-array>
+    <string-array name="tutorial_unread_count_titles">
+        <item></item>
+        <item>請安裝"Missed It!"此應用</item>
+        <item>開啟通知存取能力</item>
+        <item>進入"Missed It!"設定</item>
+    </string-array>
+</resources>

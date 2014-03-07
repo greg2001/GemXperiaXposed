@@ -7,12 +7,12 @@
             android:title="@string/restart_launcher" 
             android:summary="@string/restart_launcher_summary"/>
          
-        <PreferenceCategory android:title="@string/launcher_experimental">
+        <PreferenceScreen android:title="@string/launcher_experimental">
             <CheckBoxPreference
                 android:key="key_enable_experimental"
                 android:title="@string/enable_experimental"
                 android:defaultValue="false"/>
-	        <PreferenceScreen android:title="@string/experimental_tutorial">
+	        <PreferenceCategory android:title="@string/experimental_tutorial">
 		        <Preference android:title="@string/settings_menu">
 		            <intent android:action=".TutorialActivity">
 		                <extra android:name="title" android:value="@string/settings_menu"/>
@@ -41,16 +41,16 @@
 		                <extra android:name="drawables" android:value="tutorial_unread_count_drawables"/>
 		            </intent>
 		        </Preference>
-		    </PreferenceScreen>
-	    </PreferenceCategory>
+		    </PreferenceCategory>
+	    </PreferenceScreen>
 	    
-        <PreferenceCategory android:title="@string/launcher_general">
+        <PreferenceScreen android:title="@string/launcher_general">
             <com.gem.util.GemSliderPreference
                 android:key="key_launcher_icon_size"
                 android:title="@string/launcher_icon_size"
 				android:defaultValue="100" 
                 minimum="50"
-                maximum="100"
+                maximum="150"
                 step="1"
                 currentValueFormat="%d%%"/>
             <com.gem.util.GemSliderPreference
@@ -58,7 +58,7 @@
                 android:title="@string/launcher_label_text_size"
                 android:defaultValue="100"
                 minimum="50"
-                maximum="100"
+                maximum="150"
                 step="1"
                 currentValueFormat="%d%%"/>
             <CheckBoxPreference
@@ -70,9 +70,9 @@
                 android:title="@string/all_widgets_resizable"
                 android:summary="@string/all_widgets_resizable_summary"
                 android:defaultValue="false"/>
-            </PreferenceCategory>
+        </PreferenceScreen>
             
-        <PreferenceCategory android:title="@string/launcher_desktop">        
+        <PreferenceScreen android:title="@string/launcher_desktop">        
             <CheckBoxPreference
                 android:key="key_transparent_desktop"
                 android:title="@string/transparent_desktop"
@@ -93,16 +93,35 @@
                 android:entryValues="@array/desktop_columns_entries"
                 android:defaultValue="@string/desktop_columns_default"/>            
             <CheckBoxPreference
+                android:key="key_desktop_disable_labels"
+                android:title="@string/desktop_disable_labels"
+                android:disableDependentsState="true"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
                 android:key="key_desktop_multiline_labels"
                 android:title="@string/desktop_multiline_labels"
+                android:dependency="key_desktop_disable_labels"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
+                android:key="key_desktop_disable_pagination"
+                android:title="@string/desktop_disable_pagination"
+                android:disableDependentsState="true"
                 android:defaultValue="false"/>
             <CheckBoxPreference
                 android:key="key_desktop_autohide_pagination"
                 android:title="@string/desktop_autohide_pagination"
+                android:dependency="key_desktop_disable_pagination"
                 android:defaultValue="false"/>
-            </PreferenceCategory>
+            <com.gem.util.GemListPreference
+                android:key="key_desktop_animation"
+                android:title="@string/desktop_animation"
+                android:dialogTitle="@string/desktop_animation"
+                android:entries="@array/desktop_animation_entries"
+                android:entryValues="@array/desktop_animation_values"
+                android:defaultValue="@string/desktop_animation_default"/>            
+            </PreferenceScreen>
             
-        <PreferenceCategory android:title="@string/launcher_dock">        
+        <PreferenceScreen android:title="@string/launcher_dock">        
             <com.gem.util.GemListPreference
                 android:key="key_dock_columns"
                 android:title="@string/dock_columns"
@@ -124,9 +143,9 @@
                 android:title="@string/large_dock_reflection"
                 android:dependency="key_disable_dock_reflection"
                 android:defaultValue="false"/>
-            </PreferenceCategory>
+        </PreferenceScreen>
             
-        <PreferenceCategory android:title="@string/launcher_folders">        
+        <PreferenceScreen android:title="@string/launcher_folders">        
             <com.gem.util.GemListPreference
                 android:key="key_folder_columns"
                 android:title="@string/folder_columns"
@@ -135,24 +154,26 @@
                 android:entryValues="@array/folder_columns_entries"
                 android:defaultValue="@string/folder_columns_default"/>            
             <CheckBoxPreference
+                android:key="key_folder_disable_labels"
+                android:title="@string/folder_disable_labels"
+                android:disableDependentsState="true"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
                 android:key="key_folder_multiline_labels"
                 android:title="@string/folder_multiline_labels"
+                android:dependency="key_folder_disable_labels"
                 android:defaultValue="false"/>
             <CheckBoxPreference
                 android:key="key_folder_disable_background_dim"
                 android:title="@string/folder_disable_background_dim"
                 android:defaultValue="false"/>
-            </PreferenceCategory>
+        </PreferenceScreen>
             
-        <PreferenceCategory android:title="@string/launcher_drawer">        
+        <PreferenceScreen android:title="@string/launcher_drawer">        
             <CheckBoxPreference
                 android:key="key_transparent_drawer"
                 android:title="@string/transparent_drawer"
                 android:summary="@string/transparent_drawer_summary"
-                android:defaultValue="false"/>
-            <CheckBoxPreference
-                android:key="key_menu_dark_bars"
-                android:title="@string/menu_dark_bars"
                 android:defaultValue="false"/>
             <com.gem.util.GemListPreference
                 android:key="key_drawer_rows"
@@ -169,12 +190,31 @@
                 android:entryValues="@array/drawer_columns_entries"
                 android:defaultValue="@string/drawer_columns_default"/>            
             <CheckBoxPreference
+                android:key="key_drawer_disable_labels"
+                android:title="@string/drawer_disable_labels"
+                android:disableDependentsState="true"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
+                android:key="key_drawer_disable_pagination"
+                android:title="@string/drawer_disable_pagination"
+                android:disableDependentsState="true"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
+                android:key="key_drawer_autohide_pagination"
+                android:title="@string/drawer_autohide_pagination"
+                android:dependency="key_drawer_disable_pagination"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
                 android:key="key_disable_drawer_backplate"
                 android:title="@string/disable_drawer_backplate"
                 android:defaultValue="false"/>
             <CheckBoxPreference
                 android:key="key_remember_drawer_page"
                 android:title="@string/remember_drawer_page"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
+                android:key="key_menu_dark_bars"
+                android:title="@string/menu_dark_bars"
                 android:defaultValue="false"/>
             <com.gem.util.GemSliderPreference
                 android:key="key_drawer_menu_opacity"
@@ -184,7 +224,7 @@
                 maximum="100"
                 step="1"
                 currentValueFormat="%d%%"/>
-            </PreferenceCategory>
+        </PreferenceScreen>
     </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/lockscreen">
