@@ -1,17 +1,22 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.home.Hooks.*;
+import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import android.content.*;
-import android.os.*;
-import android.text.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.text.TextUtils;
 
-import com.sonymobile.flix.debug.*;
-import com.sonymobile.home.badge.*;
-import com.sonymobile.home.data.*;
+import com.sonymobile.flix.debug.Logx;
+import com.sonymobile.home.badge.BadgeManager;
+import com.sonymobile.home.data.ActivityItem;
 
 public class MissedItReceiver extends BroadcastReceiver
 {

@@ -275,7 +275,11 @@
             android:title="@string/more_unlock_blinds"
             android:dependency="key_enable_standard_lockscreen"
             android:defaultValue="false"/>
-    </PreferenceScreen>
+        <CheckBoxPreference
+            android:key="key_volume_keys_wake"
+            android:title="@string/volume_keys_wake"
+            android:defaultValue="false"/>
+        </PreferenceScreen>
     
     <PreferenceScreen android:title="@string/systemui">
         <PreferenceScreen android:title="@string/systemui_colors">

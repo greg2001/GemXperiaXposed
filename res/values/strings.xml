@@ -90,6 +90,7 @@
     <string name="folder_disable_background_dim">Disable background dimming</string>
     <string name="enable_standard_lockscreen">Enable AOSP lockscreen</string>
     <string name="enable_standard_lockscreen_summary">Standard AOSP lockscreen with live wallpaper support.</string>
+    <string name="volume_keys_wake">Wake up with volume keys</string>
     
     <string name="systemui">SystemUI Settings</string>
     <string name="systemui_colors">Colors</string>

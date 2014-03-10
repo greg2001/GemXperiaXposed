@@ -3,28 +3,45 @@ package com.gem.xperiaxposed.home;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.*;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
-import com.gem.xperiaxposed.*;
-import com.sonymobile.flix.components.*;
-import com.sonymobile.home.*;
-import com.sonymobile.home.apptray.*;
+import com.gem.xperiaxposed.ClassHook;
+import com.gem.xperiaxposed.ReflectionUtils;
+import com.sonymobile.flix.components.Scene;
+import com.sonymobile.home.MainView;
+import com.sonymobile.home.apptray.AppTray;
+import com.sonymobile.home.apptray.AppTrayAdapter;
+import com.sonymobile.home.apptray.AppTrayDrawerAdapter;
 import com.sonymobile.home.apptray.AppTrayDrawerAdapter.AppTrayDrawerItemData;
+import com.sonymobile.home.apptray.AppTrayDrawerLoadHelper;
 import com.sonymobile.home.apptray.AppTrayDrawerLoadHelper.AppTrayDrawerItemType;
+import com.sonymobile.home.apptray.AppTrayDropZoneView;
+import com.sonymobile.home.apptray.AppTrayModel;
+import com.sonymobile.home.apptray.AppTrayPreferenceManager;
 import com.sonymobile.home.apptray.AppTrayPreferenceManager.SortMode;
-import com.sonymobile.home.badge.*;
-import com.sonymobile.home.data.*;
-import com.sonymobile.home.storage.*;
+import com.sonymobile.home.apptray.AppTrayPresenter;
+import com.sonymobile.home.apptray.AppTraySorter;
+import com.sonymobile.home.badge.BadgeManager;
+import com.sonymobile.home.data.Item;
+import com.sonymobile.home.storage.StorageManager;
 
-import de.robv.android.xposed.*;
+import de.robv.android.xposed.XC_MethodHook;
 
-public class Hooks
+public class ExperimentalHooks
 {
 
 ////////////////////////////////////////////////////////////
@@ -63,7 +80,7 @@ public class Hooks
           missedItReceiver = new MissedItReceiver((Context)param.args[0], (BadgeManager)param.getResult());
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
     
     /*
      * AppTray drop zone 
@@ -86,7 +103,7 @@ public class Hooks
         mTargets.add(0, Ids.hide_drop_area);
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
     
     /*
      * Hidden item filtering 
@@ -104,7 +121,7 @@ public class Hooks
         filterAppTrayItems((AppTraySorter)param.thisObject, (List<Item>)param.args[0]);
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     try {
     findAndHookMethod(AppTrayAdapter.class, "setModelItems",
@@ -127,7 +144,7 @@ public class Hooks
         }
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     try {
     findAndHookMethod(AppTraySorter.class, "sort",
@@ -141,7 +158,7 @@ public class Hooks
           param.args[0] = SortMode.ALPHABETICAL;
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     /*
      * Navigation drawer 
@@ -161,7 +178,7 @@ public class Hooks
         injectAppTrayDrawerItems((AppTrayDrawerLoadHelper)param.thisObject, (SortMode)param.args[0], (Map<String, List<AppTrayDrawerItemData>>)param.args[3]);
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     try {
     findAndHookMethod(AppTrayPresenter.class, "onAppTrayDrawerItemClicked",
@@ -174,7 +191,7 @@ public class Hooks
         onAppTrayDrawerItemClicked((AppTrayPresenter)param.thisObject, (AppTrayDrawerItemData)param.args[0]);
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     try {
     findAndHookMethod(AppTrayPresenter.class, "getCategoryTitleFromSortMode",
@@ -192,7 +209,7 @@ public class Hooks
             + " (" + String.format("%d", numberOfHiddenActivities) + ")");
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     try {
     findAndHookMethod(AppTrayDrawerAdapter.class, "convertSortModeToItemType",
@@ -206,7 +223,7 @@ public class Hooks
           param.setResult(APPTRAY_DRAWER_ITEM_TYPE_HIDDEN);
       }
     });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
 
     /*
      * Badges
@@ -224,7 +241,7 @@ public class Hooks
             param.setResult(true);
         }
       });
-    } catch(Exception ex) { log(ex); }
+    } catch(Throwable ex) { log(ex); }
   }
   
 ////////////////////////////////////////////////////////////
@@ -284,7 +301,7 @@ public class Hooks
         }
       };
     }
-    catch(Exception ex)
+    catch(Throwable ex)
     {
       log(ex);
     }

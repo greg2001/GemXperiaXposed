@@ -1,19 +1,26 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.home.Hooks.*;
+import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
 import static com.sonymobile.flix.components.Component.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 
-import com.gem.xperiaxposed.*;
+import com.gem.xperiaxposed.ClassHook;
 import com.sonyericsson.home.R;
-import com.sonymobile.flix.components.*;
-import com.sonymobile.flix.components.util.*;
-import com.sonymobile.flix.debug.*;
-import com.sonymobile.home.apptray.*;
-import com.sonymobile.home.data.*;
-import com.sonymobile.home.transfer.*;
+import com.sonymobile.flix.components.Component;
+import com.sonymobile.flix.components.ComponentListeners;
+import com.sonymobile.flix.components.Image;
+import com.sonymobile.flix.components.Scene;
+import com.sonymobile.flix.components.util.Layouter;
+import com.sonymobile.flix.debug.Logx;
+import com.sonymobile.home.apptray.AppTray;
+import com.sonymobile.home.apptray.AppTrayDropZoneView;
+import com.sonymobile.home.apptray.AppTrayModel;
+import com.sonymobile.home.data.ActivityItem;
+import com.sonymobile.home.transfer.DropTarget;
+import com.sonymobile.home.transfer.Transferable;
 
 public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
 {

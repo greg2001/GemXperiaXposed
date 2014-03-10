@@ -1,16 +1,20 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.home.Hooks.*;
+import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.content.*;
+import android.content.Context;
+import android.content.SharedPreferences;
 
-import com.gem.xperiaxposed.*;
-import com.sonymobile.home.apptray.*;
-import com.sonymobile.home.data.*;
-import com.sonymobile.home.model.*;
+import com.gem.xperiaxposed.ClassHook;
+import com.sonymobile.home.apptray.AppTrayModel;
+import com.sonymobile.home.data.ActivityItem;
+import com.sonymobile.home.data.Item;
+import com.sonymobile.home.data.ItemLocation;
+import com.sonymobile.home.model.PackageHandler;
 
 public class AppTrayModelHook extends ClassHook<AppTrayModel>
 {
