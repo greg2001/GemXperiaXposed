@@ -15,9 +15,6 @@ import android.view.ViewManager;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.gem.xperiaxposed.home.Ids;
-
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -35,10 +32,11 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
 ////////////////////////////////////////////////////////////
   
-  public static final String ANDROID = "android";
+  public static final String ANDROID  = "android";
   public static final String SYSTEMUI = "com.android.systemui";
-  public static final String SE_HOME = "com.sonyericsson.home";
-  public static final String SE_LOCK = "com.sonyericsson.lockscreen.uxpnxt";
+  public static final String SE_HOME  = "com.sonyericsson.home";
+  public static final String SE_LOCK  = "com.sonyericsson.lockscreen.uxpnxt";
+  
   public static final String KEYGUARD_PACKAGE = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) ?
     "com.android.keyguard" : "com.android.internal.policy.impl.keyguard";
   
@@ -176,120 +174,9 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     }    
     else if(param.packageName.equals(SE_HOME))
     {
-      ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
       prefs.reload();
-
-      int desktopRows = Integer.parseInt(prefs.getString("key_desktop_rows", "4"));
-      if(desktopRows != 4)
-      {
-//      unfortunately, way too small 
-//      float height = param.res.getDimension(param.res.getIdentifier("desktop_cell_height", "dimen", SE_HOME));
-        float height = res.getDimension(R.dimen.desktop_cell_height);
-        height *= 4.0/desktopRows;
-        res.setDimension(R.dimen.desktop_cell_height, height);
-
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_rows", desktopRows);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_height", res.fwd(R.dimen.desktop_cell_height));
-      }
-
-      int desktopColumns = Integer.parseInt(prefs.getString("key_desktop_columns", "4"));
-      if(desktopColumns != 4)
-      {
-        float width = param.res.getDimension(param.res.getIdentifier("desktop_cell_width", "dimen", SE_HOME));
-        width *= 4.0/desktopColumns;
-        res.setDimension(R.dimen.desktop_cell_width, width);
-
-        param.res.setReplacement(SE_HOME, "integer", "desktop_grid_columns", desktopColumns);
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_cell_width", res.fwd(R.dimen.desktop_cell_width));
-      }
-      
-      if(prefs.getBoolean("key_desktop_multiline_labels", false))
-        param.res.setReplacement(SE_HOME, "bool", "enable_desktop_multi_line_labels", true);
-      if(prefs.getBoolean("key_desktop_autohide_pagination", false))
-        param.res.setReplacement(SE_HOME, "bool", "desktop_pagination_autohide", true);
-
-      int dockColumns = Integer.parseInt(prefs.getString("key_dock_columns", "5"));
-      if(dockColumns != 5)
-      {
-        float width = param.res.getDimension(param.res.getIdentifier("stage_cell_width", "dimen", SE_HOME));
-        width *= 5.0/dockColumns;
-        res.setDimension(R.dimen.stage_cell_width, width);
-
-        param.res.setReplacement(SE_HOME, "integer", "stage_grid_columns", dockColumns);
-        param.res.setReplacement(SE_HOME, "integer", "max_stage_items", dockColumns-1);
-        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_width", res.fwd(R.dimen.stage_cell_width));
-        param.res.setReplacement(SE_HOME, "dimen", "stage_cell_height", res.fwd(R.dimen.stage_cell_height));
-      }
-      
-      int drawerRows = Integer.parseInt(prefs.getString("key_drawer_rows", "5"));
-      if(drawerRows != 5)
-      {
-//      unfortunately, way too small 
-//      float height = param.res.getDimension(param.res.getIdentifier("apptray_cell_height", "dimen", SE_HOME));
-        float height = res.getDimension(R.dimen.apptray_cell_height);
-        height *= 5.0/drawerRows;
-        res.setDimension(R.dimen.apptray_cell_height, height);
-
-        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_rows", drawerRows);
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_height", res.fwd(R.dimen.apptray_cell_height));
-      }
-
-      int drawerColumns = Integer.parseInt(prefs.getString("key_drawer_columns", "4"));
-      if(drawerColumns != 4)
-      {
-        float width = param.res.getDimension(param.res.getIdentifier("apptray_cell_width", "dimen", SE_HOME));
-        width *= 4.0/drawerColumns;
-        res.setDimension(R.dimen.apptray_cell_width, width);
-
-        param.res.setReplacement(SE_HOME, "integer", "apptray_grid_columns", drawerColumns);
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_cell_width", res.fwd(R.dimen.apptray_cell_width));
-      }
-      
-      int iconSize = prefs.getInt("key_launcher_icon_size", 100);
-      if(iconSize != 100)
-      {
-        float width = param.res.getDimension(param.res.getIdentifier("icon_image_width", "dimen", SE_HOME));
-        width *= iconSize/100.0;
-        res.setDimension(R.dimen.icon_image_width, width);
-        
-        float height = param.res.getDimension(param.res.getIdentifier("icon_image_height", "dimen", SE_HOME));
-        height *= iconSize/100.0;
-        res.setDimension(R.dimen.icon_image_height, height);
-        
-        param.res.setReplacement(SE_HOME, "dimen", "icon_image_width", res.fwd(R.dimen.icon_image_height));
-        param.res.setReplacement(SE_HOME, "dimen", "icon_image_height", res.fwd(R.dimen.icon_image_height));
-      }
-
-      int textSize = prefs.getInt("key_launcher_label_text_size", 100);
-      if(textSize != 100)
-      {
-        float size = param.res.getDimension(param.res.getIdentifier("icon_label_text_size", "dimen", SE_HOME));
-        size *= textSize/100.0;
-        res.setDimension(R.dimen.icon_label_text_size, size);
-        
-        param.res.setReplacement(SE_HOME, "dimen", "icon_label_text_size", res.fwd(R.dimen.icon_label_text_size));
-        param.res.setReplacement(SE_HOME, "dimen", "desktop_icon_label_max_text_size", res.fwd(R.dimen.icon_label_text_size));
-        param.res.setReplacement(SE_HOME, "dimen", "apptray_icon_label_max_text_size", res.fwd(R.dimen.icon_label_text_size));
-      }
-      
-      if(prefs.getBoolean("key_large_dock_reflection", false))
-      {
-        float size = param.res.getDimension(param.res.getIdentifier("stage_mirror_size", "dimen", SE_HOME));
-        size *= 2;
-        res.setDimension(R.dimen.stage_mirror_size, size);
-
-        param.res.setReplacement(SE_HOME, "dimen", "stage_mirror_size", res.fwd(R.dimen.stage_mirror_size));
-      }
-
-      if(prefs.getBoolean("key_enable_experimental", false))
-      {
-        param.res.setReplacement(Ids.home_apptray_dropzone_hide, res.fwd(R.drawable.home_apptray_dropzone_hide));
-        param.res.setReplacement(Ids.home_apptray_dropzone_unhide, res.fwd(R.drawable.home_apptray_dropzone_unhide));
-        param.res.setReplacement(Ids.app_tray_drawer_list_item_categories_hidden, res.fwd(R.string.app_tray_drawer_list_item_categories_hidden));
-        param.res.setReplacement(Ids.app_tray_drawer_list_item_categories_settings, res.fwd(R.string.app_tray_drawer_list_item_categories_settings));
-        param.res.setReplacement(Ids.drawer_icn_hidden, res.fwd(R.drawable.drawer_icn_hidden));
-        param.res.setReplacement(Ids.drawer_icn_settings, res.fwd(R.drawable.drawer_icn_settings));
-      }
+      ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
+      com.gem.xperiaxposed.home.HomeResources.updateResources(param.res, res);
     }
   }
 

@@ -19,6 +19,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.gem.xperiaxposed.AutoHook;
 import com.gem.xperiaxposed.ClassHook;
 import com.gem.xperiaxposed.ReflectionUtils;
 import com.sonymobile.flix.components.Scene;
@@ -38,10 +39,11 @@ import com.sonymobile.home.apptray.AppTraySorter;
 import com.sonymobile.home.badge.BadgeManager;
 import com.sonymobile.home.data.Item;
 import com.sonymobile.home.storage.StorageManager;
+import com.sonymobile.home.transfer.TransferView;
 
-import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 
-public class ExperimentalHooks
+public class ExperimentalHooks extends AutoHook
 {
 
 ////////////////////////////////////////////////////////////
@@ -49,13 +51,17 @@ public class ExperimentalHooks
   public static SortMode HIDDEN;
   public static AppTrayDrawerItemType APPTRAY_DRAWER_ITEM_TYPE_HIDDEN;
   public static AppTrayDrawerItemType APPTRAY_DRAWER_ITEM_TYPE_SETTINGS;
+
   public static int numberOfActivities = 0;
   public static int numberOfHiddenActivities = 0;
-  public static MissedItReceiver missedItReceiver = null;
+  
+////////////////////////////////////////////////////////////
+
+  private MissedItReceiver missedItReceiver = null;
   
 ////////////////////////////////////////////////////////////
   
-  public static void installHooks()
+  public ExperimentalHooks()
   {
     ReflectionUtils.addToEnum(AppTrayPreferenceManager.SortMode.class, "HIDDEN", 4, "hidden");
     ReflectionUtils.addToEnum(AppTrayDrawerLoadHelper.AppTrayDrawerItemType.class, "APPTRAY_DRAWER_ITEM_TYPE_HIDDEN", 9);
@@ -64,189 +70,91 @@ public class ExperimentalHooks
     APPTRAY_DRAWER_ITEM_TYPE_HIDDEN = AppTrayDrawerItemType.valueOf("APPTRAY_DRAWER_ITEM_TYPE_HIDDEN");
     APPTRAY_DRAWER_ITEM_TYPE_SETTINGS = AppTrayDrawerItemType.valueOf("APPTRAY_DRAWER_ITEM_TYPE_SETTINGS");
     
-    /*
-     * MissedIt broadcast receiver
-     */
-    
-    try {
-    findAndHookMethod(StorageManager.class, "getBadgeManager",
-      Context.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void afterHookedMethod(MethodHookParam param) throws Throwable
-      {
-        if(param.getResult() != null && missedItReceiver == null)
-          missedItReceiver = new MissedItReceiver((Context)param.args[0], (BadgeManager)param.getResult());
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-    
-    /*
-     * AppTray drop zone 
-     */
-
     ClassHook.hookClass(AppTrayDropZoneView.class, AppTrayDropZoneViewHook.class);
     ClassHook.hookClass(AppTrayModel.class, AppTrayModelHook.class);
-
-    /*
-     * Hide/unhide drop zone registration 
-     */
-
-    try {
-    hookAllConstructors(com.sonymobile.home.transfer.TransferView.class, new XC_MethodHook() 
-    {
-      @Override
-      protected void afterHookedMethod(MethodHookParam param) throws Throwable
-      {
-        List<Integer> mTargets = getField(param.thisObject, "mTargets");
-        mTargets.add(0, Ids.hide_drop_area);
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-    
-    /*
-     * Hidden item filtering 
-     */
-
-    try {
-    findAndHookMethod(AppTraySorter.class, "filterItemsIfNeeded",
-      List.class,
-      AppTrayPreferenceManager.SortMode.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        filterAppTrayItems((AppTraySorter)param.thisObject, (List<Item>)param.args[0]);
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTrayAdapter.class, "setModelItems",
-      List.class,
-      boolean.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        AppTraySorter sorter = getField(getAppTray(param.thisObject), AppTraySorter.class);
-        if(sorter.getSortMode() == SortMode.OWN_ORDER)
-        {
-          if(param.args[0] != null)
-          {
-            List<Item> items = new ArrayList<Item>((List<Item>)param.args[0]);
-            filterAppTrayItems(sorter, items);
-            param.args[0] = items;
-          }
-        }
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTraySorter.class, "sort",
-      AppTrayPreferenceManager.SortMode.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        if(param.args[0] == HIDDEN)
-          param.args[0] = SortMode.ALPHABETICAL;
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    /*
-     * Navigation drawer 
-     */
-
-    try {
-    findAndHookMethod(AppTrayDrawerLoadHelper.class, "loadItemData",
-      AppTrayPreferenceManager.SortMode.class,
-      int.class,
-      int.class,
-      Map.class,
-      new XC_MethodHook() 
-    {
-      @Override
-      protected void afterHookedMethod(MethodHookParam param) throws Throwable
-      {
-        injectAppTrayDrawerItems((AppTrayDrawerLoadHelper)param.thisObject, (SortMode)param.args[0], (Map<String, List<AppTrayDrawerItemData>>)param.args[3]);
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTrayPresenter.class, "onAppTrayDrawerItemClicked",
-      AppTrayDrawerAdapter.AppTrayDrawerItemData.class,
-      new XC_MethodHook()
-    {
-      @Override
-      protected void afterHookedMethod(MethodHookParam param) throws Throwable
-      {
-        onAppTrayDrawerItemClicked((AppTrayPresenter)param.thisObject, (AppTrayDrawerItemData)param.args[0]);
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTrayPresenter.class, "getCategoryTitleFromSortMode",
-      AppTrayPreferenceManager.SortMode.class,
-      new XC_MethodHook()
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        if(param.args[0] == SortMode.ALPHABETICAL)
-          param.setResult(getResources(param.thisObject).getString(com.sonyericsson.home.R.string.app_tray_drawer_list_item_categories_alphabetical) 
-            + " (" + String.format("%d", numberOfActivities) + ")");
-        else if(param.args[0] == HIDDEN)
-          param.setResult(getResources(param.thisObject).getString(Ids.app_tray_drawer_list_item_categories_hidden) 
-            + " (" + String.format("%d", numberOfHiddenActivities) + ")");
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    try {
-    findAndHookMethod(AppTrayDrawerAdapter.class, "convertSortModeToItemType",
-      AppTrayPreferenceManager.SortMode.class,
-      new XC_MethodHook()
-    {
-      @Override
-      protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-      {
-        if(param.args[0] == HIDDEN)
-          param.setResult(APPTRAY_DRAWER_ITEM_TYPE_HIDDEN);
-      }
-    });
-    } catch(Throwable ex) { log(ex); }
-
-    /*
-     * Badges
-     */
-    
-    try {
-    findAndHookMethod(AppTrayDrawerAdapter.class, "updateNumberOfMostUsedItems",
-      int.class,
-      new XC_MethodHook()
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
-        {
-          if(updateNumberOfActivities((AppTrayDrawerAdapter)param.thisObject))
-            param.setResult(true);
-        }
-      });
-    } catch(Throwable ex) { log(ex); }
   }
   
+  public void after_getBadgeManager(StorageManager thiz, Context context, MethodHookParam param)
+  {
+    if(param.getResult() != null && missedItReceiver == null)
+      missedItReceiver = new MissedItReceiver(context, (BadgeManager)param.getResult());
+  }
+  
+  public void after_all_constructors(TransferView thiz)
+  {
+    List<Integer> targets = getField(thiz, "mTargets");
+    targets.add(0, Ids.hide_drop_area);
+  }
+  
+  public void before_filterItemsIfNeeded(AppTraySorter thiz, List<Item> items, SortMode mode)
+  {
+    filterAppTrayItems(thiz, items);
+  }
+
+  public void before_setModelItems(AppTrayAdapter thiz, List<Item> items, boolean b, MethodHookParam param)
+  {
+    AppTraySorter sorter = getField(getAppTray(thiz), "mAppTraySorter");
+    if(sorter.getSortMode() == SortMode.OWN_ORDER)
+    {
+      if(items != null)
+      {
+        items = new ArrayList<Item>(items);
+        filterAppTrayItems(sorter, items);
+        param.args[0] = items;
+      }
+    }
+  }
+
+  public void before_sort(AppTraySorter thiz, SortMode mode, MethodHookParam param)
+  {
+    if(mode == HIDDEN)
+      param.args[0] = SortMode.ALPHABETICAL;
+  }
+
+  public void after_loadItemData(AppTrayDrawerLoadHelper thiz, SortMode mode, int i1, int i2, Map<String, List<AppTrayDrawerItemData>> items)
+  {
+    injectAppTrayDrawerItems(thiz, mode, items);
+  }
+
+  public void after_onAppTrayDrawerItemClicked(AppTrayPresenter thiz, AppTrayDrawerItemData data)
+  {
+    if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_SETTINGS)
+      callMethod(thiz, "launchApplication", data.mIntent);
+    else if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_HIDDEN)
+      callMethod(thiz, "handleSortModeItemClicked", HIDDEN);
+  }
+
+  public Object before_getCategoryTitleFromSortMode(AppTrayPresenter thiz, SortMode mode)
+  {
+    if(mode == SortMode.ALPHABETICAL)
+      return getResources(thiz).getString(com.sonyericsson.home.R.string.app_tray_drawer_list_item_categories_alphabetical) 
+        + " (" + String.format("%d", numberOfActivities) + ")";
+    else if(mode == HIDDEN)
+      return getResources(thiz).getString(Ids.app_tray_drawer_list_item_categories_hidden) 
+        + " (" + String.format("%d", numberOfHiddenActivities) + ")";
+    else
+      return NONE;
+  }
+
+  public Object before_convertSortModeToItemType(AppTrayDrawerAdapter thiz, SortMode mode)
+  {
+    if(mode == HIDDEN)
+      return APPTRAY_DRAWER_ITEM_TYPE_HIDDEN;
+    else
+      return NONE;
+  }
+
+  public Object after_updateNumberOfMostUsedItems(AppTrayDrawerAdapter thiz, int i)
+  {
+    AppTrayDrawerLoadHelper loadHelper = getField(thiz, "mLoadHelper");
+    callMethod(thiz, "setBadgeText", String.format("%d", numberOfActivities), loadHelper.getCategoriesTitle(), AppTrayDrawerItemType.APPTRAY_DRAWER_ITEM_TYPE_ALPHABETICAL);
+    callMethod(thiz, "setBadgeText", String.format("%d", numberOfHiddenActivities), loadHelper.getCategoriesTitle(), APPTRAY_DRAWER_ITEM_TYPE_HIDDEN);
+    return true;
+  }
+
 ////////////////////////////////////////////////////////////
   
-  public static boolean filterAppTrayItems(AppTraySorter sorter, List<Item> items)
+  private boolean filterAppTrayItems(AppTraySorter sorter, List<Item> items)
   {
     AppTrayModel appTrayModel = getField(sorter, "mOwnOrderModel");
     AppTrayModelHook appTrayModelHook = AppTrayModelHook.getHook(appTrayModel);
@@ -266,7 +174,7 @@ public class ExperimentalHooks
     return !items.isEmpty();
   }
   
-  public static void injectAppTrayDrawerItems(AppTrayDrawerLoadHelper loadHelper, SortMode sortMode, Map<String, List<AppTrayDrawerItemData>> map)
+  private void injectAppTrayDrawerItems(AppTrayDrawerLoadHelper loadHelper, SortMode sortMode, Map<String, List<AppTrayDrawerItemData>> map)
   {
     Resources res = getResources(loadHelper);
     int iconSize = res.getDimensionPixelSize(com.sonyericsson.home.R.dimen.apptray_drawer_icon_width);
@@ -344,27 +252,11 @@ public class ExperimentalHooks
     }
   }
   
-  public static void onAppTrayDrawerItemClicked(AppTrayPresenter presenter, AppTrayDrawerItemData data)
-  {
-    if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_SETTINGS)
-      callMethod(presenter, "launchApplication", data.mIntent);
-    else if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_HIDDEN)
-      callMethod(presenter, "handleSortModeItemClicked", HIDDEN);
-  }
-  
-  public static boolean updateNumberOfActivities(AppTrayDrawerAdapter adapter)
-  {
-    AppTrayDrawerLoadHelper loadHelper = getField(adapter, "mLoadHelper");
-    callMethod(adapter, "setBadgeText", String.format("%d", numberOfActivities), loadHelper.getCategoriesTitle(), AppTrayDrawerItemType.APPTRAY_DRAWER_ITEM_TYPE_ALPHABETICAL);
-    callMethod(adapter, "setBadgeText", String.format("%d", numberOfHiddenActivities), loadHelper.getCategoriesTitle(), APPTRAY_DRAWER_ITEM_TYPE_HIDDEN);
-    return true;
-  }
-  
 ////////////////////////////////////////////////////////////
   
   public static Context getContext(Object o)
   {
-    return getField(o, Context.class);
+    return getField(o, "mContext");
   }
 
   public static Resources getResources(Object o)
@@ -374,7 +266,7 @@ public class ExperimentalHooks
 
   public static Scene getScene(Object o)
   {
-    return getField(o, Scene.class);
+    return getField(o, "mScene");
   }
 
   public static MainView getMainView(Object o)
@@ -384,16 +276,11 @@ public class ExperimentalHooks
 
   public static AppTray getAppTray(Object o)
   {
-    return getField(getMainView(o), AppTray.class);
+    return getField(getMainView(o), "mAppTray");
   }
   
-  static <T> T getField(Object o, Class<T> clazz)
-  {
-    return getField(o, "m" + clazz.getSimpleName());
-  }
-
   @SuppressWarnings("unchecked")
-  static <T> T getField(Object o, String name)
+  public static <T> T getField(Object o, String name)
   {
     return (T)getObjectField(o, name);
   }

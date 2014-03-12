@@ -4,6 +4,7 @@ import static com.gem.xperiaxposed.XposedMain.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import android.appwidget.AppWidgetProviderInfo;
@@ -14,21 +15,38 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gem.xperiaxposed.AutoHook;
+import com.sonymobile.flix.components.Component;
+import com.sonymobile.flix.components.Image;
 import com.sonymobile.flix.components.Scene;
 import com.sonymobile.flix.util.Animation;
+import com.sonymobile.grid.GridRect;
+import com.sonymobile.home.HomeFragment;
 import com.sonymobile.home.MainView;
 import com.sonymobile.home.apptray.AppTray;
+import com.sonymobile.home.apptray.AppTrayDrawerView;
 import com.sonymobile.home.apptray.AppTrayPageIndicatorView;
+import com.sonymobile.home.apptray.AppTrayPageView;
 import com.sonymobile.home.apptray.AppTrayPresenter;
 import com.sonymobile.home.apptray.AppTrayView;
+import com.sonymobile.home.bitmap.MirrorBitmapDrawable;
+import com.sonymobile.home.cui.CuiWidgetLoadHelper;
 import com.sonymobile.home.data.Item;
 import com.sonymobile.home.desktop.Desktop;
 import com.sonymobile.home.desktop.DesktopView;
+import com.sonymobile.home.folder.OpenFolderAdapter;
+import com.sonymobile.home.presenter.view.AdvWidgetItemView;
 import com.sonymobile.home.presenter.view.IconLabelView;
 import com.sonymobile.home.presenter.view.ItemViewCreatorBase;
+import com.sonymobile.home.stage.StageView;
+import com.sonymobile.home.textview.TextViewUtilities;
 import com.sonymobile.home.ui.pageview.PageViewInteractionListener;
+import com.sonymobile.home.ui.widget.HomeAdvWidget;
+import com.sonymobile.home.ui.widget.HomeAdvWidgetManager;
+import com.sonymobile.home.ui.widget.HomeAppWidgetManager;
+import com.sonymobile.ui.support.SystemUiVisibilityWrapper;
 
-import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -39,32 +57,27 @@ public class HomeHooks
 
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookTransparency(XC_LoadPackage.LoadPackageParam param)
   {
     final int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
-    try {
-    findAndHookMethod("com.sonymobile.home.util.SystemUiExtensions", param.classLoader, "getSystemUiBackgroundColor", Context.class, new XC_MethodReplacement() 
+    new AutoHook()
     {
-      @Override
-      protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+      public Object before_getSystemUiBackgroundColor(com.sonymobile.home.util.SystemUiExtensions thiz, Context c)
       {
         return system_ui_transparent_background;
       }
-    });
-    } catch(Throwable ex) { log(ex); }
+    };
     
     if(!prefs.getBoolean("key_menu_dark_bars", false))
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.apptray.AppTrayPresenter", param.classLoader, "setSystemUiTransparent", boolean.class, new XC_MethodReplacement() 
+      new AutoHook()
       {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        public Object before_setSystemUiTransparent(AppTrayPresenter thiz, boolean b)
         {
-          return null;
+          return VOID;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     final boolean transparentDesktop = prefs.getBoolean("key_transparent_desktop", false);
@@ -72,165 +85,129 @@ public class HomeHooks
 
     if(transparentDesktop || transparentDrawer)
     {
-      // transparent SystemUI
-      try {
-      hookAllConstructors(findClass("com.sonymobile.home.MainView", param.classLoader), new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(MainView thiz)
         {
-          setFullTransparent((View)param.thisObject, transparentDesktop);
+          setFullTransparent(thiz, transparentDesktop);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.MainView", param.classLoader, "showApptray", boolean.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+
+        public void after_showApptray(MainView thiz, boolean show)
         {
-          if((Boolean)param.args[0])
-            setFullTransparent((View)param.thisObject, transparentDrawer);
+          if(show)
+            setFullTransparent(thiz, transparentDrawer);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.MainView", param.classLoader, "showDesktop", boolean.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public void after_showDesktop(MainView thiz, boolean show)
         {
-          if((Boolean)param.args[0])
-            setFullTransparent((View)param.thisObject, transparentDesktop);
+          if(show)
+            setFullTransparent(thiz, transparentDesktop);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.HomeFragment", param.classLoader, "setFocused", boolean.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+
+        public void after_setFocused(HomeFragment thiz, boolean focused)
         {
-          if((Boolean)param.args[0])
+          if(focused)
           {
-            Object mainView = getObjectField(param.thisObject, "mMainView");
+            MainView mainView = thiz.getMainView();
             if(mainView != null)
             {
               if((Boolean)callMethod(mainView, "isDesktopOpen"))
-                setFullTransparent((View)mainView, transparentDesktop);
+                setFullTransparent(mainView, transparentDesktop);
               else if((Boolean)callMethod(mainView, "isAppTrayOpen"))
-                setFullTransparent((View)mainView, transparentDrawer);
+                setFullTransparent(mainView, transparentDrawer);
             }
           }
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.ui.support.SystemUiVisibilityWrapper", param.classLoader, "apply", new XC_MethodHook() 
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        
+        public void before_apply(SystemUiVisibilityWrapper thiz)
         {
-          Object mainView = getObjectField(param.thisObject, "mView");
+          Object mainView = getObjectField(thiz, "mView");
           if(mainView != null)
           {
             if((Boolean)callMethod(mainView, "isDesktopOpen"))
             {
               if(transparentDesktop)
-                callMethod(param.thisObject, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
+                callMethod(thiz, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
             }
             else if((Boolean)callMethod(mainView, "isAppTrayOpen"))
             {
               if(transparentDrawer)
-                callMethod(param.thisObject, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
+                callMethod(thiz, "setFlag", SYSTEM_UI_FLAG_FULL_TRANSPARENCY, true);
             }
           }
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+        
+        private void setFullTransparent(View view, boolean value)
+        {
+          if(value)
+            view.setSystemUiVisibility(view.getSystemUiVisibility() | SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
+          else
+            view.setSystemUiVisibility(view.getSystemUiVisibility() & ~SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
+        }
+      };
     }
 
     if(transparentDrawer)
     {
-      try {
-      hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayView", param.classLoader), new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(AppTrayView thiz)
         {
-          setIntField(param.thisObject, "mBackgroundColor", 0);
+          setIntField(thiz, "mBackgroundColor", 0);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
   
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookFont(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_condensed_font", false))
     {
-      final Typeface CONDENSED_FONT = Typeface.createFromFile("/system/fonts/RobotoCondensed-Regular.ttf");
-      try {
-      findAndHookMethod("com.sonymobile.home.textview.TextViewUtilities", param.classLoader, "createTextView", 
-                        Context.class, float.class, int.class,
-                        new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        Typeface CONDENSED_FONT = Typeface.createFromFile("/system/fonts/RobotoCondensed-Regular.ttf");
+        
+        public void after_createTextView(TextViewUtilities thiz, Context c, float f, int i, MethodHookParam param)
         {
           ((TextView)param.getResult()).getPaint().setTypeface(CONDENSED_FONT);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.textview.TextViewUtilities", param.classLoader, "createTextView", 
-                        Context.class, String.class, float.class, int.class, int.class, Rect.class, Typeface.class, int.class, 
-                        new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public void after_createTextView(TextViewUtilities thiz, Context c, String s, float f, int i1, int i2, Rect r, Typeface t, int i3, MethodHookParam param)
         {
           ((TextView)param.getResult()).getPaint().setTypeface(CONDENSED_FONT);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
   
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookLayout(XC_LoadPackage.LoadPackageParam param)
   {
     final boolean desktop_disable_pagination = prefs.getBoolean("key_desktop_disable_pagination", false);
     final boolean drawer_disable_pagination = prefs.getBoolean("key_drawer_disable_pagination", false);
     if(desktop_disable_pagination || drawer_disable_pagination)
     {
-      try {
-      findAndHookMethod(MainView.class, "onSceneCreated", 
-        Scene.class,
-        int.class,
-        int.class,
-        new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        void after_onSceneCreated(MainView thiz, Scene scene, int i1, int i2)
         {
-          MainView mainView = (MainView)param.thisObject;
           if(desktop_disable_pagination)
           {
-            Desktop desktop = (Desktop)getObjectField(mainView, "mDesktop");
+            Desktop desktop = (Desktop)getObjectField(thiz, "mDesktop");
             desktop.getView().removeChild(desktop.getPresenter().getPageIndicatorView());
           }
           if(drawer_disable_pagination)
           {
-            AppTray appTray = (AppTray)getObjectField(mainView, "mAppTray");
+            AppTray appTray = (AppTray)getObjectField(thiz, "mAppTray");
             appTray.getView().removeChild(appTray.getPresenter().getPageIndicatorView());
           }
         }
-      });      
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     final boolean desktop_disable_labels = prefs.getBoolean("key_desktop_disable_labels", false);
@@ -238,254 +215,193 @@ public class HomeHooks
     final boolean drawer_disable_labels = prefs.getBoolean("key_drawer_disable_labels", false);
     if(desktop_disable_labels || folder_disable_labels || drawer_disable_labels)
     {
-      try {
-      findAndHookMethod(ItemViewCreatorBase.class, "includedLabel", 
-        Item.class,
-        new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public Object after_includedLabel(ItemViewCreatorBase thiz, Item item)
         {
-          Item item = (Item)param.args[0];
           String name = item.getPageViewName();
           if(desktop_disable_labels && "desktop".equals(name))
-            param.setResult(false);
+            return false;
           if(folder_disable_labels && "folder".equals(name))
-            param.setResult(false);
+            return false;
           if(drawer_disable_labels && "apptray".equals(name))
-            param.setResult(false);
+            return false;
+          else
+            return NONE;
         }
-      });      
-      } catch(Throwable ex) { log(ex); }
 
-      try {
-      findAndHookMethod(IconLabelView.class, "setMaxTextSize", 
-        int.class,
-        new XC_MethodHook() 
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        public Object before_setMaxTextSize(IconLabelView thiz, int size)
         {
-          if(! getBooleanField(param.thisObject, "mIncludedLabel"))
-            param.setResult(null);
+          if(! getBooleanField(thiz, "mIncludedLabel"))
+            return VOID;
+          else
+            return NONE;
         }
-      });      
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
   
 ////////////////////////////////////////////////////////////
   
+  @SuppressWarnings("unused")
   public static void hookDesktop(XC_LoadPackage.LoadPackageParam param)
   {
     final int desktop_animation = Integer.valueOf(prefs.getString("key_desktop_animation", "0"));
     if(desktop_animation != 0)
     {
-      try {
-      hookAllConstructors(DesktopView.class, new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(DesktopView thiz)
         {
-          setIntField(param.thisObject, "mAnimNbr", desktop_animation);
+          setIntField(thiz, "mAnimNbr", desktop_animation);
         }
-      });      
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
   
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookDock(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_disable_dock_stage", false))
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.stage.StageView", param.classLoader, "updateBackground", new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_updateBackground(StageView thiz)
         {
-          callMethod(getObjectField(param.thisObject, "mBackground"), "setBitmap", (Object)null);
+          ((Image)getObjectField(thiz, "mBackground")).setBitmap(null);
         }
-      });      
-      } catch(Throwable ex) { log(ex); }
+      };
     }
       
     if(prefs.getBoolean("key_disable_dock_reflection", false))
     {
-      try {
-      hookAllConstructors(findClass("com.sonymobile.home.bitmap.MirrorBitmapDrawable", param.classLoader), new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(MirrorBitmapDrawable thiz)
         {
-          setBooleanField(param.thisObject, "mMirror", false);
+          thiz.setMirrorEnabled(false);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
   
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookDrawer(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_disable_drawer_backplate", false))
     {
-      try {
-      hookAllConstructors(findClass("com.sonymobile.home.apptray.AppTrayPageView", param.classLoader), new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(AppTrayPageView thiz)
         {
-          callMethod(getObjectField(param.thisObject, "mContent"), "removeChild", getObjectField(param.thisObject, "mDefaultBackplate"));
-          callMethod(getObjectField(param.thisObject, "mContent"), "removeChild", getObjectField(param.thisObject, "mUninstallBackplate"));
+          thiz.getContent().removeChild((Component)getObjectField(thiz, "mDefaultBackplate"));
+          thiz.getContent().removeChild((Component)getObjectField(thiz, "mUninstallBackplate"));
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     if(prefs.getBoolean("key_remember_drawer_page", false))
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.apptray.AppTrayView", param.classLoader, "gotoDefaultPage", new XC_MethodReplacement()
+      new AutoHook()
       {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        public Object before_gotoDefaultPage(AppTrayView thiz)
         {
-          return null;
+          return VOID;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     final int drawer_menu_opacity = prefs.getInt("key_drawer_menu_opacity", 100);
     if(drawer_menu_opacity != 100)
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.apptray.AppTrayDrawerView", param.classLoader, "initialize", 
-        float.class,
-        float.class,
-        float.class,
-        new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_initialize(AppTrayDrawerView thiz, float f1, float f2, float f3)
         {
-          View menu = (View)getObjectField(param.thisObject, "mListView");
-          menu.getBackground().setAlpha((int)(2.55 * drawer_menu_opacity));
+          ((View)getObjectField(thiz, "mListView")).getBackground().setAlpha((int)(2.55 * drawer_menu_opacity));
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     if(prefs.getBoolean("key_drawer_autohide_pagination", false))
     {
-      try {
-      hookAllConstructors(AppTrayPageIndicatorView.class, new XC_MethodHook()
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_all_constructors(AppTrayPageIndicatorView thiz)
         {
-          callMethod(param.thisObject, "setAutoHide", true);
+          thiz.setAutoHide(true);
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod(AppTrayPresenter.class, "setView",
-        AppTrayView.class,
-        new XC_MethodHook()
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public void after_setView(final AppTrayPresenter thiz, AppTrayView view)
         {
-          final AppTrayView view = (AppTrayView)param.args[0];
-          final AppTrayPresenter presenter = (AppTrayPresenter)param.thisObject;
           view.addInteractionListener(new PageViewInteractionListener()
           {
             @Override
             public void onInteractionStart()
             {
-              presenter.getPageIndicatorView().onInteractionStart();
+              thiz.getPageIndicatorView().onInteractionStart();
             }
             @Override
             public void onInteractionEnd()
             {
-              presenter.getPageIndicatorView().onInteractionEnd();
+              thiz.getPageIndicatorView().onInteractionEnd();
             }
           });
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod(AppTrayPageIndicatorView.class, "setTitle",
-        String.class,
-        new XC_MethodHook()
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public void after_setTitle(final AppTrayPageIndicatorView thiz, String title)
         {
-          final AppTrayPageIndicatorView indicator = (AppTrayPageIndicatorView)param.thisObject;
-          ((Animation)getObjectField(indicator, "mPageIndicatorAnimation")).addListener(new Animation.Listener()
+          thiz.onInteractionStart();
+          ((Animation)getObjectField(thiz, "mPageIndicatorAnimation")).addListener(new Animation.Listener()
           {
             @Override
             public void onStart(Animation arg0)
             {
-              indicator.onInteractionStart();
             }
             @Override
             public void onFinish(Animation arg0)
             {
-              indicator.onInteractionEnd();
+              thiz.onInteractionEnd();
             }
           });
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod(AppTrayPresenter.class, "onAppTrayDrawerVisibilityChanged",
-        float.class,
-        new XC_MethodHook()
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+        
+        public Object before_onAppTrayDrawerVisibilityChanged(AppTrayPresenter thiz, float visibility)
         {
-          callMethod(param.thisObject, "setSystemUiTransparent", (Float)param.args[0] <= 0.05);
-          param.setResult(null);
+          callMethod(thiz, "setSystemUiTransparent", visibility <= 0.05);
+          return VOID;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   }
 
 ////////////////////////////////////////////////////////////
 
+  @SuppressWarnings("unused")
   public static void hookFolders(XC_LoadPackage.LoadPackageParam param)
   {
     final int folderColumns = Integer.parseInt(prefs.getString("key_folder_columns", "4"));
     if(folderColumns != 4)
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.folder.GridView", param.classLoader, "setCellWidth", float.class, new XC_MethodReplacement() 
+      new AutoHook()
       {
-        @Override
-        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
+        public Object before_setCellWidth(com.sonymobile.home.folder.GridView thiz, float width)
         {
-          setFloatField(param.thisObject, "mCellWidth", (Float)param.args[0] * 4 / folderColumns);
-          return null;
+          setFloatField(thiz, "mCellWidth", width * 4 / folderColumns);
+          return VOID;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
 
     if(prefs.getBoolean("key_folder_multiline_labels", false))
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.folder.OpenFolderAdapter", param.classLoader, "getItemView", int.class, new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        public void after_getItemView(OpenFolderAdapter thiz, int i, MethodHookParam param)
         {
           try
           {
@@ -495,19 +411,15 @@ public class HomeHooks
           {
           }
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.presenter.view.ItemViewCreatorBase", param.classLoader, "getItemViewTextLines", String.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public Object after_getItemViewTextLines(ItemViewCreatorBase thiz, String s)
         {
-          if("folder".equals(param.args[0]))
-            param.setResult(2);
+          if("folder".equals(s))
+            return 2;
+          else
+            return NONE;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
     
     if(prefs.getBoolean("key_folder_disable_background_dim", false))
@@ -527,75 +439,46 @@ public class HomeHooks
   
 ////////////////////////////////////////////////////////////
   
-  private static WeakHashMap<Object, int[]> advWidgetSizes = new WeakHashMap<Object, int[]>();
-  
+  @SuppressWarnings("unused")
   public static void hookWidgets(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_all_widgets_resizable", false))
     {
-      try {
-      findAndHookMethod("com.sonymobile.home.ui.widget.HomeAppWidgetManager", param.classLoader, "getResizeMode", int.class, new XC_MethodHook() 
+      new AutoHook()
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        private Map<HomeAdvWidget, int[]> advWidgetSizes = new WeakHashMap<HomeAdvWidget, int[]>();
+        
+        public Object after_getResizeMode(HomeAppWidgetManager thiz, int i)
         {
-          param.setResult(AppWidgetProviderInfo.RESIZE_BOTH);
+          return AppWidgetProviderInfo.RESIZE_BOTH;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader, "createAppWidgetInfo", PackageManager.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+
+        public void after_createAppWidgetInfo(HomeAdvWidget thiz, PackageManager pm)
         {
-          AppWidgetProviderInfo info = (AppWidgetProviderInfo)getObjectField(param.thisObject, "mAppWidgetProviderInfo");
+          AppWidgetProviderInfo info = (AppWidgetProviderInfo)getObjectField(thiz, "mAppWidgetProviderInfo");
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.cui.CuiWidgetLoadHelper", param.classLoader, "getVanillaSpanXY", Context.class, AppWidgetProviderInfo.class, new XC_MethodHook() 
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+
+        public void before_getVanillaSpanXY(CuiWidgetLoadHelper thiz, Context context, AppWidgetProviderInfo info)
         {
-          AppWidgetProviderInfo info = (AppWidgetProviderInfo)param.args[1];
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.presenter.view.AdvWidgetItemView", param.classLoader, "setAdvancedWidget",
-        findClass("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader),
-        findClass("com.sonymobile.home.ui.widget.HomeAdvWidgetManager", param.classLoader),
-        boolean.class,
-        new XC_MethodHook() 
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+
+        public void before_setAdvancedWidget(AdvWidgetItemView thiz, HomeAdvWidget w, HomeAdvWidgetManager wm, boolean b)
         {
-          Object mItem = getObjectField(param.thisObject, "mItem");
-          Object mLocation = getObjectField(mItem, "mLocation");
-          Object grid = getObjectField(mLocation, "grid");
-          int colSpan = getIntField(grid, "colSpan");
-          int rowSpan = getIntField(grid, "rowSpan");
-          advWidgetSizes.put(param.args[0], new int[] { colSpan, rowSpan });
+          GridRect grid = thiz.getItem().getLocation().grid;
+          advWidgetSizes.put(w, new int[] { grid.colSpan, grid.rowSpan });
         }
-      });
-      } catch(Throwable ex) { log(ex); }
-      try {
-      findAndHookMethod("com.sonymobile.home.ui.widget.HomeAdvWidget", param.classLoader, "getSpanXY", new XC_MethodHook() 
-      {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        
+        public Object after_getSpanXY(HomeAdvWidget thiz)
         {
-          int[] span = advWidgetSizes.get(param.thisObject);
+          int[] span = advWidgetSizes.get(thiz);
           if(span != null)
-            param.setResult(span);
+            return span;
+          else
+            return NONE;
         }
-      });
-      } catch(Throwable ex) { log(ex); }
+      };
     }
   } 
   
@@ -604,21 +487,9 @@ public class HomeHooks
   public static void hookExperimental(XC_LoadPackage.LoadPackageParam param) throws Exception
   {
     if(prefs.getBoolean("key_enable_experimental", false))
-    {
-      com.gem.xperiaxposed.home.ExperimentalHooks.installHooks();
-    }
+      new com.gem.xperiaxposed.home.ExperimentalHooks();
   } 
   
-////////////////////////////////////////////////////////////
-
-  private static void setFullTransparent(View view, boolean value) throws Throwable
-  {
-    if(value)
-      view.setSystemUiVisibility(view.getSystemUiVisibility() | SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
-    else
-      view.setSystemUiVisibility(view.getSystemUiVisibility() & ~SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
-  }
-
 ////////////////////////////////////////////////////////////
 
 }
