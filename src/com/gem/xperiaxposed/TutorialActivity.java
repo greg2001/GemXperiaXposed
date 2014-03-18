@@ -1,16 +1,22 @@
 package com.gem.xperiaxposed;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.content.res.*;
-import android.os.*;
-import android.support.v4.app.*;
-import android.support.v4.view.*;
-import android.view.*;
-import android.widget.*;
+import android.content.res.TypedArray;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.gem.util.*;
-import com.viewpagerindicator.*;
+import com.gem.util.GemActivity;
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class TutorialActivity extends GemActivity
 {
@@ -21,6 +27,7 @@ public class TutorialActivity extends GemActivity
     super.onCreate(savedInstanceState);
     
     setContentView(R.layout.experimental_tutorial);
+    
     ViewPager pager = (ViewPager)findViewById(R.id.experimental_tutorial_pager);
     pager.setAdapter(new PageAdapter(getSupportFragmentManager(), getFragments()));
     

@@ -12,7 +12,12 @@
                 android:key="key_enable_experimental"
                 android:title="@string/enable_experimental"
                 android:defaultValue="false"/>
-	        <PreferenceCategory android:title="@string/experimental_tutorial">
+            <CheckBoxPreference
+                android:key="key_fullscreen_layout"
+                android:title="@string/fullscreen_layout"
+                android:summary="@string/fullscreen_layout_summary"
+                android:defaultValue="false"/>
+            <PreferenceCategory android:title="@string/experimental_tutorial">
 		        <Preference android:title="@string/settings_menu">
 		            <intent android:action=".TutorialActivity">
 		                <extra android:name="title" android:value="@string/settings_menu"/>
@@ -39,6 +44,13 @@
 		                <extra android:name="title" android:value="@string/unread_count"/>
 		                <extra android:name="titles" android:value="tutorial_unread_count_titles"/>
 		                <extra android:name="drawables" android:value="tutorial_unread_count_drawables"/>
+		            </intent>
+		        </Preference>
+		        <Preference android:title="@string/tutorial_fullscreen_layout"> 
+		            <intent android:action=".TutorialActivity">
+		                <extra android:name="title" android:value="@string/tutorial_fullscreen_layout"/>
+		                <extra android:name="titles" android:value="tutorial_fullscreen_layout_titles"/>
+		                <extra android:name="drawables" android:value="tutorial_fullscreen_layout_drawables"/>
 		            </intent>
 		        </Preference>
 		    </PreferenceCategory>
@@ -175,6 +187,17 @@
                 android:title="@string/transparent_drawer"
                 android:summary="@string/transparent_drawer_summary"
                 android:defaultValue="false"/>
+            <CheckBoxPreference
+                android:key="key_enable_drawer_background"
+                android:title="@string/enable_drawer_background"
+                android:summary="@string/enable_drawer_background_summary"
+                android:defaultValue="false"/>
+   	        <net.margaritov.preference.colorpicker.ColorPickerPreference 
+		        android:key="key_drawer_background"
+		        android:title="@string/drawer_background"
+		        alphaSlider="true"
+                android:dependency="key_enable_drawer_background"
+		        android:defaultValue="0x00000000"/>
             <com.gem.util.GemListPreference
                 android:key="key_drawer_rows"
                 android:title="@string/drawer_rows"

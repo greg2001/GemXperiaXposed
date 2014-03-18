@@ -1,11 +1,12 @@
 package com.gem.xperiaxposed;
 
-import net.margaritov.preference.colorpicker.*;
+import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.*;
-import android.preference.*;
+import android.os.Bundle;
+import android.preference.Preference;
 
-import com.gem.util.*;
+import com.gem.util.GemActivity;
+import com.gem.util.GemPreferenceFragment;
 
 public class MainActivity extends GemActivity
 {

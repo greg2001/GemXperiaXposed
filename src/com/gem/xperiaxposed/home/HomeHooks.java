@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gem.xperiaxposed.AutoHook;
@@ -91,7 +92,7 @@ public class HomeHooks
         {
           setFullTransparent(thiz, transparentDesktop);
         }
-
+        
         public void after_showApptray(MainView thiz, boolean show)
         {
           if(show)
@@ -146,17 +147,6 @@ public class HomeHooks
         }
       };
     }
-
-    if(transparentDrawer)
-    {
-      new AutoHook()
-      {
-        public void after_all_constructors(AppTrayView thiz)
-        {
-          setIntField(thiz, "mBackgroundColor", 0);
-        }
-      };
-    }
   }
   
 ////////////////////////////////////////////////////////////
@@ -188,6 +178,46 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookLayout(XC_LoadPackage.LoadPackageParam param)
   {
+    if(prefs.getBoolean("key_fullscreen_layout", false))
+    {
+      new AutoHook()
+      {
+        public void before_showMainView(HomeFragment thiz)
+        {
+          DisplayData.updateConfiguration(thiz.getActivity(), thiz.getResources(), thiz.getActivity().getWindowManager().getDefaultDisplay());
+        }
+        
+        public void before_onSceneCreated(MainView thiz, Scene scene, int paramInt1, int paramInt2)
+        {
+          scene.setOuterPadding(0, -DisplayData.getTopOffset(), -DisplayData.getRightOffset(), -DisplayData.getBottomOffset());
+        }
+  
+        public void before_onSceneSizeChanged(MainView thiz, Scene scene, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
+        {
+          scene.setOuterPadding(0, -DisplayData.getTopOffset(), -DisplayData.getRightOffset(), -DisplayData.getBottomOffset());
+        }
+  
+        public void after_initialize(AppTrayDrawerView thiz, float f1, float f2, float f3)
+        {
+          ListView listView = (ListView)getObjectField(thiz, "mListView");
+          listView.setPadding(Math.round(f1 - f3), DisplayData.getTopOffset(), 0, DisplayData.getBottomOffset());
+        }
+        
+        public void after_onDrawerSizeChanged(AppTrayDrawerView thiz, float f1, float f2, float f3)
+        {
+          ListView listView = (ListView)getObjectField(thiz, "mListView");
+          listView.setPadding(Math.round(f1 - f3), DisplayData.getTopOffset(), 0, DisplayData.getBottomOffset());
+        }
+        
+        public void before_apply(SystemUiVisibilityWrapper thiz)
+        {
+          Object mainView = getObjectField(thiz, "mView");
+          if(mainView != null)
+            callMethod(thiz, "setFlag", View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN, true);
+        }
+      };
+    }
+    
     final boolean desktop_disable_pagination = prefs.getBoolean("key_desktop_disable_pagination", false);
     final boolean drawer_disable_pagination = prefs.getBoolean("key_drawer_disable_pagination", false);
     if(desktop_disable_pagination || drawer_disable_pagination)
@@ -292,6 +322,20 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDrawer(XC_LoadPackage.LoadPackageParam param)
   {
+    final boolean transparentDrawer = prefs.getBoolean("key_transparent_drawer", false);
+    final boolean enableDrawerBackground = prefs.getBoolean("key_enable_drawer_background", false);
+    if(transparentDrawer || enableDrawerBackground)
+    {
+      final int backgroundColor = enableDrawerBackground ? prefs.getInt("key_drawer_background", 0) : 0; 
+      new AutoHook()
+      {
+        public void after_all_constructors(AppTrayView thiz)
+        {
+          setIntField(thiz, "mBackgroundColor", backgroundColor);
+        }
+      };
+    }
+
     if(prefs.getBoolean("key_disable_drawer_backplate", false))
     {
       new AutoHook()

@@ -136,4 +136,19 @@
         <item>@drawable/experimental_configure_missedit</item>
     </array>
     
+    <string-array name="tutorial_fullscreen_layout_titles">
+        <item>Fullscreen Navigation Menu</item>
+        <item>Drawer Background Color #00000000</item>
+        <item>Drawer Background Color #7f000000</item>
+        <item>Drawer Background Color #7f0000ff</item>
+        <item>Drawer Background Color #ff000000</item>
+    </string-array>
+    <array name="tutorial_fullscreen_layout_drawables">
+        <item>@drawable/fullscreen_navigation_menu</item>
+        <item>@drawable/drawer_background_00000000</item>
+        <item>@drawable/drawer_background_7f000000</item>
+        <item>@drawable/drawer_background_7f0000ff</item>
+        <item>@drawable/drawer_background_ff000000</item>
+    </array>
+
 </resources>

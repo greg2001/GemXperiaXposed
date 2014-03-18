@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- !!!!! don't translate _default strings !!!!! -->
+
     <!-- Xperia Home -->
     <string name="app_tray_drawer_list_item_categories_hidden">Hidden</string>
     <string name="app_tray_drawer_list_item_categories_settings">Settings</string>
@@ -19,11 +21,14 @@
     
     <string name="launcher_experimental">Experimental</string>
     <string name="enable_experimental">Enable experimental features</string>
+    <string name="fullscreen_layout">Enable fullscreen layout</string>
+    <string name="fullscreen_layout_summary">Allows launcher components to be drawn under system bars.</string>
     <string name="experimental_tutorial">Tutorial</string>
     <string name="settings_menu">Settings Menu Item</string>
     <string name="alphabetical_badge">Alphabetical Mode Badge</string>
     <string name="hide_apps">Hide Apps</string>
     <string name="unread_count">Unread Count Badges</string>
+    <string name="tutorial_fullscreen_layout">Fullscreen Layout</string>
     
     <string name="launcher_general">General</string>
     <string name="launcher_icon_size">Icon size</string>
@@ -33,7 +38,7 @@
     <string name="all_widgets_resizable_summary">When resizing Sony stock widgets, you may need to restart the launcher for the widget to rescale properly.</string>
     
     <string name="launcher_desktop">Desktop</string>
-    <string name="transparent_desktop">Transparency</string>
+    <string name="transparent_desktop">Transparent system bars</string>
     <string name="transparent_desktop_summary">Transparent status and navigation bars.</string>
     <string name="desktop_rows">Rows</string>
     <string name="desktop_rows_default">4</string>
@@ -60,8 +65,11 @@
     <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
     
     <string name="launcher_drawer">Drawer</string>
-    <string name="transparent_drawer">Transparency</string>
-    <string name="transparent_drawer_summary">Transparent status bar, navigation bar and drawer background.</string>
+    <string name="transparent_drawer">Transparent system bars</string>
+    <string name="transparent_drawer_summary">Transparent status and navigation bars.</string>
+    <string name="enable_drawer_background">Background color control</string>
+    <string name="enable_drawer_background_summary">Enable fullscreen layout and transparent system bars for better effect.</string>
+    <string name="drawer_background">Background color</string>
     <string name="drawer_rows">Rows</string>
     <string name="drawer_rows_default">5</string>
     <string name="drawer_columns">Columns</string>
@@ -132,5 +140,5 @@
     <string name="about_xposed_summary">By rovo89@XDA. Touch to visit XDA thread.</string>
     <string name="about_theme">Theme</string>
     <string name="about_theme_default">light</string>
-    
+  
 </resources>
