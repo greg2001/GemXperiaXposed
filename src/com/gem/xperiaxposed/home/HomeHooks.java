@@ -1,5 +1,6 @@
 package com.gem.xperiaxposed.home;
 
+import static com.gem.xperiaxposed.Conditionals.*;
 import static com.gem.xperiaxposed.XposedMain.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
@@ -70,7 +71,7 @@ public class HomeHooks
       }
     };
     
-    if(!prefs.getBoolean("key_menu_dark_bars", false))
+    if(JELLYBEAN_LAUNCHER && !prefs.getBoolean("key_menu_dark_bars", false))
     {
       new AutoHook()
       {
@@ -84,7 +85,7 @@ public class HomeHooks
     final boolean transparentDesktop = prefs.getBoolean("key_transparent_desktop", false);
     final boolean transparentDrawer = prefs.getBoolean("key_transparent_drawer", false);
 
-    if(transparentDesktop || transparentDrawer)
+    if(JELLYBEAN && (transparentDesktop || transparentDrawer))
     {
       new AutoHook()
       {
@@ -178,7 +179,7 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookLayout(XC_LoadPackage.LoadPackageParam param)
   {
-    if(prefs.getBoolean("key_fullscreen_layout", false))
+    if(JELLYBEAN && prefs.getBoolean("key_fullscreen_layout", false))
     {
       new AutoHook()
       {
@@ -294,7 +295,7 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDock(XC_LoadPackage.LoadPackageParam param)
   {
-    if(prefs.getBoolean("key_disable_dock_stage", false))
+    if(JELLYBEAN_LAUNCHER && prefs.getBoolean("key_disable_dock_stage", false))
     {
       new AutoHook()
       {
@@ -305,7 +306,7 @@ public class HomeHooks
       };
     }
       
-    if(prefs.getBoolean("key_disable_dock_reflection", false))
+    if(JELLYBEAN_LAUNCHER && prefs.getBoolean("key_disable_dock_reflection", false))
     {
       new AutoHook()
       {
@@ -322,7 +323,7 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDrawer(XC_LoadPackage.LoadPackageParam param)
   {
-    final boolean transparentDrawer = prefs.getBoolean("key_transparent_drawer", false);
+    final boolean transparentDrawer = JELLYBEAN && prefs.getBoolean("key_transparent_drawer", false);
     final boolean enableDrawerBackground = prefs.getBoolean("key_enable_drawer_background", false);
     if(transparentDrawer || enableDrawerBackground)
     {
@@ -336,7 +337,7 @@ public class HomeHooks
       };
     }
 
-    if(prefs.getBoolean("key_disable_drawer_backplate", false))
+    if(JELLYBEAN_LAUNCHER && prefs.getBoolean("key_disable_drawer_backplate", false))
     {
       new AutoHook()
       {
@@ -416,7 +417,8 @@ public class HomeHooks
         
         public Object before_onAppTrayDrawerVisibilityChanged(AppTrayPresenter thiz, float visibility)
         {
-          callMethod(thiz, "setSystemUiTransparent", visibility <= 0.05);
+          if(JELLYBEAN_LAUNCHER)
+            callMethod(thiz, "setSystemUiTransparent", visibility <= 0.05);
           return VOID;
         }
       };
@@ -503,17 +505,20 @@ public class HomeHooks
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
 
+        @EnableIf("JELLYBEAN_LAUNCHER")
         public void before_getVanillaSpanXY(CuiWidgetLoadHelper thiz, Context context, AppWidgetProviderInfo info)
         {
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
 
+        @EnableIf("JELLYBEAN_LAUNCHER")
         public void before_setAdvancedWidget(AdvWidgetItemView thiz, HomeAdvWidget w, HomeAdvWidgetManager wm, boolean b)
         {
           GridRect grid = thiz.getItem().getLocation().grid;
           advWidgetSizes.put(w, new int[] { grid.colSpan, grid.rowSpan });
         }
         
+        @EnableIf("JELLYBEAN_LAUNCHER")
         public Object after_getSpanXY(HomeAdvWidget thiz)
         {
           int[] span = advWidgetSizes.get(thiz);
@@ -524,8 +529,8 @@ public class HomeHooks
         }
       };
     }
-  } 
-  
+  }
+ 
 ////////////////////////////////////////////////////////////
   
   public static void hookExperimental(XC_LoadPackage.LoadPackageParam param) throws Exception

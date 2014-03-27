@@ -16,7 +16,9 @@
                 android:key="key_fullscreen_layout"
                 android:title="@string/fullscreen_layout"
                 android:summary="@string/fullscreen_layout_summary"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT" />
+            </CheckBoxPreference>
             <PreferenceCategory android:title="@string/experimental_tutorial">
 		        <Preference android:title="@string/settings_menu">
 		            <intent android:action=".TutorialActivity">
@@ -52,7 +54,8 @@
 		                <extra android:name="titles" android:value="tutorial_fullscreen_layout_titles"/>
 		                <extra android:name="drawables" android:value="tutorial_fullscreen_layout_drawables"/>
 		            </intent>
-		        </Preference>
+                    <extra android:name="hideIf" android:value="KITKAT" />
+   		        </Preference>
 		    </PreferenceCategory>
 	    </PreferenceScreen>
 	    
@@ -89,7 +92,9 @@
                 android:key="key_transparent_desktop"
                 android:title="@string/transparent_desktop"
                 android:summary="@string/transparent_desktop_summary"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT" />
+            </CheckBoxPreference>
             <com.gem.util.GemListPreference
                 android:key="key_desktop_rows"
                 android:title="@string/desktop_rows"
@@ -144,18 +149,24 @@
             <CheckBoxPreference
                 android:key="key_disable_dock_stage"
                 android:title="@string/disable_dock_stage"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT_LAUNCHER" />
+            </CheckBoxPreference>
             <CheckBoxPreference
                 android:key="key_disable_dock_reflection"
                 android:title="@string/disable_dock_reflection"
                 android:disableDependentsState="true"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT_LAUNCHER" />
+            </CheckBoxPreference>
             <CheckBoxPreference
                 android:key="key_large_dock_reflection"
                 android:title="@string/large_dock_reflection"
                 android:dependency="key_disable_dock_reflection"
-                android:defaultValue="false"/>
-        </PreferenceScreen>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT_LAUNCHER" />
+            </CheckBoxPreference>
+            </PreferenceScreen>
             
         <PreferenceScreen android:title="@string/launcher_folders">        
             <com.gem.util.GemListPreference
@@ -186,13 +197,17 @@
                 android:key="key_transparent_drawer"
                 android:title="@string/transparent_drawer"
                 android:summary="@string/transparent_drawer_summary"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT" />
+            </CheckBoxPreference>
             <CheckBoxPreference
                 android:key="key_enable_drawer_background"
                 android:title="@string/enable_drawer_background"
                 android:summary="@string/enable_drawer_background_summary"
-                android:defaultValue="false"/>
-   	        <net.margaritov.preference.colorpicker.ColorPickerPreference 
+                android:defaultValue="false">
+                <extra android:name="hideSummaryIf" android:value="KITKAT" />
+            </CheckBoxPreference>
+            <net.margaritov.preference.colorpicker.ColorPickerPreference 
 		        android:key="key_drawer_background"
 		        android:title="@string/drawer_background"
 		        alphaSlider="true"
@@ -230,7 +245,9 @@
             <CheckBoxPreference
                 android:key="key_disable_drawer_backplate"
                 android:title="@string/disable_drawer_backplate"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT_LAUNCHER" />
+            </CheckBoxPreference>
             <CheckBoxPreference
                 android:key="key_remember_drawer_page"
                 android:title="@string/remember_drawer_page"
@@ -238,7 +255,9 @@
             <CheckBoxPreference
                 android:key="key_menu_dark_bars"
                 android:title="@string/menu_dark_bars"
-                android:defaultValue="false"/>
+                android:defaultValue="false">
+                <extra android:name="hideIf" android:value="KITKAT_LAUNCHER" />
+            </CheckBoxPreference>
             <com.gem.util.GemSliderPreference
                 android:key="key_drawer_menu_opacity"
                 android:title="@string/drawer_menu_opacity"
@@ -292,7 +311,9 @@
             android:key="key_hide_hint_arrows"
             android:title="@string/hide_hint_arrows"
             android:dependency="key_enable_standard_lockscreen"
-            android:defaultValue="false"/>
+            android:defaultValue="false">
+            <extra android:name="hideIf" android:value="KITKAT" />
+        </CheckBoxPreference>
         <CheckBoxPreference
             android:key="key_more_unlock_blinds"
             android:title="@string/more_unlock_blinds"
@@ -306,6 +327,7 @@
     
     <PreferenceScreen android:title="@string/systemui">
         <PreferenceScreen android:title="@string/systemui_colors">
+            <extra android:name="hideIf" android:value="KITKAT" />
    	        <Preference 
 				android:key="key_restart_systemui"
 	            android:title="@string/restart_systemui" 

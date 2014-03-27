@@ -1,5 +1,6 @@
 package com.gem.xperiaxposed.home;
 
+import static com.gem.xperiaxposed.Constants.*;
 import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
 import static com.sonymobile.flix.components.Component.*;
 import android.content.res.Resources;
@@ -8,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.gem.xperiaxposed.ClassHook;
-import com.sonyericsson.home.R;
 import com.sonymobile.flix.components.Component;
 import com.sonymobile.flix.components.ComponentListeners;
 import com.sonymobile.flix.components.Image;
@@ -122,20 +122,20 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
     Scene scene = thiz.getScene();
     Resources res = scene.getContext().getResources();
     
-    thiz.setSize(scene.getWidth(), res.getDimension(R.dimen.dropzone_height));
-    mDropZoneBg = BitmapFactory.decodeResource(res, R.drawable.home_apptray_dropzone);
+    thiz.setSize(scene.getWidth(), res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
+    mDropZoneBg = BitmapFactory.decodeResource(res, res.getIdentifier("home_apptray_dropzone", "drawable", SE_HOME));
     mHideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_hide)).getBitmap();
     mUnhideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_unhide)).getBitmap();
 
-    mDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(R.dimen.dropzone_height));
-    mHideDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(R.dimen.dropzone_height));
+    mDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
+    mHideDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
     
     mBackground.setBitmap(mDropZoneBg);
     mBackground.setScalingToSize(scene.getWidth()/2, mBackground.getHeight());
     mHideBackground.setBitmap(mDropZoneBg);
     mHideBackground.setScalingToSize(scene.getWidth()/2, mBackground.getHeight());
 
-    mIcon.setBitmap(R.drawable.home_apptray_dropzone_home);
+    mIcon.setBitmap(res.getIdentifier("home_apptray_dropzone_home", "drawable", SE_HOME));
     mHideIcon.setBitmap(mHideBitmap);
 
     Layouter.place(mDropArea, LEFT, BOTTOM, thiz, LEFT, BOTTOM);

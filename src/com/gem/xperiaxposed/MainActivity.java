@@ -1,5 +1,6 @@
 package com.gem.xperiaxposed;
 
+import static com.gem.xperiaxposed.Constants.*;
 import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ class SettingsFragment extends GemPreferenceFragment
       {
         try
         {
-          Runtime.getRuntime().exec("su -c pkill " + XposedMain.SE_HOME).waitFor();
+          Runtime.getRuntime().exec("su -c pkill " + SE_HOME).waitFor();
         }
         catch(Exception ex)
         {
@@ -63,7 +64,7 @@ class SettingsFragment extends GemPreferenceFragment
       {
         try
         {
-          Runtime.getRuntime().exec("su -c pkill " + XposedMain.SYSTEMUI).waitFor();
+          Runtime.getRuntime().exec("su -c pkill " + SYSTEMUI).waitFor();
         }
         catch(Exception ex)
         {

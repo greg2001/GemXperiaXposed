@@ -1,5 +1,7 @@
 package com.gem.xperiaxposed;
 
+import static com.gem.xperiaxposed.Conditionals.*;
+import static com.gem.xperiaxposed.Constants.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 import android.content.ComponentName;
@@ -24,22 +26,11 @@ import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-
 ////////////////////////////////////////////////////////////
 
 public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources
 {
 
-////////////////////////////////////////////////////////////
-  
-  public static final String ANDROID  = "android";
-  public static final String SYSTEMUI = "com.android.systemui";
-  public static final String SE_HOME  = "com.sonyericsson.home";
-  public static final String SE_LOCK  = "com.sonyericsson.lockscreen.uxpnxt";
-  
-  public static final String KEYGUARD_PACKAGE = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) ?
-    "com.android.keyguard" : "com.android.internal.policy.impl.keyguard";
-  
 ////////////////////////////////////////////////////////////
   
   public static final int SYSTEM_UI_TRANSPARENT_BACKGROUND      = 0x99000000;
@@ -93,7 +84,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     prefs = new XSharedPreferences(XposedMain.class.getPackage().getName());
     prefs.makeWorldReadable();
 
-    if(prefs.getBoolean("key_hide_shortcuts", false))
+    if(JELLYBEAN && prefs.getBoolean("key_hide_shortcuts", false))
     {
       XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_camera_hint", 0);
       XResources.setSystemWideReplacement("android", "drawable", "ic_lockscreen_other_widgets_hint", 0);
@@ -107,6 +98,9 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(param.packageName.equals(SYSTEMUI))
     {
+      if(KITKAT)
+        return;
+      
       prefs.reload();
       
       boolean status_bar_custom = "custom".equals(prefs.getString("key_systemui_status_color_set", "custom"));
@@ -189,7 +183,13 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     {
       prefs.reload();
       hookWindowManager(param);
-      hookKeyguard(param);
+      if(JELLYBEAN)
+        hookKeyguard(param);
+    }
+    else if(param.packageName.equals(KEYGUARD))
+    {
+      if(KITKAT)
+        hookKeyguard(param);
     }
     else if(param.packageName.equals(SE_HOME))
     {
@@ -206,6 +206,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       {
         log(ex);
       }
+
+      Conditionals.initLauncher();
 
       prefs.reload();
       com.gem.xperiaxposed.home.HomeHooks.hookTransparency(param);
@@ -365,7 +367,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(prefs.getBoolean("key_transparent_lockscreen", false))
     {
       try {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "onFinishInflate", new XC_MethodHook()
+      findAndHookMethod(KEYGUARD + ".KeyguardHostView", param.classLoader, "onFinishInflate", new XC_MethodHook()
       {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
@@ -381,7 +383,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(!carrierText.isEmpty())
     {
       try {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".CarrierText", param.classLoader, "updateCarrierText", 
+      findAndHookMethod(KEYGUARD + ".CarrierText", param.classLoader, "updateCarrierText", 
                         findClass("com.android.internal.telephony.IccCardConstants.State", param.classLoader), 
                         CharSequence.class, CharSequence.class, new XC_MethodReplacement() 
       {
@@ -398,7 +400,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(prefs.getBoolean("key_enable_standard_lockscreen", false))
     {
       try {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardViewManager", param.classLoader, "maybeCreateKeyguardLocked", boolean.class, boolean.class, Bundle.class, new XC_MethodHook()
+      findAndHookMethod(KEYGUARD + ".KeyguardViewManager", param.classLoader, "maybeCreateKeyguardLocked", boolean.class, boolean.class, Bundle.class, new XC_MethodHook()
       {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
@@ -416,7 +418,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       });
       } catch(Throwable ex) { log(ex); }
       try {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardSelectorView", param.classLoader, "onFinishInflate", new XC_MethodHook()
+      findAndHookMethod(KEYGUARD + ".KeyguardSelectorView", param.classLoader, "onFinishInflate", new XC_MethodHook()
       {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
@@ -427,7 +429,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       });
       } catch(Throwable ex) { log(ex); }
       try {
-      findAndHookMethod(KEYGUARD_PACKAGE + ".ExternalLockScreen", param.classLoader, "validateExternalLockScreen", Context.class, ComponentName.class, new XC_MethodReplacement()
+      findAndHookMethod(KEYGUARD + ".ExternalLockScreen", param.classLoader, "validateExternalLockScreen", Context.class, ComponentName.class, new XC_MethodReplacement()
       {
         @Override
         protected Object replaceHookedMethod(MethodHookParam param) throws Throwable
@@ -441,7 +443,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(prefs.getBoolean("key_hide_widget_backplate", false))
     {
       try {
-      hookAllConstructors(findClass(KEYGUARD_PACKAGE + ".KeyguardWidgetFrame", param.classLoader), new XC_MethodHook()
+      hookAllConstructors(findClass(KEYGUARD + ".KeyguardWidgetFrame", param.classLoader), new XC_MethodHook()
       {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
@@ -455,8 +457,8 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(prefs.getBoolean("key_slide_before_unlock", false))
     {
       try {
-      final Object SecurityModeNone = getStaticObjectField(findClass(KEYGUARD_PACKAGE + ".KeyguardSecurityModel$SecurityMode", param.classLoader), "None");
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "showPrimarySecurityScreen", boolean.class, new XC_MethodHook()
+      final Object SecurityModeNone = getStaticObjectField(findClass(KEYGUARD + ".KeyguardSecurityModel$SecurityMode", param.classLoader), "None");
+      findAndHookMethod(KEYGUARD + ".KeyguardHostView", param.classLoader, "showPrimarySecurityScreen", boolean.class, new XC_MethodHook()
       {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable
@@ -465,7 +467,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
           param.setResult(null);
         }
       });
-      findAndHookMethod(KEYGUARD_PACKAGE + ".KeyguardHostView", param.classLoader, "showNextSecurityScreenOrFinish", boolean.class, new XC_MethodHook()
+      findAndHookMethod(KEYGUARD + ".KeyguardHostView", param.classLoader, "showNextSecurityScreenOrFinish", boolean.class, new XC_MethodHook()
       {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable

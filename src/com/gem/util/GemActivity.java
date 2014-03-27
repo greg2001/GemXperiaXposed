@@ -1,18 +1,20 @@
 package com.gem.util;
 
-import android.annotation.*;
-import android.content.*;
-import android.os.*;
-import android.preference.*;
-import android.support.v4.app.*;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 
-import com.gem.xperiaxposed.*;
+import com.gem.xperiaxposed.Conditionals;
+import com.gem.xperiaxposed.R;
 
 public class GemActivity extends FragmentActivity 
 {
   @Override
   public void onCreate(Bundle savedInstanceState) 
   {
+    Conditionals.init(this);
     makeSharedPreferencesWorldReadable();
     if("dark".equals(PreferenceManager.getDefaultSharedPreferences(this).getString("key_about_theme", "light")))
       setTheme(R.style.AppBaseThemeDark);

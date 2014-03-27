@@ -12,11 +12,14 @@
   <string name="restart_launcher_summary">重新啟動主頁使設定生效(需要ROOT)。如果桌面停止，你可能需要重新啟動手機。</string>
   <string name="launcher_experimental">實驗性功能</string>
   <string name="enable_experimental">啟動實驗性功能</string>
+  <string name="fullscreen_layout">開啟全螢幕佈局</string>
+  <string name="fullscreen_layout_summary">使程序選單成4.4樣式，全屏模式。</string>
   <string name="experimental_tutorial">教學</string>
   <string name="settings_menu">增加GEM的設定選項</string>
   <string name="alphabetical_badge">增加字母排序的數量</string>
   <string name="hide_apps">隱藏不常用應用程式</string>
   <string name="unread_count">增加未讀取提示</string>
+  <string name="tutorial_fullscreen_layout">全屏佈局</string>
   <string name="launcher_general">一般設定</string>
   <string name="launcher_icon_size">圖標尺寸</string>
   <string name="launcher_label_text_size">圖標文字大小</string>
@@ -45,6 +48,9 @@
   <string name="launcher_drawer">程序主頁</string>
   <string name="transparent_drawer">透明化</string>
   <string name="transparent_drawer_summary">使你的狀態欄與虛擬鍵透明。</string>
+  <string name="enable_drawer_background">背景顏色控制</string>
+  <string name="enable_drawer_background_summary">開啟主頁背景的顏色控制。</string>
+  <string name="drawer_background">背景顏色</string>
   <string name="drawer_rows">改變行數</string>
   <string name="drawer_columns">改變列數</string>
   <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
@@ -75,7 +81,6 @@
   <string name="systemui_colors">顏色</string>
   <string name="restart_systemui">重新啟動SystemUI</string>
   <string name="restart_systemui_summary">重新啟動SystemUI使設定生效(需要ROOT)。如果系統介面停止，你可能需要重新啟動手機。</string>
-  <string name="reset_to_default">重置為默認值</string>
   <string name="systemui_status_colors">狀態欄顏色</string>
   <string name="systemui_status_color_set">顏色設定</string>
   <string name="systemui_dark_background">更改黑色狀態欄顏色</string>

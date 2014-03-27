@@ -82,4 +82,11 @@
     <item>開啟通知存取能力</item>
     <item>進入Missed It!設定</item>
   </string-array>
+  <string-array name="tutorial_fullscreen_layout_titles">
+    <item>全屏的程序選單</item>
+    <item>主頁背景顏色 #00000000</item>
+    <item>主頁背景顏色 #7f000000</item>
+    <item>主頁背景顏色 #7f0000ff</item>
+    <item>主頁背景顏色 #ff000000</item>
+  </string-array>
 </resources>

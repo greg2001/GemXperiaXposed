@@ -3,6 +3,11 @@ package com.gem.xperiaxposed;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -17,6 +22,22 @@ import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 
 public class AutoHook
 {
+
+  @Target(ElementType.METHOD)
+  @Inherited
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface EnableIf
+  {
+    String[] value();
+  }
+
+  @Target(ElementType.METHOD)
+  @Inherited
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface DisableIf
+  {
+    String[] value();
+  }
 
 ////////////////////////////////////////////////////////////
   
@@ -106,7 +127,7 @@ public class AutoHook
     for(Method method: methods)
     {
       String key = methodKey(method);
-      if(key != null)
+      if(key != null && isEnabled(method.getAnnotation(EnableIf.class), method.getAnnotation(DisableIf.class)))
       {
         Method[] methodPair = methodPairs.get(key);
         if(methodPair == null)
@@ -115,6 +136,46 @@ public class AutoHook
       }
     }
     return methodPairs.values();
+  }
+  
+////////////////////////////////////////////////////////////
+  
+  private static boolean isEnabled(EnableIf e, DisableIf d)
+  {
+    if(d != null)
+    {
+      for(String c: d.value())
+      {
+        try
+        {
+          if(Conditionals.class.getField(c).getBoolean(null))
+            return false;
+        }
+        catch(Exception ex)
+        {
+          log(ex);
+        }
+      }
+    }
+    
+    if(e != null)
+    {
+      for(String c: e.value())
+      {
+        try
+        {
+          if(Conditionals.class.getField(c).getBoolean(null))
+            return true;
+        }
+        catch(Exception ex)
+        {
+          log(ex);
+        }
+      }
+      return false;
+    }
+    
+    return true;
   }
   
 ////////////////////////////////////////////////////////////

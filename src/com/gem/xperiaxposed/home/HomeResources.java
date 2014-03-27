@@ -1,5 +1,6 @@
 package com.gem.xperiaxposed.home;
 
+import static com.gem.xperiaxposed.Constants.*;
 import static com.gem.xperiaxposed.XposedMain.*;
 import android.content.res.XResources;
 
