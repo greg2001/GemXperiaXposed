@@ -35,10 +35,6 @@ public class AppTrayModelHook extends ClassHook<AppTrayModel>
     return prefs.getBoolean(item.getPackageName(), false);
   }
   
-  /**
-   * @param item
-   * @param hidden
-   */
   public void setHidden(Item item, boolean hidden)
   {
     if(hidden)

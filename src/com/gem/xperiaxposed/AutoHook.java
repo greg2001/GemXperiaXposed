@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,29 +47,50 @@ public class AutoHook
   public static final Object NULL = VOID;
 
 ////////////////////////////////////////////////////////////
-  
+
+  protected static final String CLASSHOOK_KEY = "CLASSHOOK";
+
+////////////////////////////////////////////////////////////
+
   public AutoHook()
   {
-    installHooks(this);
+    this(true);
+  }
+  
+  public AutoHook(boolean autoInstallHooks)
+  {
+    if(autoInstallHooks)
+      installHooks(this);
   }
   
 ////////////////////////////////////////////////////////////
   
-  public static void installHooks(final Object hook)
+  public static void installHooks(Object hook)
   {
-    Class<?> hookClass = hook.getClass();
+    installHooks(null, hook);
+  }
+  
+  protected static void installHooks(Class<?> cth, Object h)
+  {
+    final Object hook = (h instanceof Class) ? null : h;
+    final Class<?> hookClass = (h instanceof Class) ? (Class<?>)h : h.getClass();
+    
     for(Method[] entry: getHookMethods(hookClass))
     {
       try
       {
         final Method beforeMethod = entry[0];
         final Method afterMethod = entry[1];
-        final boolean beforeMethodHasParam = (beforeMethod != null) && (beforeMethod.getParameterTypes()[beforeMethod.getParameterTypes().length-1] == MethodHookParam.class);
-        final boolean afterMethodHasParam = (afterMethod != null) && (afterMethod.getParameterTypes()[afterMethod.getParameterTypes().length-1] == MethodHookParam.class);
+        Class<?>[] beforeMethodArgs = (beforeMethod != null) ? beforeMethod.getParameterTypes() : null;
+        Class<?>[] afterMethodArgs = (afterMethod != null) ? afterMethod.getParameterTypes() : null;
+        final boolean beforeMethodHasParam = (beforeMethodArgs != null) && (beforeMethodArgs.length != 0) && (beforeMethodArgs[beforeMethodArgs.length-1] == MethodHookParam.class);
+        final boolean afterMethodHasParam = (afterMethodArgs != null) && (afterMethodArgs.length != 0) && (afterMethodArgs[afterMethodArgs.length-1] == MethodHookParam.class);
 
         String methodName = (beforeMethod != null) ? beforeMethod.getName().substring("before_".length()) : afterMethod.getName().substring("after_".length());
-        Class<?>[] parameters = (beforeMethod != null) ? beforeMethod.getParameterTypes() : afterMethod.getParameterTypes();
-        Class<?> classToHook = parameters[0];
+        Class<?>[] args = (beforeMethodArgs != null) ? beforeMethodArgs : afterMethodArgs;
+        boolean argsHasParam = (beforeMethodArgs != null) ? beforeMethodHasParam : afterMethodHasParam;
+        final boolean hasThis = (cth == null) || ((args.length != 0) && (args[0] == cth));
+        Class<?> classToHook = hasThis ? args[0] : cth;
         
         if(methodName.equals("all_constructors"))
         {
@@ -78,33 +100,34 @@ public class AutoHook
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable
             {
               if(beforeMethod != null)
-                invokeAllConstructorsHook(hook, beforeMethod, param, beforeMethodHasParam);
+                invokeHook(hook, beforeMethod, param, hasThis, false, beforeMethodHasParam);
             }
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable
             {
               if(afterMethod != null)
-                invokeAllConstructorsHook(hook, afterMethod, param, afterMethodHasParam);
+                invokeHook(hook, afterMethod, param, hasThis, false, afterMethodHasParam);
             }
           });
         }
         else
         {
-          parameters = Arrays.copyOfRange(parameters, 1, parameters.length - ((parameters[parameters.length-1] == MethodHookParam.class) ? 1 : 0)); // strip thiz and param, if any
-          Member peer = methodName.equals("constructor") ? findConstructorBestMatch(classToHook, parameters) : findMethodBestMatch(classToHook, methodName, parameters);
+          args = Arrays.copyOfRange(args, (hasThis ? 1 : 0), args.length - (argsHasParam ? 1 : 0)); // strip thiz and param, if any
+          final boolean hasArgs = args.length != 0;
+          Member peer = methodName.equals("constructor") ? findConstructorBestMatch(classToHook, args) : findMethodBestMatch(classToHook, methodName, args);
           hookMethod(peer, new XC_MethodHook()
           {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable
             {
               if(beforeMethod != null)
-                invokeHook(hook, beforeMethod, param, beforeMethodHasParam);
+                invokeHook(hook, beforeMethod, param, hasThis, hasArgs, beforeMethodHasParam);
             }
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable
             {
               if(afterMethod != null)
-                invokeHook(hook, afterMethod, param, afterMethodHasParam);
+                invokeHook(hook, afterMethod, param, hasThis, hasArgs, afterMethodHasParam);
             }
           });
         }
@@ -187,11 +210,7 @@ public class AutoHook
     if(key == null)
       return null;
     
-    Class<?>[] parameters = method.getParameterTypes();
-    if(parameters.length < 1)
-      return null;
-    
-    for(Class<?> clazz: parameters)
+    for(Class<?> clazz: method.getParameterTypes())
       if(clazz != MethodHookParam.class)
         key += "@" + clazz.getName(); 
     
@@ -200,9 +219,36 @@ public class AutoHook
   
 ////////////////////////////////////////////////////////////
 
-  private static void invokeAllConstructorsHook(Object hook, Method method, MethodHookParam param, boolean hasParam) throws Exception
+  private static void invokeHook(Object hook, Method method, MethodHookParam param, boolean hasThis, boolean hasArgs, boolean hasParam) throws Exception
   {
-    Object result = hasParam ? method.invoke(hook, param.thisObject, param) : method.invoke(hook, param.thisObject);
+    if((hook == null) && (method.getModifiers() & Modifier.STATIC) == 0)
+      if((hook = getAdditionalInstanceField(param.thisObject, CLASSHOOK_KEY)) == null)
+        return;
+
+    Object result;
+    if(hasArgs)
+    {
+      if(hasThis && hasParam)
+        result = method.invoke(hook, array(param.thisObject, param.args, param));
+      else if(hasThis)
+        result = method.invoke(hook, array(param.thisObject, param.args));
+      else if(hasParam)
+        result = method.invoke(hook, array(param.args, param));
+      else
+        result = method.invoke(hook, param.args);
+    }
+    else
+    {
+      if(hasThis && hasParam)
+        result = method.invoke(hook, param.thisObject, param);
+      else if(hasThis)
+        result = method.invoke(hook, param.thisObject);
+      else if(hasParam)
+        result = method.invoke(hook, param);
+      else
+        result = method.invoke(hook);
+    }
+    
     if(result == null)
       ;
     else if(result instanceof Throwable)
@@ -212,25 +258,31 @@ public class AutoHook
     else
       param.setResult(result);
   }
-
+  
 ////////////////////////////////////////////////////////////
 
-  private static void invokeHook(Object hook, Method method, MethodHookParam param, boolean hasParam) throws Exception
+  private static Object[] array(Object f, Object[] a, Object l)
   {
-    Object[] params = new Object[param.args.length + 1 + (hasParam ? 1 : 0)]; // add thiz and param, if any
-    params[0] = param.thisObject;
-    System.arraycopy(param.args, 0, params, 1, param.args.length);
-    if(hasParam)
-      params[params.length-1] = param;
-    Object result = method.invoke(hook, params);
-    if(result == null)
-      ;
-    else if(result instanceof Throwable)
-      param.setThrowable((Throwable)result);
-    else if(result == NULL)
-      param.setResult(null);
-    else
-      param.setResult(result);
+    Object[] r = new Object[a.length + 2];
+    r[0] = f;
+    System.arraycopy(a, 0, r, 1, a.length);
+    r[r.length-1] = l;
+    return r;
+  }
+  
+  private static Object[] array(Object f, Object[] a)
+  {
+    Object[] r = new Object[a.length + 1];
+    r[0] = f;
+    System.arraycopy(a, 0, r, 1, a.length);
+    return r;
+  }
+  
+  private static Object[] array(Object[] a, Object l)
+  {
+    Object[] r = Arrays.copyOf(a, a.length+1);
+    r[r.length-1] = l;
+    return r;
   }
   
 ////////////////////////////////////////////////////////////

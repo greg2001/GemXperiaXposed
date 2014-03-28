@@ -109,6 +109,13 @@
                 android:entries="@array/desktop_columns_entries"
                 android:entryValues="@array/desktop_columns_entries"
                 android:defaultValue="@string/desktop_columns_default"/>            
+            <com.gem.util.GemListPreference
+                android:key="key_desktop_animation"
+                android:title="@string/desktop_animation"
+                android:dialogTitle="@string/desktop_animation"
+                android:entries="@array/desktop_animation_entries"
+                android:entryValues="@array/desktop_animation_values"
+                android:defaultValue="@string/desktop_animation_default"/>            
             <CheckBoxPreference
                 android:key="key_desktop_disable_labels"
                 android:title="@string/desktop_disable_labels"
@@ -129,14 +136,7 @@
                 android:title="@string/desktop_autohide_pagination"
                 android:dependency="key_desktop_disable_pagination"
                 android:defaultValue="false"/>
-            <com.gem.util.GemListPreference
-                android:key="key_desktop_animation"
-                android:title="@string/desktop_animation"
-                android:dialogTitle="@string/desktop_animation"
-                android:entries="@array/desktop_animation_entries"
-                android:entryValues="@array/desktop_animation_values"
-                android:defaultValue="@string/desktop_animation_default"/>            
-            </PreferenceScreen>
+        </PreferenceScreen>
             
         <PreferenceScreen android:title="@string/launcher_dock">        
             <com.gem.util.GemListPreference
@@ -227,6 +227,13 @@
                 android:entries="@array/drawer_columns_entries"
                 android:entryValues="@array/drawer_columns_entries"
                 android:defaultValue="@string/drawer_columns_default"/>            
+            <com.gem.util.GemListPreference
+                android:key="key_drawer_animation"
+                android:title="@string/drawer_animation"
+                android:dialogTitle="@string/drawer_animation"
+                android:entries="@array/desktop_animation_entries"
+                android:entryValues="@array/desktop_animation_values"
+                android:defaultValue="@string/drawer_animation_default"/>            
             <CheckBoxPreference
                 android:key="key_drawer_disable_labels"
                 android:title="@string/drawer_disable_labels"

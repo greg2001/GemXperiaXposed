@@ -81,6 +81,8 @@
     <string name="remember_drawer_page">Remember current page</string>
     <string name="drawer_menu_opacity">Navigation menu opacity</string>
     <string name="menu_dark_bars">Navigation menu dark bars</string>
+    <string name="drawer_animation">@string/desktop_animation</string>
+    <string name="drawer_animation_default">7</string>
     
     <string name="lockscreen">Lockscreen Settings</string>
     <string name="reboot_phone_lockscreen">Note</string>

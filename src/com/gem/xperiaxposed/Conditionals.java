@@ -1,6 +1,9 @@
 package com.gem.xperiaxposed;
 
 import static com.gem.xperiaxposed.Constants.*;
+
+import java.lang.reflect.Field;
+
 import android.content.Context;
 import android.util.Log;
 import de.robv.android.xposed.XposedBridge;
@@ -11,6 +14,7 @@ public class Conditionals
   public static final boolean JELLYBEAN = !KITKAT;
   public static boolean KITKAT_LAUNCHER;
   public static boolean JELLYBEAN_LAUNCHER;
+  public static boolean LAUNCHER_HAS_ANIMATIONS;
   
   private static boolean inited = false;
   
@@ -52,7 +56,24 @@ public class Conditionals
       JELLYBEAN_LAUNCHER = true;
     }
     
+    try
+    {
+      LAUNCHER_HAS_ANIMATIONS = false;
+      for(Field f: Class.forName("com.sonymobile.home.desktop.DesktopView").getDeclaredFields())
+      {
+        if("mAnimNbr".equals(f.getName()))
+        {
+          LAUNCHER_HAS_ANIMATIONS = true;
+          break;
+        }
+      }
+    }
+    catch(Throwable ex)
+    {
+    }
+    
     XposedBridge.log("JELLYBEAN_LAUNCHER: " + JELLYBEAN_LAUNCHER);
     XposedBridge.log("KITKAT_LAUNCHER: " + KITKAT_LAUNCHER);
+    XposedBridge.log("LAUNCHER_HAS_ANIMATIONS: " + LAUNCHER_HAS_ANIMATIONS);
   }
 }

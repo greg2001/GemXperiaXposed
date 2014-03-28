@@ -277,14 +277,63 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDesktop(XC_LoadPackage.LoadPackageParam param)
   {
-    final int desktop_animation = Integer.valueOf(prefs.getString("key_desktop_animation", "0"));
-    if(desktop_animation != 0)
+    final int desktop_animation = Integer.valueOf(prefs.getString("key_desktop_animation", Integer.toString(Animations.DESKTOP_DEFAULT)));
+    if(desktop_animation != Animations.DESKTOP_DEFAULT)
+    {
+      if(LAUNCHER_HAS_ANIMATIONS && (desktop_animation != Animations.SIMPLE))
+      {
+        new AutoHook()
+        {
+          public void after_all_constructors(DesktopView thiz)
+          {
+            setIntField(thiz, "mAnimNbr", desktop_animation);
+          }
+        };
+      }
+      else
+      {
+        new AutoHook()
+        {
+          private Animations animations = null;
+          
+          public void after_all_constructors(DesktopView thiz)
+          {
+            animations = new Animations(thiz);
+          }
+          
+          public Object before_updateFromTouch(DesktopView thiz, boolean b)
+          {
+            if(animations != null)
+            {
+              animations.animate(b, desktop_animation);
+              return VOID;
+            }
+            return NONE;
+          }
+        };
+      }
+    }
+
+    final int drawer_animation = Integer.valueOf(prefs.getString("key_drawer_animation", Integer.toString(Animations.DRAWER_DEFAULT)));
+    if(drawer_animation != Animations.DRAWER_DEFAULT)
     {
       new AutoHook()
       {
-        public void after_all_constructors(DesktopView thiz)
+        private Animations animations = null;
+        
+        public void after_all_constructors(AppTrayView thiz)
         {
-          setIntField(thiz, "mAnimNbr", desktop_animation);
+          animations = new Animations(thiz);
+        }
+        
+        public Object before_updateFromTouch(AppTrayView thiz, boolean b)
+        {
+          if(animations != null)
+          {
+            animations.animate(b, drawer_animation);
+            return VOID;
+          }
+          return NONE;
         }
       };
     }
