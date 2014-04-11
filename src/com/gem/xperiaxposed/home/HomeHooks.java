@@ -2,6 +2,8 @@ package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.Conditionals.*;
 import static com.gem.xperiaxposed.XposedMain.*;
+import static com.gem.xperiaxposed.systemui.SystemUIResources.*;
+import static com.gem.xposed.ReflectionUtils.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
@@ -17,7 +19,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.gem.xperiaxposed.AutoHook;
+import com.gem.xposed.AutoHook;
 import com.sonymobile.flix.components.Component;
 import com.sonymobile.flix.components.Image;
 import com.sonymobile.flix.components.Scene;
@@ -51,7 +53,6 @@ import com.sonymobile.ui.support.SystemUiVisibilityWrapper;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-
 ////////////////////////////////////////////////////////////
 
 public class HomeHooks
@@ -191,23 +192,41 @@ public class HomeHooks
         public void before_onSceneCreated(MainView thiz, Scene scene, int paramInt1, int paramInt2)
         {
           scene.setOuterPadding(0, -DisplayData.getTopOffset(), -DisplayData.getRightOffset(), -DisplayData.getBottomOffset());
+          scene.move((0-DisplayData.getRightOffset()) / 2.0f, (DisplayData.getTopOffset()-DisplayData.getBottomOffset()) / 2.0f);
         }
   
         public void before_onSceneSizeChanged(MainView thiz, Scene scene, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
         {
           scene.setOuterPadding(0, -DisplayData.getTopOffset(), -DisplayData.getRightOffset(), -DisplayData.getBottomOffset());
+          scene.move((0-DisplayData.getRightOffset()) / 2.0f, (DisplayData.getTopOffset()-DisplayData.getBottomOffset()) / 2.0f);
         }
-  
+        
+        @EnableIf("KITKAT_LAUNCHER")
+        public Object before_updateSceneMargins(MainView thiz)
+        {
+          return VOID;
+        }
+        
         public void after_initialize(AppTrayDrawerView thiz, float f1, float f2, float f3)
         {
-          ListView listView = (ListView)getObjectField(thiz, "mListView");
+          ListView listView = getField(thiz, "mListView");
           listView.setPadding(Math.round(f1 - f3), DisplayData.getTopOffset(), 0, DisplayData.getBottomOffset());
         }
         
         public void after_onDrawerSizeChanged(AppTrayDrawerView thiz, float f1, float f2, float f3)
         {
-          ListView listView = (ListView)getObjectField(thiz, "mListView");
+          ListView listView = getField(thiz, "mListView");
           listView.setPadding(Math.round(f1 - f3), DisplayData.getTopOffset(), 0, DisplayData.getBottomOffset());
+          thiz.getViewWrapper().move(0, -(DisplayData.getTopOffset()-DisplayData.getBottomOffset()) / 2.0f);
+        }
+
+        public Object after_getWorldY(Component thiz, MethodHookParam param)
+        {
+          Scene scene = thiz.getScene();
+          if(scene != null)
+            return (Float)param.getResult() + scene.getOuterPadding().top;
+          else
+            return NONE;
         }
         
         public void before_apply(SystemUiVisibilityWrapper thiz)
@@ -267,6 +286,20 @@ public class HomeHooks
             return VOID;
           else
             return NONE;
+        }
+      };
+    }
+    
+    final int iconSize = prefs.getInt("key_launcher_icon_size", 100);
+    if(iconSize != 100)
+    {
+      new AutoHook()
+      {
+        public void after_scaleIconToMaxSize(IconLabelView thiz)
+        {
+          Image image = thiz.getImage();
+          if(image != null && image.getBitmap() != null)
+            image.setScaling(image.getScalingX() * iconSize / 100.0f);
         }
       };
     }
@@ -479,19 +512,6 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookFolders(XC_LoadPackage.LoadPackageParam param)
   {
-    final int folderColumns = Integer.parseInt(prefs.getString("key_folder_columns", "4"));
-    if(folderColumns != 4)
-    {
-      new AutoHook()
-      {
-        public Object before_setCellWidth(com.sonymobile.home.folder.GridView thiz, float width)
-        {
-          setFloatField(thiz, "mCellWidth", width * 4 / folderColumns);
-          return VOID;
-        }
-      };
-    }
-
     if(prefs.getBoolean("key_folder_multiline_labels", false))
     {
       new AutoHook()

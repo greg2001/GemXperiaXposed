@@ -1,92 +1,90 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string-array name="desktop_rows_entries">
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-  </string-array>
-  <string-array name="desktop_columns_entries">
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-  </string-array>
-  <string-array name="desktop_animation_entries">
-    <item>Convex</item>
-    <item>Concave</item>
-    <item>Cylinder</item>
-    <item>Home5</item>
-    <item>Blinkfeed</item>
-    <item>Windmill</item>
-    <item>Slight windmill</item>
-  </string-array>
-  <string-array name="dock_columns_entries">
-    <item>5</item>
-    <item>7</item>
-  </string-array>
-  <string-array name="folder_columns_entries">
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-  </string-array>
-  <string-array name="drawer_rows_entries">
-    <item>5</item>
-    <item>6</item>
-  </string-array>
-  <string-array name="drawer_columns_entries">
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-  </string-array>
-  <string-array name="systemui_color_entries">
-    <item>默认</item>
-    <item>暗色系</item>
-    <item>亮色系</item>
-    <item>半透明</item>
-    <item>全透明</item>
-  </string-array>
-  <string-array name="systemui_rounded_corners_entries">
-    <item>默认</item>
-    <item>启用</item>
-    <item>关闭</item>
-  </string-array>
-  <string-array name="about_theme_entries">
-    <item>亮色系</item>
-    <item>暗色系</item>
-  </string-array>
-  <string-array name="systemui_status_color_set_entries">
-    <item>自定义</item>
-    <item>随系统或主题</item>
-  </string-array>
-  <string-array name="systemui_nav_color_set_entries">
-    <item>自定义</item>
-    <item>随系统或主题</item>
-    <item>随状态栏</item>
-  </string-array>
-  <string-array name="tutorial_settings_menu_titles">
-    <item>
-    </item>
-  </string-array>
-  <string-array name="tutorial_alphabetical_badge_titles">
-    <item>
-    </item>
-  </string-array>
-  <string-array name="tutorial_hide_apps_titles">
-    <item>隐藏不常用应用程序</item>
-    <item>增加隐藏选项</item>
-    <item>解除隐藏状态</item>
-  </string-array>
-  <string-array name="tutorial_unread_count_titles">
-    <item>
-    </item>
-    <item>请安装Missed It!此应用</item>
-    <item>开启通知存取能力</item>
-    <item>进入Missed It!设置</item>
-  </string-array>
-  <string-array name="tutorial_fullscreen_layout_titles">
-    <item>全屏的程序选单</item>
-    <item>主页背景颜色 #00000000</item>
-    <item>主页背景颜色 #7f000000</item>
-    <item>主页背景颜色 #7f0000ff</item>
-    <item>主页背景颜色 #ff000000</item>
-  </string-array>
+    <string-array name="desktop_rows_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_animation_entries">
+        <item>Convex</item>
+        <item>Concave</item>
+        <item>Cylinder</item>
+        <item>Home5</item>
+        <item>Blinkfeed</item>
+        <item>Windmill</item>
+        <item>Slight windmill</item>
+        <item>Simple</item>
+    </string-array>
+    <string-array name="dock_columns_entries">
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="folder_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_rows_entries">
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="systemui_color_entries">
+        <item>默認</item>
+        <item>暗色系</item>
+        <item>亮色系</item>
+        <item>半透明</item>
+        <item>全透明</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_entries">
+        <item>默認</item>
+        <item>啟用</item>
+        <item>關閉</item>
+    </string-array>
+    <string-array name="about_theme_entries">
+        <item>亮色系</item>
+        <item>暗色系</item>
+    </string-array>
+    <string-array name="systemui_status_color_set_entries">
+        <item>自定義</item>
+        <item>隨系統或主題</item>
+    </string-array>
+    <string-array name="systemui_nav_color_set_entries">
+        <item>自定義</item>
+        <item>隨系統或主題</item>
+        <item>隨狀態欄</item>
+    </string-array>
+    <string-array name="tutorial_settings_menu_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_alphabetical_badge_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_hide_apps_titles">
+        <item>隐藏不常用应用程序</item>
+        <item>增加隐藏选项</item>
+        <item>解除隐藏状态</item>
+    </string-array>
+    <string-array name="tutorial_unread_count_titles">
+        <item></item>
+        <item>请安装Missed It!此应用</item>
+        <item>开启通知存取能力</item>
+        <item>进入Missed It!设置</item>
+    </string-array>
+    <string-array name="tutorial_fullscreen_layout_titles">
+        <item>全屏的程序菜單</item>
+        <item>主页背景颜色 #00000000</item>
+        <item>主页背景颜色 #7f000000</item>
+        <item>主页背景颜色 #7f0000ff</item>
+        <item>主页背景颜色 #ff000000</item>
+    </string-array>
 </resources>

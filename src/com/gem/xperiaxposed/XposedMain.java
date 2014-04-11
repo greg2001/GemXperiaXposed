@@ -7,16 +7,23 @@ import static de.robv.android.xposed.XposedHelpers.*;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.XResources;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewManager;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.gem.xperiaxposed.home.HomeResources;
+import com.gem.xperiaxposed.systemui.SystemUIHooks;
+import com.gem.xperiaxposed.systemui.SystemUIResources;
+import com.gem.xposed.ModuleResources;
+import com.gem.xposed.ReflectionUtils;
+
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -26,6 +33,7 @@ import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
 ////////////////////////////////////////////////////////////
 
 public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources
@@ -33,43 +41,23 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
 ////////////////////////////////////////////////////////////
   
-  public static final int SYSTEM_UI_TRANSPARENT_BACKGROUND      = 0x99000000;
-  public static final int SYSTEM_UI_OPAQUE_BACKGROUND           = 0xff000000;
-  public static final int SYSTEM_UI_LIGHT_BACKGROUND            = 0xff4d4d4d;
-  
-////////////////////////////////////////////////////////////
-
   public static String MODULE_PATH;
   public static XSharedPreferences prefs;
 
 ////////////////////////////////////////////////////////////
-
-  public static int SYSTEM_UI_FLAG_TRANSPARENT = 0;
-  public static int SYSTEM_UI_FLAG_FULL_TRANSPARENCY = 0;
-  public static int SYSTEM_UI_FLAG_LIGHT = 0;
-  public static int SYSTEM_UI_FLAG_ROUNDED_CORNERS = 0;
-  public static int SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS = 0;
-  public static int SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION = 0;
   
-  private static void initFlags()
-  {
-    SYSTEM_UI_FLAG_TRANSPARENT                  = getFlag("SYSTEM_UI_FLAG_TRANSPARENT");
-    SYSTEM_UI_FLAG_FULL_TRANSPARENCY            = getFlag("SYSTEM_UI_FLAG_FULL_TRANSPARENCY");
-    SYSTEM_UI_FLAG_LIGHT                        = getFlag("SYSTEM_UI_FLAG_LIGHT");
-    SYSTEM_UI_FLAG_ROUNDED_CORNERS              = getFlag("SYSTEM_UI_FLAG_ROUNDED_CORNERS");
-    SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS      = getFlag("SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS");
-    SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION          = getFlag("SYSTEM_UI_FLAG_SUPPRESS_NAVIGATION");
-  }
-  
-  private static int getFlag(String flag)
+  public void setupClassLoader(XC_LoadPackage.LoadPackageParam param)
   {
     try
     {
-      return View.class.getField(flag).getInt(null);
+      ClassLoader moduleClassLoader = getClass().getClassLoader();
+      ClassLoader xposedClassLoader = moduleClassLoader.getParent();
+      ClassLoader packageClassLoader = param.classLoader;
+      ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader, xposedClassLoader);
     }
     catch(Throwable ex)
     {
-      return 0;
+      log(ex);
     }
   }
 
@@ -78,7 +66,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   @Override
   public void initZygote(IXposedHookZygoteInit.StartupParam param) throws Throwable
   {
-    initFlags();
+    SystemUIResources.initFlags();
     
     MODULE_PATH = param.modulePath;
     prefs = new XSharedPreferences(XposedMain.class.getPackage().getName());
@@ -98,49 +86,11 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(param.packageName.equals(SYSTEMUI))
     {
-      if(KITKAT)
-        return;
-      
-      prefs.reload();
-      
-      boolean status_bar_custom = "custom".equals(prefs.getString("key_systemui_status_color_set", "custom"));
-      boolean nav_bar_custom = "custom".equals(prefs.getString("key_systemui_nav_color_set", "status"));
-      boolean nav_bar_same = "status".equals(prefs.getString("key_systemui_nav_color_set", "status"));
-      
-      int system_ui_transparent_background = prefs.getInt("key_systemui_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
-      int system_ui_opaque_background = prefs.getInt("key_systemui_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
-      int system_ui_light_background = prefs.getInt("key_systemui_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
-      int system_ui_nav_transparent_background = system_ui_transparent_background;
-      int system_ui_nav_opaque_background = system_ui_opaque_background;
-      int system_ui_nav_light_background = system_ui_light_background;
-      if(!nav_bar_same)
+      if(JELLYBEAN)
       {
-        system_ui_nav_transparent_background = prefs.getInt("key_systemui_nav_translucent_background", SYSTEM_UI_TRANSPARENT_BACKGROUND);
-        system_ui_nav_opaque_background = prefs.getInt("key_systemui_nav_dark_background", SYSTEM_UI_OPAQUE_BACKGROUND);
-        system_ui_nav_light_background = prefs.getInt("key_systemui_nav_light_background", SYSTEM_UI_LIGHT_BACKGROUND);
-      }
-      
-      if(status_bar_custom)
-      {
-        param.res.setReplacement(SYSTEMUI, "color", "system_ui_transparent_background", system_ui_transparent_background);
-        param.res.setReplacement(SYSTEMUI, "color", "system_ui_opaque_background", system_ui_opaque_background);
-        param.res.setReplacement(SYSTEMUI, "color", "system_ui_light_background", system_ui_light_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_opaque_background", system_ui_opaque_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_transparent_background", system_ui_transparent_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_light_background", system_ui_light_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "status_bar_lights_out_background", system_ui_opaque_background);
-      }
-
-      if(nav_bar_custom || (status_bar_custom && nav_bar_same))
-      {
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background", system_ui_nav_opaque_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_opaque_background_land", system_ui_nav_opaque_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background", system_ui_nav_transparent_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_transparent_background_land", system_ui_nav_transparent_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background", system_ui_nav_light_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_light_background_land", system_ui_nav_light_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background", system_ui_nav_opaque_background);
-        param.res.setReplacement(SYSTEMUI, "drawable", "navigation_bar_lights_out_background_land", system_ui_nav_opaque_background);
+        prefs.reload();
+        ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
+        SystemUIResources.updateResources(param.res, res);
       }
     }
     if(param.packageName.equals(SE_LOCK))
@@ -158,9 +108,11 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       {
         param.res.setReplacement(SE_LOCK, "string", "lockscreen_unlock_hint", hintText);
         param.res.setReplacement(SE_LOCK, "string", "lockscreen_accessibility_unlock_hint", hintText);
+        if(KITKAT)
+          param.res.setReplacement(SE_LOCK, "string", "lockscreen_short_unlock_hint", hintText);
       }
 
-      if(prefs.getBoolean("key_more_unlock_blinds", false))
+      if(JELLYBEAN && prefs.getBoolean("key_more_unlock_blinds", false))
       {
         param.res.setReplacement(SE_LOCK, "integer", "number_of_blinds", 28);
         param.res.setReplacement(SE_LOCK, "integer", "blinds_affected_by_touch", 10);
@@ -170,7 +122,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     {
       prefs.reload();
       ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
-      com.gem.xperiaxposed.home.HomeResources.updateResources(param.res, res);
+      HomeResources.updateResources(param.res, res);
     }
   }
 
@@ -182,7 +134,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     if(param.packageName.equals(ANDROID))
     {
       prefs.reload();
-      hookWindowManager(param);
+      SystemUIHooks.hookWindowManager(param);
       if(JELLYBEAN)
         hookKeyguard(param);
     }
@@ -191,25 +143,20 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       if(KITKAT)
         hookKeyguard(param);
     }
+    else if(param.packageName.equals(SYSTEMUI))
+    {
+      if(JELLYBEAN)
+      {
+        setupClassLoader(param);
+        prefs.reload();
+        SystemUIHooks.hookSystemUI(param);
+      }
+    }
     else if(param.packageName.equals(SE_HOME))
     {
-      try
-      {
-        ClassLoader moduleClassLoader = getClass().getClassLoader();
-        ClassLoader xposedClassLoader = moduleClassLoader.getParent();
-        ClassLoader packageClassLoader = param.classLoader;
-        
-        ReflectionUtils.setParentClassLoader(packageClassLoader, xposedClassLoader);
-        ReflectionUtils.setParentClassLoader(moduleClassLoader, packageClassLoader);
-      }
-      catch(Throwable ex)
-      {
-        log(ex);
-      }
-
-      Conditionals.initLauncher();
-
+      setupClassLoader(param);
       prefs.reload();
+      Conditionals.initLauncher();
       com.gem.xperiaxposed.home.HomeHooks.hookTransparency(param);
       com.gem.xperiaxposed.home.HomeHooks.hookFont(param);
       com.gem.xperiaxposed.home.HomeHooks.hookLayout(param);
@@ -229,139 +176,6 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   
 ////////////////////////////////////////////////////////////
 
-  private void hookWindowManager(XC_LoadPackage.LoadPackageParam param)
-  {
-    if(prefs.getBoolean("key_systemui_enable_appearance_customization", false))
-    {
-      try {
-      findAndHookMethod("com.android.internal.policy.impl.PhoneWindowManager", param.classLoader, "filterSystemUiVisibility", int.class, int.class, new XC_MethodHook()
-      {
-        private String lastPackageName = null;
-        private int enableFlags = 0;  
-        private int disableFlags = 0;  
-        
-        private void updateRoundedCorners(String value)
-        {
-          if("Enable".equals(value))
-          {
-            enableFlags |= SYSTEM_UI_FLAG_ROUNDED_CORNERS;
-            disableFlags |= SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS;
-          }
-          else if("Disable".equals(value))
-          {
-            enableFlags |= SYSTEM_UI_FLAG_DISABLE_ROUNDED_CORNERS;
-            disableFlags |= SYSTEM_UI_FLAG_ROUNDED_CORNERS;
-          }
-        }
-        
-        private void updateColor(String value)
-        {
-          if("Dark".equals(value))
-          {
-            enableFlags |= 0;
-            disableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY | SYSTEM_UI_FLAG_LIGHT;
-          }
-          else if("Light".equals(value))
-          {
-            enableFlags |= SYSTEM_UI_FLAG_LIGHT;
-            disableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY;
-          }
-          else if("Translucent".equals(value))
-          {
-            enableFlags |= SYSTEM_UI_FLAG_TRANSPARENT;
-            disableFlags |= SYSTEM_UI_FLAG_FULL_TRANSPARENCY | SYSTEM_UI_FLAG_LIGHT;
-          }
-          else if("Transparent".equals(value))
-          {
-            enableFlags |= SYSTEM_UI_FLAG_TRANSPARENT | SYSTEM_UI_FLAG_FULL_TRANSPARENCY;
-            disableFlags |= SYSTEM_UI_FLAG_LIGHT;
-          }
-        }
-        
-        private void updatePackage(MethodHookParam param)
-        {
-          Object mFocusedWindow = getObjectField(param.thisObject, "mFocusedWindow");
-          String packageName = (String)callMethod(mFocusedWindow, "getOwningPackage");
-          if(packageName == lastPackageName || (packageName != null && packageName.equals(lastPackageName)))
-            return;
-          
-          lastPackageName = packageName;
-          enableFlags = 0;
-          disableFlags = 0;
-  
-          prefs.reload();
-          
-          String corners = prefs.getString("key_systemui_app_rounded_corners$" + packageName, "Default");
-          if("Default".equals(corners))
-            corners = prefs.getString("key_systemui_app_rounded_corners", "Default");
-          updateRoundedCorners(corners);
-          
-          if(!ANDROID.equals(packageName))
-          {
-            String color = prefs.getString("key_systemui_app_color$" + packageName, "Default");
-            if("Default".equals(color))
-              color = prefs.getString("key_systemui_app_color", "Default");
-            updateColor(color);
-          }
-        }
-        
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
-        {
-          updatePackage(param);
-          if(enableFlags != 0 || disableFlags != 0)
-            param.setResult(((Integer)param.getResult() | enableFlags) & ~disableFlags);
-        }
-      });
-      } catch(Throwable ex) { log(ex); }
-    }
-    
-    if(prefs.getBoolean("key_volume_keys_wake", false))
-    {
-      try {
-      findAndHookMethod("com.android.internal.policy.impl.PhoneWindowManager", param.classLoader, "interceptKeyBeforeQueueing", 
-        KeyEvent.class,
-        int.class,
-        boolean.class,
-        new XC_MethodHook()
-      {
-        private static final int FLAG_WAKE = 0x00000001;
-        private static final int FLAG_WAKE_DROPPED = 0x00000002;
-        
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-        {
-          KeyEvent event = (KeyEvent)param.args[0];
-          int keyCode = event.getKeyCode();
-          if(keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
-          {
-            int flags = (Integer)param.args[1];
-            flags |= FLAG_WAKE | FLAG_WAKE_DROPPED;
-            param.args[1] = flags;
-          }
-        }
-      });
-      } catch(Throwable ex) { log(ex); }
-
-      try {
-      findAndHookMethod("com.android.internal.policy.impl.PhoneWindowManager", param.classLoader, "isWakeKeyWhenScreenOff", 
-        int.class,
-        new XC_MethodHook()
-      {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable
-        {
-          int keyCode = (Integer)param.args[0];
-          if(keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
-            param.setResult(true);
-        }
-      });
-      } catch(Throwable ex) { log(ex); }
-    }
-  }
-  
-////////////////////////////////////////////////////////////
-
   private void hookKeyguard(XC_LoadPackage.LoadPackageParam param)
   {
     if(prefs.getBoolean("key_transparent_lockscreen", false))
@@ -373,7 +187,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         protected void afterHookedMethod(MethodHookParam param) throws Throwable
         {
           View view = (View)param.thisObject;
-          view.setSystemUiVisibility(view.getSystemUiVisibility() | SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
+          view.setSystemUiVisibility(view.getSystemUiVisibility() | SystemUIResources.SYSTEM_UI_FLAG_FULL_TRANSPARENCY);
         }
       });
       } catch(Throwable ex) { log(ex); }
@@ -442,16 +256,32 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
     if(prefs.getBoolean("key_hide_widget_backplate", false))
     {
-      try {
-      hookAllConstructors(findClass(KEYGUARD + ".KeyguardWidgetFrame", param.classLoader), new XC_MethodHook()
+      if(JELLYBEAN)
       {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable
+        try {
+        hookAllConstructors(findClass(KEYGUARD + ".KeyguardWidgetFrame", param.classLoader), new XC_MethodHook()
         {
-          setObjectField(param.thisObject, "mBackgroundDrawable", new ColorDrawable(0));
-        }
-      });
-      } catch(Throwable ex) { log(ex); }
+          @Override
+          protected void afterHookedMethod(MethodHookParam param) throws Throwable
+          {
+            setObjectField(param.thisObject, "mBackgroundDrawable", new ColorDrawable(0));
+          }
+        });
+        } catch(Throwable ex) { log(ex); }
+      }
+      if(KITKAT)
+      {
+        try {
+        findAndHookMethod(KEYGUARD + ".KeyguardWidgetFrame", param.classLoader, "drawBg", Canvas.class, new XC_MethodHook()
+        {
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable
+          {
+            param.setResult(null);
+          }
+        });
+        } catch(Throwable ex) { log(ex); }
+      }
     }
     
     if(prefs.getBoolean("key_slide_before_unlock", false))
@@ -491,7 +321,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 
   private void hookLockscreen(XC_LoadPackage.LoadPackageParam param)
   {
-    if(prefs.getBoolean("key_slide_before_unlock", false) && !prefs.getBoolean("key_enable_standard_lockscreen", false))
+    if(JELLYBEAN && prefs.getBoolean("key_slide_before_unlock", false) && !prefs.getBoolean("key_enable_standard_lockscreen", false))
     {
       try {
       findAndHookMethod("com.sonymobile.lockscreen.xperia.widget.blindslayout.BlindsRelativeLayout", param.classLoader, "onExitTransitionFinished", 

@@ -1,6 +1,6 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
+import static com.gem.xposed.ReflectionUtils.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
 import java.util.HashMap;

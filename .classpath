@@ -6,6 +6,7 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="C:/gregory/android/workspace/GemXperiaXposed/XperiaHome.jar"/>
+	<classpathentry kind="lib" path="C:/gregory/android/workspace/GemXperiaXposed/XperiaSystemUI.jar"/>
 	<classpathentry kind="lib" path="C:/gregory/android/workspace/GemXperiaXposed/XposedBridgeApi-30.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

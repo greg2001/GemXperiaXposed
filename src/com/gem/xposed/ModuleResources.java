@@ -1,10 +1,15 @@
-package com.gem.xperiaxposed;
+package com.gem.xposed;
 
 import static de.robv.android.xposed.XposedHelpers.*;
-import android.annotation.*;
-import android.app.*;
-import android.content.res.*;
-import android.util.*;
+import android.annotation.SuppressLint;
+import android.app.AndroidAppHelper;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.XResForwarder;
+import android.content.res.XResources;
+import android.util.DisplayMetrics;
+import android.util.SparseArray;
 
 @SuppressLint("UseSparseArrays")
 public class ModuleResources extends Resources

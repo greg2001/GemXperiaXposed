@@ -2,13 +2,15 @@ package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.Constants.*;
 import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
+import static com.gem.xposed.AutoHook.*;
+import static com.gem.xposed.ReflectionUtils.*;
 import static com.sonymobile.flix.components.Component.*;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 
-import com.gem.xperiaxposed.ClassHook;
+import com.gem.xposed.ClassHook;
 import com.sonymobile.flix.components.Component;
 import com.sonymobile.flix.components.ComponentListeners;
 import com.sonymobile.flix.components.Image;

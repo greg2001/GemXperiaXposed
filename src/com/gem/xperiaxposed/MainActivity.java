@@ -1,12 +1,17 @@
 package com.gem.xperiaxposed;
 
 import static com.gem.xperiaxposed.Constants.*;
+
+import java.util.HashSet;
+
 import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 
 import com.gem.util.GemActivity;
+import com.gem.util.GemListPreference;
 import com.gem.util.GemPreferenceFragment;
 
 public class MainActivity extends GemActivity
@@ -79,9 +84,13 @@ class SettingsFragment extends GemPreferenceFragment
       @Override
       public boolean onPreferenceClick(Preference preference)
       {
+        ((MultiSelectListPreference)findPreference("key_systemui_status_gradient")).setValues(new HashSet<String>());
+        ((GemListPreference)findPreference("key_systemui_status_color_set")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_dark_background")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_light_background")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_translucent_background")).resetValue();
+        ((MultiSelectListPreference)findPreference("key_systemui_nav_gradient")).setValues(new HashSet<String>());
+        ((GemListPreference)findPreference("key_systemui_nav_color_set")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_nav_dark_background")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_nav_light_background")).resetValue();
         ((ColorPickerPreference)findPreference("key_systemui_nav_translucent_background")).resetValue();

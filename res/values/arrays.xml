@@ -50,6 +50,18 @@
         <item>6</item>
     </string-array>
     
+    <string-array name="systemui_gradient_entries">
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Translucent</item>
+        <item>Transparent</item>
+    </string-array>
+    <string-array name="systemui_gradient_values">
+        <item>dark</item>
+        <item>light</item>
+        <item>translucent</item>
+        <item>transparent</item>
+    </string-array>
     <string-array name="systemui_color_entries">
         <item>Default</item>
         <item>Dark</item>
@@ -153,5 +165,7 @@
         <item>@drawable/drawer_background_7f0000ff</item>
         <item>@drawable/drawer_background_ff000000</item>
     </array>
+    
+    <string-array name="empty_array"></string-array>
 
 </resources>

@@ -18,6 +18,7 @@
     <item>Blinkfeed</item>
     <item>Windmill</item>
     <item>Slight windmill</item>
+    <item>Simple</item>
   </string-array>
   <string-array name="dock_columns_entries">
     <item>5</item>
@@ -60,15 +61,13 @@
   <string-array name="systemui_nav_color_set_entries">
     <item>自定義</item>
     <item>隨系統或主題</item>
-    <item>隨狀態欄</item>
+    <item>隨系統或狀態欄</item>
   </string-array>
   <string-array name="tutorial_settings_menu_titles">
-    <item>
-    </item>
+    <item></item>
   </string-array>
   <string-array name="tutorial_alphabetical_badge_titles">
-    <item>
-    </item>
+    <item></item>
   </string-array>
   <string-array name="tutorial_hide_apps_titles">
     <item>隱藏不常用應用程式</item>
@@ -76,8 +75,7 @@
     <item>解除隱藏狀態</item>
   </string-array>
   <string-array name="tutorial_unread_count_titles">
-    <item>
-    </item>
+    <item></item>
     <item>請安裝Missed It!此應用</item>
     <item>開啟通知存取能力</item>
     <item>進入Missed It!設定</item>

@@ -60,6 +60,7 @@
   <string name="remember_drawer_page">記住當前頁</string>
   <string name="drawer_menu_opacity">程序選單透明度</string>
   <string name="menu_dark_bars">滑動程序選單時使狀態欄不透明</string>
+  <string name="drawer_animation">@string/desktop_animation</string>
   <string name="lockscreen">Xperia鎖屏介面設定</string>
   <string name="reboot_phone_lockscreen">備註</string>
   <string name="reboot_phone_summary_lockscreen">你需要重啟你的手機使設定生效。修改鎖屏介面有一定的風險，如果不幸的無限重啟的話，請進入Recovery，在手機內建記憶體內找到Xposed-Disabler-Recovery.zip刷入，即可移除XPOSED框架。</string>
@@ -81,6 +82,7 @@
   <string name="systemui_colors">顏色</string>
   <string name="restart_systemui">重新啟動SystemUI</string>
   <string name="restart_systemui_summary">重新啟動SystemUI使設定生效(需要ROOT)。如果系統介面停止，你可能需要重新啟動手機。</string>
+  <string name="reset_to_default">恢復為預設值</string>
   <string name="systemui_status_colors">狀態欄顏色</string>
   <string name="systemui_status_color_set">顏色設定</string>
   <string name="systemui_dark_background">更改黑色狀態欄顏色</string>

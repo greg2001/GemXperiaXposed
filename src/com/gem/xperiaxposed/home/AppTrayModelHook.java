@@ -1,6 +1,7 @@
 package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
+import static com.gem.xposed.ReflectionUtils.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.gem.xperiaxposed.ClassHook;
+import com.gem.xposed.ClassHook;
 import com.sonymobile.home.apptray.AppTrayModel;
 import com.sonymobile.home.data.ActivityItem;
 import com.sonymobile.home.data.Item;
@@ -38,7 +39,10 @@ public class AppTrayModelHook extends ClassHook<AppTrayModel>
   public void setHidden(Item item, boolean hidden)
   {
     if(hidden)
+    {
+      item.setLocation(new ItemLocation(10000, 1));
       prefs.edit().putBoolean(item.getPackageName(), true).commit();
+    }
     else
     {
       item.setLocation((ItemLocation)callMethod(thiz, "getNewLocation"));

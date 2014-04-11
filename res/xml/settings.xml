@@ -302,7 +302,9 @@
         <CheckBoxPreference
             android:key="key_hide_shortcuts"
             android:title="@string/hide_shortcuts"
-            android:defaultValue="false"/>
+            android:defaultValue="false">
+            <extra android:name="hideIf" android:value="KITKAT" />
+        </CheckBoxPreference>
         <EditTextPreference
             android:key="key_carrier_text"
             android:title="@string/carrier_text"
@@ -318,14 +320,14 @@
             android:key="key_hide_hint_arrows"
             android:title="@string/hide_hint_arrows"
             android:dependency="key_enable_standard_lockscreen"
-            android:defaultValue="false">
-            <extra android:name="hideIf" android:value="KITKAT" />
-        </CheckBoxPreference>
+            android:defaultValue="false"/>
         <CheckBoxPreference
             android:key="key_more_unlock_blinds"
             android:title="@string/more_unlock_blinds"
             android:dependency="key_enable_standard_lockscreen"
-            android:defaultValue="false"/>
+            android:defaultValue="false">
+            <extra android:name="hideIf" android:value="KITKAT" />
+        </CheckBoxPreference>
         <CheckBoxPreference
             android:key="key_volume_keys_wake"
             android:title="@string/volume_keys_wake"
@@ -342,7 +344,15 @@
 	        <Preference 
 				android:key="key_reset_to_default"
 	            android:title="@string/reset_to_default"/>
-   	        <PreferenceCategory android:title="@string/systemui_status_colors">        
+			<PreferenceCategory android:title="@string/systemui_status_colors">        
+				<MultiSelectListPreference
+	        		android:key="key_systemui_status_gradient"
+	        		android:title="@string/systemui_status_gradient"
+	        		android:summary="@string/systemui_status_gradient_summary"
+	        		android:dialogTitle="@string/systemui_status_gradient"
+	        		android:entries="@array/systemui_gradient_entries"
+	        		android:entryValues="@array/systemui_gradient_values"
+	        		android:defaultValue="@array/empty_array" />	        
 			    <com.gem.util.GemListPreference
 			        android:key="key_systemui_status_color_set"
 			        android:title="@string/systemui_status_color_set"
@@ -369,9 +379,17 @@
 		            alphaSlider="true"
                     android:dependency="key_systemui_status_color_set"
 		            android:defaultValue="0x99000000"/>
-	        </PreferenceCategory>
+			</PreferenceCategory>
    	        <PreferenceCategory android:title="@string/systemui_nav_colors">        
-			    <com.gem.util.GemListPreference
+				<MultiSelectListPreference
+	        		android:key="key_systemui_nav_gradient"
+	        		android:title="@string/systemui_nav_gradient"
+	        		android:summary="@string/systemui_nav_gradient_summary"
+	        		android:dialogTitle="@string/systemui_nav_gradient"
+	        		android:entries="@array/systemui_gradient_entries"
+	        		android:entryValues="@array/systemui_gradient_values"
+	        		android:defaultValue="@array/empty_array" />	        
+   	            <com.gem.util.GemListPreference
 			        android:key="key_systemui_nav_color_set"
 			        android:title="@string/systemui_nav_color_set"
 			        android:dialogTitle="@string/systemui_nav_color_set"
@@ -397,7 +415,7 @@
 		            alphaSlider="true"
                     android:dependency="key_systemui_nav_color_set"
 		            android:defaultValue="0x99000000"/>
-	        </PreferenceCategory>
+			</PreferenceCategory>
         </PreferenceScreen>
 
    	    <PreferenceCategory android:title="@string/systemui_appearance">        

@@ -1,15 +1,24 @@
 package com.gem.xperiaxposed;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.graphics.drawable.*;
-import android.os.*;
-import android.preference.*;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 
-import com.gem.util.*;
+import com.gem.util.GemActivity;
+import com.gem.util.GemPreferenceFragment;
 
 ////////////////////////////////////////////////////////////
 
@@ -58,7 +67,7 @@ class AppListFragment extends GemPreferenceFragment
       Preference p = getPreferenceScreen().getPreference(i);
       String title = p.getTitle().toString();
       if("Default".equals(prefs.getString("key_systemui_app_color$" + p.getKey(), "Default")) &&
-         "Default".equals(prefs.getString("key_systemui_app_rounded_borders$" + p.getKey(), "Default")))
+         "Default".equals(prefs.getString("key_systemui_app_rounded_corners$" + p.getKey(), "Default")))
       {
         if(title.startsWith(PREFIX))
           p.setTitle(title.substring(PREFIX.length()));

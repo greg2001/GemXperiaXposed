@@ -15,6 +15,9 @@
     <item type="dimen" name="desktop_cell_width">@dimen/desktop_cell_width_port</item>
     <item type="dimen" name="desktop_cell_height">@dimen/desktop_cell_height_port</item>
     
+    <dimen name="open_folder_cell_width">80.0dip</dimen>
+    <dimen name="open_folder_cell_height">83.0dip</dimen>
+    
     <dimen name="stage_cell_width">52.0dip</dimen>
     <dimen name="stage_cell_height">55.0dip</dimen>
 

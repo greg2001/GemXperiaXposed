@@ -53,9 +53,5 @@ public final class DisplayData
     sTopOffset = res.getDimensionPixelSize(res.getIdentifier("status_bar_height", "dimen", "android"));
     sBottomOffset = realSize.y - size.y;
     sRightOffset = realSize.x - size.x;
-    
-    XposedBridge.log("Bars " + sTopOffset + " " + sBottomOffset + " " + sRightOffset);
-    XposedBridge.log("Size " + size.x + " " + size.y);
-    XposedBridge.log("Real " + realSize.x + " " + realSize.y);
   }
 }

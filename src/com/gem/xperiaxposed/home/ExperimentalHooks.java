@@ -1,6 +1,7 @@
 package com.gem.xperiaxposed.home;
 
 import static com.gem.xperiaxposed.Constants.*;
+import static com.gem.xposed.ReflectionUtils.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
 
@@ -20,9 +21,9 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import com.gem.xperiaxposed.AutoHook;
-import com.gem.xperiaxposed.ClassHook;
-import com.gem.xperiaxposed.ReflectionUtils;
+import com.gem.xposed.AutoHook;
+import com.gem.xposed.ClassHook;
+import com.gem.xposed.ReflectionUtils;
 import com.sonymobile.flix.components.Scene;
 import com.sonymobile.home.MainView;
 import com.sonymobile.home.apptray.AppTray;
@@ -106,6 +107,12 @@ public class ExperimentalHooks extends AutoHook
     }
   }
 
+  public int after_getPageCount(AppTrayAdapter thiz, MethodHookParam param)
+  {
+    int pages = (Integer)param.getResult();
+    return (pages == 0) ? 1 : pages;
+  }
+
   public void before_sort(AppTraySorter thiz, SortMode mode, MethodHookParam param)
   {
     if(mode == HIDDEN)
@@ -124,7 +131,7 @@ public class ExperimentalHooks extends AutoHook
     else if(data.mItemType == APPTRAY_DRAWER_ITEM_TYPE_HIDDEN)
       callMethod(thiz, "handleSortModeItemClicked", HIDDEN);
   }
-
+  
   public Object before_getCategoryTitleFromSortMode(AppTrayPresenter thiz, SortMode mode)
   {
     if(mode == SortMode.ALPHABETICAL)
@@ -255,16 +262,6 @@ public class ExperimentalHooks extends AutoHook
   
 ////////////////////////////////////////////////////////////
   
-  public static Context getContext(Object o)
-  {
-    return getField(o, "mContext");
-  }
-
-  public static Resources getResources(Object o)
-  {
-    return getContext(o).getResources();
-  }
-
   public static Scene getScene(Object o)
   {
     return getField(o, "mScene");
@@ -280,12 +277,6 @@ public class ExperimentalHooks extends AutoHook
     return getField(getMainView(o), "mAppTray");
   }
   
-  @SuppressWarnings("unchecked")
-  public static <T> T getField(Object o, String name)
-  {
-    return (T)getObjectField(o, name);
-  }
-
 ////////////////////////////////////////////////////////////
   
 }

@@ -109,13 +109,17 @@
     <string name="reset_to_default">Reset to default</string>
     
     <string name="systemui_status_colors">Status Bar</string>
+    <string name="systemui_status_gradient">Gradient</string>
+    <string name="systemui_status_gradient_summary">Enable KitKat-like gradient on a per-state basis.</string>
     <string name="systemui_status_color_set">Color set</string>
-    <string name="systemui_status_color_set_default">custom</string>
+    <string name="systemui_status_color_set_default">system</string>
     <string name="systemui_dark_background">Dark</string>
     <string name="systemui_light_background">Light</string>
     <string name="systemui_translucent_background">Translucent</string>
     
     <string name="systemui_nav_colors">Navigation Bar</string>
+    <string name="systemui_nav_gradient">@string/systemui_status_gradient</string>
+    <string name="systemui_nav_gradient_summary">@string/systemui_status_gradient_summary</string>
     <string name="systemui_nav_color_set">Color set</string>
     <string name="systemui_nav_color_set_default">status</string>
     <string name="systemui_same_nav_colors">Same as Status Bar</string>

@@ -1,9 +1,12 @@
-package com.gem.xperiaxposed;
+package com.gem.xposed;
 
 import static de.robv.android.xposed.XposedHelpers.*;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Arrays;
+
+import android.content.Context;
+import android.content.res.Resources;
 
 ////////////////////////////////////////////////////////////
 
@@ -12,9 +15,10 @@ public class ReflectionUtils
 
 ////////////////////////////////////////////////////////////
   
-  public static void setParentClassLoader(ClassLoader classLoader, ClassLoader parent)
+  public static void setParentClassLoader(ClassLoader... cl)
   {
-    setObjectField(classLoader, "parent", parent);
+    for(int i = cl.length-2; i >= 0; --i)
+      setObjectField(cl[i], "parent", cl[i+1]);
   }
   
 ////////////////////////////////////////////////////////////
@@ -49,6 +53,24 @@ public class ReflectionUtils
     setStaticObjectField(enumClass, "$VALUES", values);
   }
   
+////////////////////////////////////////////////////////////
+  
+  @SuppressWarnings("unchecked")
+  public static <T> T getField(Object o, String name)
+  {
+    return (T)getObjectField(o, name);
+  }
+  
+  public static Context getContext(Object o)
+  {
+    return getField(o, "mContext");
+  }
+
+  public static Resources getResources(Object o)
+  {
+    return getContext(o).getResources();
+  }
+
 ////////////////////////////////////////////////////////////
 
 }

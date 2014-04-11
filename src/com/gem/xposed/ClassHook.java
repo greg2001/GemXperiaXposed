@@ -1,4 +1,4 @@
-package com.gem.xperiaxposed;
+package com.gem.xposed;
 
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;

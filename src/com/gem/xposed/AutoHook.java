@@ -1,4 +1,4 @@
-package com.gem.xperiaxposed;
+package com.gem.xposed;
 
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.gem.xperiaxposed.Conditionals;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;

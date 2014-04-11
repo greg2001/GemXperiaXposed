@@ -4,8 +4,8 @@ import static com.gem.xperiaxposed.Constants.*;
 import static com.gem.xperiaxposed.XposedMain.*;
 import android.content.res.XResources;
 
-import com.gem.xperiaxposed.ModuleResources;
 import com.gem.xperiaxposed.R;
+import com.gem.xposed.ModuleResources;
 
 ////////////////////////////////////////////////////////////
 
@@ -58,6 +58,15 @@ public class HomeResources
       pres.setReplacement(SE_HOME, "dimen", "stage_cell_height", res.fwd(R.dimen.stage_cell_height));
     }
     
+    int folderColumns = Integer.parseInt(prefs.getString("key_folder_columns", "4"));
+    if(folderColumns != 4)
+    {
+      float width = pres.getDimension(pres.getIdentifier("open_folder_cell_width", "dimen", SE_HOME));
+      width *= 4.0/folderColumns;
+      res.setDimension(R.dimen.open_folder_cell_width, width);
+      pres.setReplacement(SE_HOME, "dimen", "open_folder_cell_width", res.fwd(R.dimen.open_folder_cell_width));
+    }
+
     int drawerRows = Integer.parseInt(prefs.getString("key_drawer_rows", "5"));
     if(drawerRows != 5)
     {
@@ -82,6 +91,7 @@ public class HomeResources
       pres.setReplacement(SE_HOME, "dimen", "apptray_cell_width", res.fwd(R.dimen.apptray_cell_width));
     }
     
+/*    
     int iconSize = prefs.getInt("key_launcher_icon_size", 100);
     if(iconSize != 100)
     {
@@ -96,7 +106,8 @@ public class HomeResources
       pres.setReplacement(SE_HOME, "dimen", "icon_image_width", res.fwd(R.dimen.icon_image_height));
       pres.setReplacement(SE_HOME, "dimen", "icon_image_height", res.fwd(R.dimen.icon_image_height));
     }
-
+*/
+    
     int textSize = prefs.getInt("key_launcher_label_text_size", 100);
     if(textSize != 100)
     {
