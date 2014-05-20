@@ -58,7 +58,7 @@ public class SystemUIResources
 
 ////////////////////////////////////////////////////////////
 
-  public static void updateResources(XResources pres, ModuleResources res)
+  public static void updateResources(final XResources pres, final ModuleResources res)
   {
     boolean status_bar_custom = "custom".equals(prefs.getString("key_systemui_status_color_set", "system"));
     boolean nav_bar_custom = "custom".equals(prefs.getString("key_systemui_nav_color_set", "status"));
@@ -136,7 +136,7 @@ public class SystemUIResources
           ViewGroup navBar = (ViewGroup)param.view;
           FrameLayout portNavBar = (FrameLayout)navBar.getChildAt(0);
           FrameLayout landNavBar = (FrameLayout)navBar.getChildAt(1);
-          
+
           View gradient = new View(navBar.getContext());
           gradient.setId(Ids.navigation_bar_gradient_view);
           gradient.setBackgroundResource(Ids.nav_background);

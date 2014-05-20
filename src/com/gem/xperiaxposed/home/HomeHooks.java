@@ -244,7 +244,7 @@ public class HomeHooks
     {
       new AutoHook()
       {
-        void after_onSceneCreated(MainView thiz, Scene scene, int i1, int i2)
+        public void after_onSceneCreated(MainView thiz, Scene scene, int i1, int i2)
         {
           if(desktop_disable_pagination)
           {
