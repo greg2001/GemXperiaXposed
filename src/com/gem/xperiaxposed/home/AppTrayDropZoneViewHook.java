@@ -1,8 +1,7 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.Constants.*;
+import static com.gem.xperiaxposed.XposedMain.*;
 import static com.gem.xperiaxposed.home.ExperimentalHooks.*;
-import static com.gem.xposed.AutoHook.*;
 import static com.gem.xposed.ReflectionUtils.*;
 import static com.sonymobile.flix.components.Component.*;
 import android.content.res.Resources;
@@ -124,20 +123,20 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
     Scene scene = thiz.getScene();
     Resources res = scene.getContext().getResources();
     
-    thiz.setSize(scene.getWidth(), res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
-    mDropZoneBg = BitmapFactory.decodeResource(res, res.getIdentifier("home_apptray_dropzone", "drawable", SE_HOME));
+    thiz.setSize(scene.getWidth(), res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME_PACKAGE)));
+    mDropZoneBg = BitmapFactory.decodeResource(res, res.getIdentifier("home_apptray_dropzone", "drawable", SE_HOME_PACKAGE));
     mHideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_hide)).getBitmap();
     mUnhideBitmap = ((BitmapDrawable)res.getDrawable(Ids.home_apptray_dropzone_unhide)).getBitmap();
 
-    mDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
-    mHideDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME)));
+    mDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME_PACKAGE)));
+    mHideDropArea.setSize(scene.getWidth()/2, 3.0F * res.getDimension(res.getIdentifier("dropzone_height", "dimen", SE_HOME_PACKAGE)));
     
     mBackground.setBitmap(mDropZoneBg);
     mBackground.setScalingToSize(scene.getWidth()/2, mBackground.getHeight());
     mHideBackground.setBitmap(mDropZoneBg);
     mHideBackground.setScalingToSize(scene.getWidth()/2, mBackground.getHeight());
 
-    mIcon.setBitmap(res.getIdentifier("home_apptray_dropzone_home", "drawable", SE_HOME));
+    mIcon.setBitmap(res.getIdentifier("home_apptray_dropzone_home", "drawable", SE_HOME_PACKAGE));
     mHideIcon.setBitmap(mHideBitmap);
 
     Layouter.place(mDropArea, LEFT, BOTTOM, thiz, LEFT, BOTTOM);

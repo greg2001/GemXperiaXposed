@@ -42,6 +42,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
 ////////////////////////////////////////////////////////////
   
   public static String MODULE_PATH;
+  public static String SE_HOME_PACKAGE;
   public static XSharedPreferences prefs;
 
 ////////////////////////////////////////////////////////////
@@ -118,9 +119,11 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         param.res.setReplacement(SE_LOCK, "integer", "blinds_affected_by_touch", 10);
       }
     }    
-    else if(param.packageName.equals(SE_HOME))
+    else if(param.packageName.equals(SE_HOME) || param.packageName.equals(SE_HOME+".z1") || param.packageName.equals(SE_HOME+".z2"))
     {
+      SE_HOME_PACKAGE = param.packageName;
       prefs.reload();
+      
       ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
       HomeResources.updateResources(param.res, res);
     }
@@ -152,10 +155,12 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         SystemUIHooks.hookSystemUI(param);
       }
     }
-    else if(param.packageName.equals(SE_HOME))
+    else if(param.packageName.equals(SE_HOME) || param.packageName.equals(SE_HOME+".z1") || param.packageName.equals(SE_HOME+".z2"))
     {
-      setupClassLoader(param);
+      SE_HOME_PACKAGE = param.packageName;
       prefs.reload();
+
+      setupClassLoader(param);
       Conditionals.initLauncher();
       com.gem.xperiaxposed.home.HomeHooks.hookTransparency(param);
       com.gem.xperiaxposed.home.HomeHooks.hookFont(param);

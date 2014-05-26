@@ -1,6 +1,6 @@
 package com.gem.xperiaxposed.home;
 
-import static com.gem.xperiaxposed.Constants.*;
+import static com.gem.xperiaxposed.XposedMain.*;
 import static com.gem.xposed.ReflectionUtils.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
@@ -135,7 +135,7 @@ public class ExperimentalHooks extends AutoHook
   public Object before_getCategoryTitleFromSortMode(AppTrayPresenter thiz, SortMode mode)
   {
     if(mode == SortMode.ALPHABETICAL)
-      return getResources(thiz).getString(getResources(thiz).getIdentifier("app_tray_drawer_list_item_categories_alphabetical", "string", SE_HOME)) 
+      return getResources(thiz).getString(getResources(thiz).getIdentifier("app_tray_drawer_list_item_categories_alphabetical", "string", SE_HOME_PACKAGE)) 
         + " (" + String.format("%d", numberOfActivities) + ")";
     else if(mode == HIDDEN)
       return getResources(thiz).getString(Ids.app_tray_drawer_list_item_categories_hidden) 
@@ -185,13 +185,13 @@ public class ExperimentalHooks extends AutoHook
   private void injectAppTrayDrawerItems(AppTrayDrawerLoadHelper loadHelper, SortMode sortMode, Map<String, List<AppTrayDrawerItemData>> map)
   {
     Resources res = getResources(loadHelper);
-    int iconSize = res.getDimensionPixelSize(res.getIdentifier("apptray_drawer_icon_width", "dimen", SE_HOME));
+    int iconSize = res.getDimensionPixelSize(res.getIdentifier("apptray_drawer_icon_width", "dimen", SE_HOME_PACKAGE));
     Drawable hiddenIcon = res.getDrawable(Ids.drawer_icn_hidden);
     Drawable settingsIcon = res.getDrawable(Ids.drawer_icn_settings);
     
     try
     {
-      Bitmap icon = BitmapFactory.decodeResource(res, res.getIdentifier("drawer_icn_own_order", "drawable", SE_HOME));
+      Bitmap icon = BitmapFactory.decodeResource(res, res.getIdentifier("drawer_icn_own_order", "drawable", SE_HOME_PACKAGE));
       final int color = icon.getPixel(icon.getWidth()/2, icon.getHeight()/2);
       if(color != Color.WHITE)
       {
@@ -249,7 +249,7 @@ public class ExperimentalHooks extends AutoHook
           items.add(i+1, new AppTrayDrawerItemData(
             res.getString(Ids.app_tray_drawer_list_item_categories_hidden), 
             hiddenIcon, 
-            (sortMode == HIDDEN) ? res.getDrawable(res.getIdentifier("drawer_list_selected", "drawable", SE_HOME)) : null,
+            (sortMode == HIDDEN) ? res.getDrawable(res.getIdentifier("drawer_list_selected", "drawable", SE_HOME_PACKAGE)) : null,
             String.format("%d", numberOfHiddenActivities),
             APPTRAY_DRAWER_ITEM_TYPE_HIDDEN,
             null,

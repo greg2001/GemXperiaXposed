@@ -26,7 +26,22 @@ public class Conditionals
     
     try
     {
-      String version = context.getPackageManager().getPackageInfo(SE_HOME, 0).versionName;
+      String version;
+      try
+      {
+        version = context.getPackageManager().getPackageInfo(SE_HOME, 0).versionName;
+      }
+      catch(Throwable ex)
+      {
+        try
+        {
+          version = context.getPackageManager().getPackageInfo(SE_HOME+".z1", 0).versionName;
+        }
+        catch(Throwable exx)
+        {
+          version = context.getPackageManager().getPackageInfo(SE_HOME+".z2", 0).versionName;
+        }
+      }
       Log.i(TAG, "Xperia launcher version: " + version);
       JELLYBEAN_LAUNCHER = version.startsWith("6.1");
       KITKAT_LAUNCHER = !JELLYBEAN_LAUNCHER;
