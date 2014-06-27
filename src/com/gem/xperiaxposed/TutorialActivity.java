@@ -78,40 +78,40 @@ public class TutorialActivity extends GemActivity
       return this.fragments.size();
     }
   }
-}
 
-class PageFragment extends Fragment
-{
-  public static final String EXTRA_IMAGE = "EXTRA_IMAGE";
-  public static final String EXTRA_TEXT = "EXTRA_TEXT";
-
-  static final PageFragment newInstance(int image, String text)
+  public static class PageFragment extends Fragment
   {
-    PageFragment f = new PageFragment();
-    Bundle bdl = new Bundle(2);
-    bdl.putInt(EXTRA_IMAGE, image);
-    bdl.putString(EXTRA_TEXT, text);
-    f.setArguments(bdl);
-    return f;
-  }
+    public static final String EXTRA_IMAGE = "EXTRA_IMAGE";
+    public static final String EXTRA_TEXT = "EXTRA_TEXT";
   
-  public String getTitle()
-  {
-    return getArguments().getString(EXTRA_TEXT);
+    static final PageFragment newInstance(int image, String text)
+    {
+      PageFragment f = new PageFragment();
+      Bundle bdl = new Bundle(2);
+      bdl.putInt(EXTRA_IMAGE, image);
+      bdl.putString(EXTRA_TEXT, text);
+      f.setArguments(bdl);
+      return f;
+    }
+    
+    public String getTitle()
+    {
+      return getArguments().getString(EXTRA_TEXT);
+    }
+  
+    public int getImage()
+    {
+      return getArguments().getInt(EXTRA_IMAGE);
+    }
+  
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+      View v = inflater.inflate(R.layout.tutorial_page, container, false);
+      ((TextView)v.findViewById(R.id.tutorial_page_text)).setText(getTitle());
+      ((ImageView)v.findViewById(R.id.tutorial_page_image)).setImageResource(getImage());
+      return v;
+    }
   }
 
-  public int getImage()
-  {
-    return getArguments().getInt(EXTRA_IMAGE);
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-  {
-    View v = inflater.inflate(R.layout.tutorial_page, container, false);
-    ((TextView)v.findViewById(R.id.tutorial_page_text)).setText(getTitle());
-    ((ImageView)v.findViewById(R.id.tutorial_page_image)).setImageResource(getImage());
-    return v;
-  }
 }
-

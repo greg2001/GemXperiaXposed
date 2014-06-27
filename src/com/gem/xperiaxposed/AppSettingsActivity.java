@@ -1,8 +1,9 @@
 package com.gem.xperiaxposed;
 
-import android.os.*;
+import android.os.Bundle;
 
-import com.gem.util.*;
+import com.gem.util.GemActivity;
+import com.gem.util.GemPreferenceFragment;
 
 public class AppSettingsActivity extends GemActivity 
 {
@@ -16,14 +17,14 @@ public class AppSettingsActivity extends GemActivity
       .replace(android.R.id.content, new AppSettingsFragment())
       .commit();
   }
-}
 
-class AppSettingsFragment extends GemPreferenceFragment
-{
-  @Override
-  public void onCreate(Bundle savedInstanceState) 
+  public static class AppSettingsFragment extends GemPreferenceFragment
   {
-    super.onCreate(savedInstanceState);
-    addPreferencesFromResource(R.xml.app_settings);
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    {
+      super.onCreate(savedInstanceState);
+      addPreferencesFromResource(R.xml.app_settings);
+    }
   }
 }

@@ -336,7 +336,6 @@
     
     <PreferenceScreen android:title="@string/systemui">
         <PreferenceScreen android:title="@string/systemui_colors">
-            <extra android:name="hideIf" android:value="KITKAT" />
    	        <Preference 
 				android:key="key_restart_systemui"
 	            android:title="@string/restart_systemui" 
@@ -352,7 +351,9 @@
 	        		android:dialogTitle="@string/systemui_status_gradient"
 	        		android:entries="@array/systemui_gradient_entries"
 	        		android:entryValues="@array/systemui_gradient_values"
-	        		android:defaultValue="@array/empty_array" />	        
+	        		android:defaultValue="@array/empty_array">
+				    <extra android:name="hideIf" android:value="KITKAT" />
+				</MultiSelectListPreference>
 			    <com.gem.util.GemListPreference
 			        android:key="key_systemui_status_color_set"
 			        android:title="@string/systemui_status_color_set"
@@ -378,7 +379,9 @@
 		            android:title="@string/systemui_translucent_background"
 		            alphaSlider="true"
                     android:dependency="key_systemui_status_color_set"
-		            android:defaultValue="0x99000000"/>
+		            android:defaultValue="0x99000000">
+				    <extra android:name="hideIf" android:value="KITKAT" />
+				</net.margaritov.preference.colorpicker.ColorPickerPreference>
 			</PreferenceCategory>
    	        <PreferenceCategory android:title="@string/systemui_nav_colors">        
 				<MultiSelectListPreference
@@ -388,8 +391,10 @@
 	        		android:dialogTitle="@string/systemui_nav_gradient"
 	        		android:entries="@array/systemui_gradient_entries"
 	        		android:entryValues="@array/systemui_gradient_values"
-	        		android:defaultValue="@array/empty_array" />	        
-   	            <com.gem.util.GemListPreference
+	        		android:defaultValue="@array/empty_array">	        
+				    <extra android:name="hideIf" android:value="KITKAT" />
+				</MultiSelectListPreference>
+				<com.gem.util.GemListPreference
 			        android:key="key_systemui_nav_color_set"
 			        android:title="@string/systemui_nav_color_set"
 			        android:dialogTitle="@string/systemui_nav_color_set"
@@ -414,8 +419,10 @@
 		            android:title="@string/systemui_nav_translucent_background"
 		            alphaSlider="true"
                     android:dependency="key_systemui_nav_color_set"
-		            android:defaultValue="0x99000000"/>
-			</PreferenceCategory>
+		            android:defaultValue="0x99000000">
+				    <extra android:name="hideIf" android:value="KITKAT" />
+				</net.margaritov.preference.colorpicker.ColorPickerPreference>
+            </PreferenceCategory>
         </PreferenceScreen>
 
    	    <PreferenceCategory android:title="@string/systemui_appearance">        

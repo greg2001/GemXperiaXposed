@@ -34,15 +34,14 @@ public class AppListActivity extends GemActivity
       .replace(android.R.id.content, new AppListFragment())
       .commit();
   }
-}
 
 ////////////////////////////////////////////////////////////
 
-class AppListFragment extends GemPreferenceFragment
+public static class AppListFragment extends GemPreferenceFragment
 {
   public static final String PREFIX = "\u2714 ";
   
-@Override
+  @Override
   public void onCreate(Bundle savedInstanceState) 
   {
     super.onCreate(savedInstanceState);
@@ -170,6 +169,10 @@ class AppListFragment extends GemPreferenceFragment
       dialog.dismiss();
     }
   }
+
+////////////////////////////////////////////////////////////
+
+}
 
 ////////////////////////////////////////////////////////////
 

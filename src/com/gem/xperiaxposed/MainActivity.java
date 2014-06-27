@@ -26,9 +26,8 @@ public class MainActivity extends GemActivity
       .replace(android.R.id.content, new SettingsFragment())
       .commit();
   }
-}
 
-class SettingsFragment extends GemPreferenceFragment
+public static class SettingsFragment extends GemPreferenceFragment
 {
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -108,4 +107,6 @@ class SettingsFragment extends GemPreferenceFragment
       }
     });
   }
+}
+
 }

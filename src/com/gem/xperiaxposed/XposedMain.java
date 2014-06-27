@@ -87,12 +87,9 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
   {
     if(param.packageName.equals(SYSTEMUI))
     {
-      if(JELLYBEAN)
-      {
-        prefs.reload();
-        ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
-        SystemUIResources.updateResources(param.res, res);
-      }
+      prefs.reload();
+      ModuleResources res = ModuleResources.createInstance(MODULE_PATH, param.res);
+      SystemUIResources.updateResources(param.res, res);
     }
     if(param.packageName.equals(SE_LOCK))
     {
@@ -148,12 +145,9 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
     }
     else if(param.packageName.equals(SYSTEMUI))
     {
-      if(JELLYBEAN)
-      {
-        setupClassLoader(param);
-        prefs.reload();
-        SystemUIHooks.hookSystemUI(param);
-      }
+      setupClassLoader(param);
+      prefs.reload();
+      SystemUIHooks.hookSystemUI(param);
     }
     else if(param.packageName.equals(SE_HOME) || param.packageName.equals(SE_HOME+".z1") || param.packageName.equals(SE_HOME+".z2"))
     {

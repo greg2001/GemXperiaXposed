@@ -405,6 +405,17 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDrawer(XC_LoadPackage.LoadPackageParam param)
   {
+    if(KITKAT && Integer.parseInt(prefs.getString("key_drawer_rows", "5")) != 5)
+    {
+      new AutoHook()
+      {
+        public void before_layoutAppTray(MainView thiz)
+        {
+          setFloatField(thiz, "mApptrayPaginationVerticalOffset", getFloatField(thiz, "mApptrayPaginationVerticalOffset")*0.75f);
+        }
+      };
+    }
+    
     final boolean transparentDrawer = JELLYBEAN && prefs.getBoolean("key_transparent_drawer", false);
     final boolean enableDrawerBackground = prefs.getBoolean("key_enable_drawer_background", false);
     if(transparentDrawer || enableDrawerBackground)

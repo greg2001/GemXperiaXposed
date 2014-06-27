@@ -1,5 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- !!!!! don't translate _default strings !!!!! -->
+
     <!-- Xperia Home -->
-    <string name="app_tray_drawer_list_item_categories_hidden">"Versteckt"</string>
-    <string name="app_tray_drawer_list_item_categories_settings">"Einstellungen"</string>
+    <string name="app_tray_drawer_list_item_categories_hidden">Versteckt</string>
+    <string name="app_tray_drawer_list_item_categories_settings">Einstellungen</string>
+    
+    <!-- Color Picker -->
+    <string name="dialog_color_picker">Farbauswahl</string>
+    <string name="press_color_to_apply">Farbe durch Tippen übernehmen</string>
+    
+    <string name="app_name">GEM Xperia Xposed</string>
+    <string name="app_list_loading">Lade Anwendungen, bitte warten...</string>
+    <string name="action_settings">Einstellungen</string>
+    
+    <string name="launcher">Launcher Einstellungen</string>
+    <string name="restart_launcher">Launcher Neustart</string>
+    <string name="restart_launcher_summary">Starten Sie zur Übernahme der Änderungen den Launcher neu(benötigt ROOT).</string>
+    
+    <string name="launcher_experimental">Experimentell</string>
+    <string name="enable_experimental">Experimentelle Features aktivieren</string>
+    <string name="fullscreen_layout">Vollbilddarstellung aktivieren</string>
+    <string name="fullscreen_layout_summary">Gestattet dem Launcher das Zeichnen von Komponenten unter den Systemleisten.</string>
+    <string name="experimental_tutorial">Tutorial</string>
+    <string name="settings_menu">Einträge im Einstellungsmenü</string>
+    <string name="alphabetical_badge">Alphabetische Benachrichtigungen</string>
+    <string name="hide_apps">Versteckte Anwendungen</string>
+    <string name="unread_count">Ungelesene Benachrichtigungen</string>
+    <string name="tutorial_fullscreen_layout">Vollbilddarstellung</string>
+    
+    <string name="launcher_general">Allgemein</string>
+    <string name="launcher_icon_size">Icongröße</string>
+    <string name="launcher_label_text_size">Symboltextgröße</string>
+    <string name="condensed_font">Verkleinerte Schrift</string>
+    <string name="all_widgets_resizable">Alle Widgetsgrößen anpassbar</string>
+    <string name="all_widgets_resizable_summary">Nach dem Anpassen von Sony Stock Widgets ist ein Neustart des Launchers notwendig, damit die Widgets proportional dargestellt werden.</string>
+    
+    <string name="launcher_desktop">Desktop</string>
+    <string name="transparent_desktop">Transparente Systemleisten</string>
+    <string name="transparent_desktop_summary">Transparente Status- und Navigationsleisten.</string>
+    <string name="desktop_rows">Zeilen</string>
+    <string name="desktop_columns">Spalten</string>
+    <string name="desktop_disable_labels">Beschriftung entfernen</string>
+    <string name="desktop_multiline_labels">Mehrzeilige Beschriftung</string>
+    <string name="desktop_disable_pagination">Seitenanzeige entfernen</string>
+    <string name="desktop_autohide_pagination">Seitenanzeige automatisch verbergen</string>
+    <string name="desktop_animation">Scrollanimation</string>
+    
+    <string name="launcher_dock">Dock</string>
+    <string name="dock_columns">Spalten</string>
+    <string name="disable_dock_stage">Hintergrund verbergen</string>
+    <string name="disable_dock_reflection">Reflektion verbergen</string>
+    <string name="large_dock_reflection">Große Reflektion</string>
+    
+    <string name="launcher_folders">Ordner</string>
+    <string name="folder_columns">Spalten</string>
+    <string name="folder_disable_labels">@string/desktop_disable_labels</string>
+    <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
+    
+    <string name="launcher_drawer">Drawer</string>
+    <string name="transparent_drawer">Transparente Systemleisten</string>
+    <string name="transparent_drawer_summary">Transparente Status- und Navigationsleisten.</string>
+    <string name="enable_drawer_background">Hintergrundfarbe festlegen</string>
+    <string name="enable_drawer_background_summary">Vollbilddarstellung und transparente Systemleisten aktivieren für einen besseren Effekt.</string>
+    <string name="drawer_background">Hintergrundfarbe</string>
+    <string name="drawer_rows">Zeilen</string>
+    <string name="drawer_columns">Spalten</string>
+    <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
+    <string name="drawer_disable_pagination">@string/desktop_disable_pagination</string>
+    <string name="drawer_autohide_pagination">@string/desktop_autohide_pagination</string>
+    <string name="disable_drawer_backplate">Hintergrund verbergen</string>
+    <string name="remember_drawer_page">Aktuelle Seite merken</string>
+    <string name="drawer_menu_opacity">Deckkraft im Navigationsmenü</string>
+    <string name="menu_dark_bars">Dunkele Leisten im Navigationsmenü</string>
+    <string name="drawer_animation">@string/desktop_animation</string>
+    
+    <string name="lockscreen">Sperrbildschirm Einstellungen</string>
+    <string name="reboot_phone_lockscreen">Bitte beachten</string>
+    <string name="reboot_phone_summary_lockscreen">Das Gerät muß zum Übernehmen der Änderungen neugestartet werden.</string>
+    <string name="transparent_lockscreen">Transparente Statusleiste</string>
+    <string name="slide_before_unlock">Schieben vor Entsperren</string>
+    <string name="hide_widget_backplate">Widgethintergrund verbergen</string>
+    <string name="hide_shortcuts">Verknüpfungsicons verbergen</string>
+    <string name="hide_hint_arrows">Hinweispfeile verbergen</string>
+    <string name="hint_text">Text verbergen</string>
+    <string name="hint_text_summary">Leeres Feld zur Anzeige der normalen Hinweise, weiße Fläche zum verbergen der Hinweise.</string>
+    <string name="carrier_text">Netzbetreiber Logo</string>
+    <string name="hint_carrier_summary">Leeres Feld zur Anzeige des normalen Netzbetreiber Logos, weiße Fläche zum verbergen des Netzbetreiber Logos.</string>
+    <string name="more_unlock_blinds">Kleine Jalousien</string>
+    <string name="folder_disable_background_dim">Hintergrunddimmen deaktivieren</string>
+    <string name="enable_standard_lockscreen">AOSP-Sperrbildschirm verwenden</string>
+    <string name="enable_standard_lockscreen_summary">Normalen AOSP-Sperrbildschirm verwenden mit Unterstützung von Live-Hintergründen.</string>
+    <string name="volume_keys_wake">Aufwecken mit Lautstärketasten</string>
+    
+    <string name="systemui">Systemoberfläche Einstellungen</string>
+    <string name="systemui_colors">Farben</string>
+    <string name="restart_systemui">Systemoberfläche neustarten</string>
+    <string name="restart_systemui_summary">Systemoberfläche zum Übernehmen der Änderungen neustarten (benötigt ROOT).</string>
+    <string name="reset_to_default">Zurücksetzen auf Standard</string>
+    
+    <string name="systemui_status_colors">Statusleiste</string>
+    <string name="systemui_status_gradient">Neigung</string>
+    <string name="systemui_status_gradient_summary">Aktiviere KitKat-ähnlichen Neigungseffekt.</string>
+    <string name="systemui_status_color_set">Farbeinstellungen</string>
+    <string name="systemui_dark_background">Dunkel</string>
+    <string name="systemui_light_background">Hell</string>
+    <string name="systemui_translucent_background">Durchscheinend</string>
+    
+    <string name="systemui_nav_colors">Navigationsleiste</string>
+    <string name="systemui_nav_gradient">@string/systemui_status_gradient</string>
+    <string name="systemui_nav_gradient_summary">@string/systemui_status_gradient_summary</string>
+    <string name="systemui_nav_color_set">Farbeinstellungen</string>
+    <string name="systemui_same_nav_colors">Wie Statusleiste</string>
+    <string name="systemui_nav_dark_background">Dunkel</string>
+    <string name="systemui_nav_light_background">Hell</string>
+    <string name="systemui_nav_translucent_background">Durchscheinend</string>
+    
+    <string name="systemui_appearance">Aussehen</string>
+    <string name="systemui_enable_appearance_customization">Anpassungen übernehmen</string>
+    <string name="systemui_enable_appearance_customization_summary">Benötigt Neustart.</string>
+    <string name="systemui_global_settings">Allgemeine Einstellungen</string>
+    <string name="systemui_app_settings">Programmeinstellungen</string>
+
+    <string name="systemui_app_settings_note">Bitte beachten</string>
+    <string name="systemui_app_settings_note_summary">Transparente/Durchscheinende Systemoberfläche funktioniert nur bei unterstützenden Programmen.</string>
+    <string name="systemui_app_color">Systemoberfläche Aussehen</string>
+    <string name="systemui_app_rounded_corners">Runde Kanten</string>
+    
+    <string name="about">Über</string>
+    <string name="about_app_summary">Von greg2001@XDA. Besuchen Sie den XDA-Thread.</string>
+    <string name="about_xposed">Xposed Framework</string>
+    <string name="about_xposed_summary">Von rovo89@XDA. Besuchen Sie den XDA-Thread.</string>
+    <string name="about_theme">Thema</string>
+  
 </resources>

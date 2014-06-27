@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="desktop_rows_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_animation_entries">
+        <item>Выпуклая</item>
+        <item>Вогнутая</item>
+        <item>Цилиндр</item>
+        <item>Home5</item>
+        <item>BlinkFeed</item>
+        <item>Ветряная мельница</item>
+        <item>Небольшая ветряная мельница</item>
+        <item>Простая</item>
+    </string-array>
+    <string-array name="dock_columns_entries">
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="folder_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_rows_entries">
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="systemui_gradient_entries">
+        <item>Темный</item>
+        <item>Светлый</item>
+        <item>Полупрозрачный</item>
+        <item>Прозрачный</item>
+    </string-array>
+    <string-array name="systemui_color_entries">
+        <item>По умолчанию</item>
+        <item>Темный</item>
+        <item>Светлый</item>
+        <item>Полупрозрачный</item>
+        <item>Прозрачный</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_entries">
+        <item>По умолчанию</item>
+        <item>Включены</item>
+        <item>Отключены</item>
+    </string-array>
+    <string-array name="about_theme_entries">
+        <item>Светлая Holo</item>
+        <item>Темная Holo</item>
+    </string-array>
+    <string-array name="systemui_status_color_set_entries">
+        <item>Пользовательский</item>
+        <item>Системный или из темы</item>
+    </string-array>
+    <string-array name="systemui_nav_color_set_entries">
+        <item>Пользовательский</item>
+        <item>Системный или из темы</item>
+        <item>Как у строки состояния</item>
+    </string-array>
+    <string-array name="tutorial_settings_menu_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_alphabetical_badge_titles">
+        <item></item>
+    </string-array>
+    <string-array name="tutorial_hide_apps_titles">
+        <item>Скрыть приложение</item>
+        <item>Скрытые приложения</item>
+        <item>Показать приложение</item>
+    </string-array>
+    <string-array name="tutorial_unread_count_titles">
+        <item></item>
+        <item>Установить Missed It!</item>
+        <item>Включить доступ к уведомлениям</item>
+        <item>Настросить Missed It!</item>
+    </string-array>
+    <string-array name="tutorial_fullscreen_layout_titles">
+        <item>Полноэкранное боковое меню</item>
+        <item>Цвет меню приложений #00000000</item>
+        <item>Цвет меню приложений #7f000000</item>
+        <item>Цвет меню приложений #7f0000ff</item>
+        <item>Цвет меню приложений #ff000000</item>
+    </string-array>
+    <array name="empty_array" />
+</resources>

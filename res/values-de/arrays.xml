@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- !!!!! don't translate _values and _drawables arrays !!!!! -->
+    <string-array name="desktop_rows_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="desktop_animation_entries">
+        <item>Konvex</item>
+        <item>Konkav</item>
+        <item>Zylinder</item>
+        <item>Home 5</item>
+        <item>Blinkfeed</item>
+        <item>Windmühle</item>
+        <item>Langsame Windmühle</item>
+        <item>Einfach</item>
+    </string-array>
+    <string-array name="dock_columns_entries">
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="folder_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_rows_entries">
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="drawer_columns_entries">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    
+    <string-array name="systemui_gradient_entries">
+        <item>Dunkel</item>
+        <item>Hell</item>
+        <item>Durchscheinend</item>
+        <item>Transparent</item>
+    </string-array>
+    <string-array name="systemui_color_entries">
+        <item>Standard</item>
+        <item>Dunkel</item>
+        <item>Hell</item>
+        <item>Durchscheinend</item>
+        <item>Transparent</item>
+    </string-array>
+    <string-array name="systemui_rounded_corners_entries">
+        <item>Standard</item>
+        <item>Aktivieren</item>
+        <item>Deaktivieren</item>
+    </string-array>
+    <string-array name="about_theme_entries">
+        <item>Holo Hell</item>
+        <item>Holo Dunkel</item>
+    </string-array>
+    <string-array name="systemui_status_color_set_entries">
+        <item>Benutzerdefiniert</item>
+        <item>System oder Thema</item>
+    </string-array>
+    <string-array name="systemui_nav_color_set_entries">
+        <item>Benutzerdefiniert</item>
+        <item>System oder Thema</item>
+        <item>Gleich mit Statusleiste</item>
+        </string-array>
+    
+    <string-array name="tutorial_settings_menu_titles">
+        <item></item>
+    </string-array>
+    
+    <string-array name="tutorial_alphabetical_badge_titles">
+        <item></item>
+    </string-array>
+    
+    <string-array name="tutorial_hide_apps_titles">
+        <item>Anwendung verbergen</item>
+        <item>Verborgene Anwendungen</item>
+        <item>Anwendung sichtbar</item>
+    </string-array>
+    
+    <string-array name="tutorial_unread_count_titles">
+        <item></item>
+        <item>Missed It! installieren</item>
+        <item>Zugriff auf Benachrichtigungen aktivieren</item>
+        <item>Missed It! konfigurieren</item>
+    </string-array>
+    
+    <string-array name="tutorial_fullscreen_layout_titles">
+        <item>Vollbild Navigationsmenü</item>
+        <item>Drawer Background Color #00000000</item>
+        <item>Drawer Background Color #7f000000</item>
+        <item>Drawer Background Color #7f0000ff</item>
+        <item>Drawer Background Color #ff000000</item>
+    </string-array>
+    
+    <string-array name="empty_array"></string-array>
+
+</resources>

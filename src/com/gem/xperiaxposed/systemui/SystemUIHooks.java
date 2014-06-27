@@ -1,5 +1,6 @@
 package com.gem.xperiaxposed.systemui;
 
+import static com.gem.xperiaxposed.Conditionals.*;
 import static com.gem.xperiaxposed.Constants.*;
 import static com.gem.xperiaxposed.XposedMain.*;
 import static com.gem.xperiaxposed.systemui.SystemUIResources.*;
@@ -10,6 +11,8 @@ import static de.robv.android.xposed.XposedHelpers.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -78,7 +81,9 @@ public class SystemUIHooks
         private void updatePackage(MethodHookParam param)
         {
           Object mFocusedWindow = getObjectField(param.thisObject, "mFocusedWindow");
-          String packageName = (String)callMethod(mFocusedWindow, "getOwningPackage");
+          if(mFocusedWindow == null)
+            mFocusedWindow = getObjectField(param.thisObject, "mTopFullscreenOpaqueWindowState");
+          String packageName = (mFocusedWindow != null) ? (String)callMethod(mFocusedWindow, "getOwningPackage") : null;
           if(packageName == lastPackageName || (packageName != null && packageName.equals(lastPackageName)))
             return;
           
@@ -100,6 +105,8 @@ public class SystemUIHooks
               color = prefs.getString("key_systemui_app_color", "Default");
             updateColor(color);
           }
+          
+          //log(((lastPackageName != null) ? lastPackageName : "<null>") + " " + Integer.toHexString(enableFlags) + " " + Integer.toHexString(disableFlags));
         }
         
         @Override
@@ -160,64 +167,117 @@ public class SystemUIHooks
   @SuppressWarnings("unused")
   public static void hookSystemUI(XC_LoadPackage.LoadPackageParam param)
   {
-    Set<String> status_gradient = prefs.getStringSet("key_systemui_status_gradient", new HashSet<String>());
-    final boolean status_gradient_active = !status_gradient.isEmpty() && status_gradient.size() != 4; 
-    Set<String> nav_gradient = prefs.getStringSet("key_systemui_nav_gradient", new HashSet<String>());
-    final boolean nav_gradient_active = !nav_gradient.isEmpty() && nav_gradient.size() != 4; 
-    if(status_gradient_active || nav_gradient_active)
+    SystemUIResources.initColors();
+    
+    if(KITKAT)
     {
-      final int transparent_status_gradient = status_gradient.contains("transparent") ? View.VISIBLE : View.GONE;
-      final int translucent_status_gradient = status_gradient.contains("translucent") ? View.VISIBLE : View.GONE;
-      final int light_status_gradient = status_gradient.contains("light") ? View.VISIBLE : View.GONE;
-      final int dark_status_gradient = status_gradient.contains("dark") ? View.VISIBLE : View.GONE;
-      
-      final int transparent_nav_gradient = nav_gradient.contains("transparent") ? View.VISIBLE : View.GONE;
-      final int translucent_nav_gradient = nav_gradient.contains("translucent") ? View.VISIBLE : View.GONE;
-      final int light_nav_gradient = nav_gradient.contains("light") ? View.VISIBLE : View.GONE;
-      final int dark_nav_gradient = nav_gradient.contains("dark") ? View.VISIBLE : View.GONE;
-      
-      new AutoHook()
+      if(SystemUIResources.status_bar_custom || SystemUIResources.nav_bar_custom)
       {
-        public void after_swapViews(PhoneStatusBar thiz, View view, int id1, int id2, long l)
+        new AutoHook()
         {
-          if(status_gradient_active)
+          private void updateColors(com.android.systemui.statusbar.phone.BarTransitions thiz)
           {
-            View statusBar = getField(thiz, "mStatusBarWindow");
-            if(view == statusBar)
+            View view = getField(thiz, "mView");
+            LayerDrawable l = (LayerDrawable)view.getBackground();
+            if(thiz instanceof com.android.systemui.statusbar.phone.PhoneStatusBarTransitions)
             {
-              int vis = getField(thiz, "mSystemUiVisibility");
-              int visible =
-                (vis & SYSTEM_UI_FLAG_FULL_TRANSPARENCY) != 0 ? transparent_status_gradient :
-                (vis & SYSTEM_UI_FLAG_TRANSPARENT) != 0 ? translucent_status_gradient :
-                (vis & SYSTEM_UI_FLAG_LIGHT) != 0 ? light_status_gradient : dark_status_gradient;
-              updateVisibility(statusBar.findViewById(Ids.status_bar_gradient_view), visible);
-              return;
+              if(SystemUIResources.status_bar_custom)
+              {
+                l.setDrawableByLayerId(l.getId(4), new ColorDrawable(SystemUIResources.system_ui_opaque_background));
+                l.setDrawableByLayerId(l.getId(5), new ColorDrawable(SystemUIResources.system_ui_light_background));
+                l.setDrawableByLayerId(l.getId(6), new ColorDrawable(SystemUIResources.system_ui_opaque_background));
+              }
+            }
+            else
+            {
+              if(SystemUIResources.nav_bar_custom || (SystemUIResources.nav_bar_same && SystemUIResources.status_bar_custom))
+              {
+                l.setDrawableByLayerId(l.getId(4), new ColorDrawable(SystemUIResources.system_ui_nav_opaque_background));
+                l.setDrawableByLayerId(l.getId(5), new ColorDrawable(SystemUIResources.system_ui_nav_light_background));
+                l.setDrawableByLayerId(l.getId(6), new ColorDrawable(SystemUIResources.system_ui_nav_opaque_background));
+              }
             }
           }
           
-          if(nav_gradient_active)
+          public void after_setResourceIds(com.android.systemui.statusbar.phone.BarTransitions thiz, int n, int n2, int n3, int n4, int n5, int n6, int n7)
           {
-            View navBar = getField(thiz, "mNavigationBarView");
-            if(view.getParent() == navBar)
+            updateColors(thiz);
+          }
+
+          public void after_all_constructors(com.android.systemui.statusbar.phone.PhoneStatusBarTransitions thiz)
+          {
+            updateColors(thiz);
+          }
+
+          public void after_all_constructors(com.android.systemui.statusbar.phone.NavigationBarTransitions thiz)
+          {
+            updateColors(thiz);
+          }
+        };
+      }
+    }
+    
+    if(JELLYBEAN)
+    {
+      Set<String> status_gradient = prefs.getStringSet("key_systemui_status_gradient", new HashSet<String>());
+      final boolean status_gradient_active = !status_gradient.isEmpty() && status_gradient.size() != 4; 
+      Set<String> nav_gradient = prefs.getStringSet("key_systemui_nav_gradient", new HashSet<String>());
+      final boolean nav_gradient_active = !nav_gradient.isEmpty() && nav_gradient.size() != 4; 
+      if(status_gradient_active || nav_gradient_active)
+      {
+        final int transparent_status_gradient = status_gradient.contains("transparent") ? View.VISIBLE : View.GONE;
+        final int translucent_status_gradient = status_gradient.contains("translucent") ? View.VISIBLE : View.GONE;
+        final int light_status_gradient = status_gradient.contains("light") ? View.VISIBLE : View.GONE;
+        final int dark_status_gradient = status_gradient.contains("dark") ? View.VISIBLE : View.GONE;
+        
+        final int transparent_nav_gradient = nav_gradient.contains("transparent") ? View.VISIBLE : View.GONE;
+        final int translucent_nav_gradient = nav_gradient.contains("translucent") ? View.VISIBLE : View.GONE;
+        final int light_nav_gradient = nav_gradient.contains("light") ? View.VISIBLE : View.GONE;
+        final int dark_nav_gradient = nav_gradient.contains("dark") ? View.VISIBLE : View.GONE;
+        
+        new AutoHook()
+        {
+          public void after_swapViews(PhoneStatusBar thiz, View view, int id1, int id2, long l)
+          {
+            if(status_gradient_active)
             {
-              int vis = getField(thiz, "mSystemUiVisibility");
-              int visible =
-                (vis & SYSTEM_UI_FLAG_FULL_TRANSPARENCY) != 0 ? transparent_nav_gradient :
-                (vis & SYSTEM_UI_FLAG_TRANSPARENT) != 0 ? translucent_nav_gradient :
-                (vis & SYSTEM_UI_FLAG_LIGHT) != 0 ? light_nav_gradient : dark_nav_gradient;
-              updateVisibility(navBar.findViewById(Ids.navigation_bar_gradient_view), visible);
-              updateVisibility(navBar.findViewById(Ids.navigation_bar_gradient_view_land), visible);
-              return;
+              View statusBar = getField(thiz, "mStatusBarWindow");
+              if(view == statusBar)
+              {
+                int vis = getField(thiz, "mSystemUiVisibility");
+                int visible =
+                  (vis & SYSTEM_UI_FLAG_FULL_TRANSPARENCY) != 0 ? transparent_status_gradient :
+                  (vis & SYSTEM_UI_FLAG_TRANSPARENT) != 0 ? translucent_status_gradient :
+                  (vis & SYSTEM_UI_FLAG_LIGHT) != 0 ? light_status_gradient : dark_status_gradient;
+                updateVisibility(statusBar.findViewById(Ids.status_bar_gradient_view), visible);
+                return;
+              }
+            }
+            
+            if(nav_gradient_active)
+            {
+              View navBar = getField(thiz, "mNavigationBarView");
+              if(view.getParent() == navBar)
+              {
+                int vis = getField(thiz, "mSystemUiVisibility");
+                int visible =
+                  (vis & SYSTEM_UI_FLAG_FULL_TRANSPARENCY) != 0 ? transparent_nav_gradient :
+                  (vis & SYSTEM_UI_FLAG_TRANSPARENT) != 0 ? translucent_nav_gradient :
+                  (vis & SYSTEM_UI_FLAG_LIGHT) != 0 ? light_nav_gradient : dark_nav_gradient;
+                updateVisibility(navBar.findViewById(Ids.navigation_bar_gradient_view), visible);
+                updateVisibility(navBar.findViewById(Ids.navigation_bar_gradient_view_land), visible);
+                return;
+              }
             }
           }
-        }
-        
-        private void updateVisibility(View gradient, int visible)
-        {
-          if(gradient != null && gradient.getVisibility() != visible)
-            gradient.setVisibility(visible);
-        }
-      };
+          
+          private void updateVisibility(View gradient, int visible)
+          {
+            if(gradient != null && gradient.getVisibility() != visible)
+              gradient.setVisibility(visible);
+          }
+        };
+      }
     }
   }
   
