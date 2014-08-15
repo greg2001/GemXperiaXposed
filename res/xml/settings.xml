@@ -177,6 +177,10 @@
                 android:entryValues="@array/folder_columns_entries"
                 android:defaultValue="@string/folder_columns_default"/>            
             <CheckBoxPreference
+                android:key="key_folder_auto_close"
+                android:title="@string/folder_auto_close"
+                android:defaultValue="false"/>
+            <CheckBoxPreference
                 android:key="key_folder_disable_labels"
                 android:title="@string/folder_disable_labels"
                 android:disableDependentsState="true"

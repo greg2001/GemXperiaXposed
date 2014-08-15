@@ -12,6 +12,7 @@ public class Conditionals
 {
   public static final boolean KITKAT = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT;
   public static final boolean JELLYBEAN = !KITKAT;
+  public static boolean NEW_KITKAT_LAUNCHER;
   public static boolean KITKAT_LAUNCHER;
   public static boolean JELLYBEAN_LAUNCHER;
   public static boolean LAUNCHER_HAS_ANIMATIONS;
@@ -64,11 +65,21 @@ public class Conditionals
       Class.forName("com.sonymobile.home.configprovider.ConfigProvider");
       KITKAT_LAUNCHER = true;
       JELLYBEAN_LAUNCHER = false;
+      try
+      {
+        Class.forName("com.sonymobile.home.LifeCycle");
+        NEW_KITKAT_LAUNCHER = false;
+      }
+      catch(Throwable ex)
+      {
+        NEW_KITKAT_LAUNCHER = true;
+      }
     }
     catch(Throwable ex)
     {
       KITKAT_LAUNCHER = false;
       JELLYBEAN_LAUNCHER = true;
+      NEW_KITKAT_LAUNCHER = false;
     }
     
     try
@@ -89,6 +100,7 @@ public class Conditionals
     
     XposedBridge.log("JELLYBEAN_LAUNCHER: " + JELLYBEAN_LAUNCHER);
     XposedBridge.log("KITKAT_LAUNCHER: " + KITKAT_LAUNCHER);
+    XposedBridge.log("NEW_KITKAT_LAUNCHER: " + NEW_KITKAT_LAUNCHER);
     XposedBridge.log("LAUNCHER_HAS_ANIMATIONS: " + LAUNCHER_HAS_ANIMATIONS);
   }
 }

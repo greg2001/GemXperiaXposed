@@ -38,10 +38,13 @@ import com.sonymobile.home.cui.CuiWidgetLoadHelper;
 import com.sonymobile.home.data.Item;
 import com.sonymobile.home.desktop.Desktop;
 import com.sonymobile.home.desktop.DesktopView;
+import com.sonymobile.home.folder.FolderOpener;
 import com.sonymobile.home.folder.OpenFolderAdapter;
+import com.sonymobile.home.presenter.view.ActivityItemView;
 import com.sonymobile.home.presenter.view.AdvWidgetItemView;
 import com.sonymobile.home.presenter.view.IconLabelView;
 import com.sonymobile.home.presenter.view.ItemViewCreatorBase;
+import com.sonymobile.home.presenter.view.ShortcutItemView;
 import com.sonymobile.home.stage.StageView;
 import com.sonymobile.home.textview.TextViewUtilities;
 import com.sonymobile.home.ui.pageview.PageViewInteractionListener;
@@ -53,6 +56,7 @@ import com.sonymobile.ui.support.SystemUiVisibilityWrapper;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
 ////////////////////////////////////////////////////////////
 
 public class HomeHooks
@@ -310,6 +314,17 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookDesktop(XC_LoadPackage.LoadPackageParam param)
   {
+    if(KITKAT && Integer.parseInt(prefs.getString("key_desktop_rows", "4")) != 4)
+    {
+      new AutoHook()
+      {
+        public void before_layoutDesktop(MainView thiz)
+        {
+          setFloatField(thiz, "mDesktopPaginationVerticalOffset", getFloatField(thiz, "mDesktopPaginationVerticalOffset")*0.75f);
+        }
+      };
+    }
+    
     final int desktop_animation = Integer.valueOf(prefs.getString("key_desktop_animation", Integer.toString(Animations.DESKTOP_DEFAULT)));
     if(desktop_animation != Animations.DESKTOP_DEFAULT)
     {
@@ -523,6 +538,30 @@ public class HomeHooks
   @SuppressWarnings("unused")
   public static void hookFolders(XC_LoadPackage.LoadPackageParam param)
   {
+    if(prefs.getBoolean("key_folder_auto_close", false))
+    {
+      new AutoHook()
+      {
+        public void after_doHandleClick(ActivityItemView thiz, Context context)
+        {
+          closeFolder(thiz);
+        }
+        
+        public void after_doHandleClick(ShortcutItemView thiz, Context context)
+        {
+          closeFolder(thiz);
+        }
+        
+        private void closeFolder(Component view)
+        {
+          MainView mainView = (MainView)view.getScene().getView();
+          FolderOpener folderOpener = getField(mainView, "mFolderOpener");
+          if(folderOpener != null)
+            folderOpener.close(true);
+        }
+      };
+    }
+    
     if(prefs.getBoolean("key_folder_multiline_labels", false))
     {
       new AutoHook()

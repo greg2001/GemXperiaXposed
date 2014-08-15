@@ -59,7 +59,7 @@ public class Animations
   public void animate(boolean b, int animation)
   {
     if(mExternalDynamics)
-      mFlickDynamics.setTarget(mScrollController.getVelocity());
+      mFlickDynamics.setTarget(getFloatField(mScrollController, "mVelocity"));
     
     if(!b && !mFlickDynamicsRunning && (animation == BLINKFEED)) 
     {
@@ -83,7 +83,7 @@ public class Animations
     }
     
     thiz.getScrollableContent().setPosition(getFloatField(thiz, "mGridHorizontalPosition"), getFloatField(thiz, "mGridVerticalPosition"));
-    thiz.getScrollableContent().setZ(thiz.getZoomPosition() * thiz.getDepth());
+    thiz.getScrollableContent().setZ(getFloatField(thiz, "mZoomPosition") * thiz.getDepth());
     switch(animation)
     {
       case CONVEX:          convex(thiz);                    break;

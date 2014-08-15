@@ -119,7 +119,14 @@ public class ExperimentalHooks extends AutoHook
       param.args[0] = SortMode.ALPHABETICAL;
   }
 
+  @DisableIf("NEW_KITKAT_LAUNCHER")
   public void after_loadItemData(AppTrayDrawerLoadHelper thiz, SortMode mode, int i1, int i2, Map<String, List<AppTrayDrawerItemData>> items)
+  {
+    injectAppTrayDrawerItems(thiz, mode, items);
+  }
+
+  @EnableIf("NEW_KITKAT_LAUNCHER")
+  public void after_loadItemData(AppTrayDrawerLoadHelper thiz, SortMode mode, int i, Map<String, List<AppTrayDrawerItemData>> items)
   {
     injectAppTrayDrawerItems(thiz, mode, items);
   }
@@ -152,7 +159,7 @@ public class ExperimentalHooks extends AutoHook
       return NONE;
   }
 
-  public Object after_updateNumberOfMostUsedItems(AppTrayDrawerAdapter thiz, int i)
+  public Object after_updateNumberOfDownloadedItems(AppTrayDrawerAdapter thiz, int i)
   {
     AppTrayDrawerLoadHelper loadHelper = getField(thiz, "mLoadHelper");
     callMethod(thiz, "setBadgeText", String.format("%d", numberOfActivities), loadHelper.getCategoriesTitle(), AppTrayDrawerItemType.APPTRAY_DRAWER_ITEM_TYPE_ALPHABETICAL);

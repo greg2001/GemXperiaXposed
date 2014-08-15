@@ -61,6 +61,7 @@
     <string name="launcher_folders">Folders</string>
     <string name="folder_columns">Columns</string>
     <string name="folder_columns_default">4</string>
+    <string name="folder_auto_close">Auto-close</string>
     <string name="folder_disable_labels">@string/desktop_disable_labels</string>
     <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
     

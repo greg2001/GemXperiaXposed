@@ -3,10 +3,13 @@ package com.gem.util;
 import static com.gem.xperiaxposed.Constants.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import android.os.Bundle;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
@@ -29,6 +32,17 @@ public class GemPreferenceFragment extends PreferenceFragment
   public void setPreferenceCategory(String category)
   {
     processPreferences(getPreferenceScreen(), category);
+  }
+  
+  public void resetPreference(String pref)
+  {
+    Preference p = findPreference(pref);
+    if(p instanceof MultiSelectListPreference)
+      ((MultiSelectListPreference)p).setValues(new HashSet<String>());
+    else if(p instanceof GemListPreference)
+      ((GemListPreference)p).resetValue();
+    else if(p instanceof ColorPickerPreference)
+      ((ColorPickerPreference)p).resetValue();
   }
   
   private void processPreferences(PreferenceGroup ps, String category)

@@ -19,6 +19,7 @@ import com.sonymobile.flix.debug.Logx;
 import com.sonymobile.home.apptray.AppTray;
 import com.sonymobile.home.apptray.AppTrayDropZoneView;
 import com.sonymobile.home.apptray.AppTrayModel;
+import com.sonymobile.home.apptray.AppTraySorter;
 import com.sonymobile.home.data.ActivityItem;
 import com.sonymobile.home.transfer.DropTarget;
 import com.sonymobile.home.transfer.Transferable;
@@ -57,9 +58,10 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
           if(transferable.getItem() instanceof ActivityItem)
           {
             AppTray appTray = getAppTray(thiz);
-            AppTrayModel model = appTray.getModel();
+            AppTrayModel model = getField(appTray, "mAppTrayModel");
+            AppTraySorter sorter = getField(appTray.getPresenter(), "mAppTraySorter");
             AppTrayModelHook modelHook = AppTrayModelHook.getHook(model);
-            modelHook.setHidden(transferable.getItem(), appTray.getPresenter().getSorter().getSortMode() != HIDDEN);
+            modelHook.setHidden(transferable.getItem(), sorter.getSortMode() != HIDDEN);
           }
         }
         catch(Exception ex)
@@ -96,8 +98,9 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
       {
         if(visible)
         {
+          AppTraySorter sorter = getField(getAppTray(thiz).getPresenter(), "mAppTraySorter");
           mHideDropArea.setBackgroundColor(0);
-          if(getAppTray(thiz).getPresenter().getSorter().getSortMode() == HIDDEN)
+          if(sorter.getSortMode() == HIDDEN)
             mHideIcon.setBitmap(mUnhideBitmap);
           else
             mHideIcon.setBitmap(mHideBitmap);
