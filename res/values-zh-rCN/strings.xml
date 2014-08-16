@@ -41,21 +41,27 @@
     <string name="transparent_desktop">透明化</string>
     <string name="transparent_desktop_summary">透明状态栏和虚拟按键</string>
     <string name="desktop_rows">行数</string>
+    <string name="desktop_rows_default">4</string>
     <string name="desktop_columns">列数</string>
+    <string name="desktop_columns_default">4</string>
     <string name="desktop_disable_labels">禁用标签</string>
     <string name="desktop_multiline_labels">多行标签</string>
     <string name="desktop_disable_pagination">禁用页面指示器</string>
     <string name="desktop_autohide_pagination">自动隐藏页面指示器</string>
     <string name="desktop_animation">滚动动画</string>
+    <string name="desktop_animation_default">0</string>
     
     <string name="launcher_dock">托盘</string>
     <string name="dock_columns">列数</string>
+    <string name="dock_columns_default">5</string>
     <string name="disable_dock_stage">隐藏托盘</string>
     <string name="disable_dock_reflection">隐藏倒影</string>
     <string name="large_dock_reflection">增强倒影</string>
     
     <string name="launcher_folders">文件夹</string>
     <string name="folder_columns">列数</string>
+    <string name="folder_columns_default">4</string>
+    <string name="folder_auto_close">自动关闭</string>
     <string name="folder_disable_labels">@string/desktop_disable_labels</string>
     <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
     
@@ -66,7 +72,9 @@
     <string name="enable_drawer_background_summary">启用全屏幕布局和透明化效果更佳</string>
     <string name="drawer_background">背景颜色</string>
     <string name="drawer_rows">行数</string>
+    <string name="drawer_rows_default">5</string>
     <string name="drawer_columns">列数</string>
+    <string name="drawer_columns_default">4</string>
     <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
     <string name="drawer_disable_pagination">@string/desktop_disable_pagination</string>
     <string name="drawer_autohide_pagination">@string/desktop_autohide_pagination</string>
@@ -75,6 +83,7 @@
     <string name="drawer_menu_opacity">虚拟按键菜单透明度</string>
     <string name="menu_dark_bars">虚拟按键菜单暗色</string>
     <string name="drawer_animation">@string/desktop_animation</string>
+    <string name="drawer_animation_default">7</string>
     
     <string name="lockscreen">锁屏设置</string>
     <string name="reboot_phone_lockscreen">注意</string>
@@ -98,11 +107,13 @@
     <string name="systemui_colors">颜色</string>
     <string name="restart_systemui">重启系统界面</string>
     <string name="restart_systemui_summary">重启系统界面使其更改生效（需要ROOT）</string>
+    <string name="reset_to_default">重设为默认值</string>
     
     <string name="systemui_status_colors">状态栏</string>
     <string name="systemui_status_gradient">渐变</string>
     <string name="systemui_status_gradient_summary">启用根据KitKat-like的per-state渐变</string>
     <string name="systemui_status_color_set">颜色设置</string>
+    <string name="systemui_status_color_set_default">系统</string>
     <string name="systemui_dark_background">暗色</string>
     <string name="systemui_light_background">亮色</string>
     <string name="systemui_translucent_background">半透明</string>
@@ -111,12 +122,13 @@
     <string name="systemui_nav_gradient">@string/systemui_status_gradient</string>
     <string name="systemui_nav_gradient_summary">@string/systemui_status_gradient_summary</string>
     <string name="systemui_nav_color_set">颜色设置</string>
+    <string name="systemui_nav_color_set_default">状态栏</string>
     <string name="systemui_same_nav_colors">与状态栏相同</string>
     <string name="systemui_nav_dark_background">暗色</string>
     <string name="systemui_nav_light_background">亮色</string>
     <string name="systemui_nav_translucent_background">半透明</string>
     
-    <string name="systemui_appearance">Appearance</string>
+    <string name="systemui_appearance">外观</string>
     <string name="systemui_enable_appearance_customization">启用自定义</string>
     <string name="systemui_enable_appearance_customization_summary">需要重启</string>
     <string name="systemui_global_settings">全局设置</string>
@@ -126,11 +138,14 @@
     <string name="systemui_app_settings_note_summary">透明或是半透明的状态栏仅适用于支持透明度的应用，例如Xperia桌面</string>
     <string name="systemui_app_color">系统界面外观</string>
     <string name="systemui_app_rounded_corners">圆角</string>
+    <string name="systemui_color_default">默认</string>
+    <string name="systemui_rounded_corners_default">默认</string>
     
-    <string name="about">About</string>
+    <string name="about">关于</string>
     <string name="about_app_summary">开发者:greg2001@XDA 点击访问XDA原文</string>
     <string name="about_xposed">Xposed框架</string>
     <string name="about_xposed_summary">开发者:rovo89@XDA 点击访问XDA原文</string>
     <string name="about_theme">主题</string>
+    <string name="about_theme_default">亮色</string>
   
 </resources>
