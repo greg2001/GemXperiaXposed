@@ -41,26 +41,21 @@
     <string name="transparent_desktop">Przeźroczysty systemowy pasek</string>
     <string name="transparent_desktop_summary">Przeźroczysty pasek stanu i nawigacji.</string>
     <string name="desktop_rows">Wiersze</string>
-    <string name="desktop_rows_default">4</string>
     <string name="desktop_columns">Kolumny</string>
-    <string name="desktop_columns_default">4</string>
     <string name="desktop_disable_labels">Wyłącz etykiety</string>
     <string name="desktop_multiline_labels">Wielo-liniowe etykiety</string>
     <string name="desktop_disable_pagination">Wyłącz wskaźnik strony</string>
     <string name="desktop_autohide_pagination">Auto-ukrywanie wskaźnika strony</string>
     <string name="desktop_animation">Animacja przewijania</string>
-    <string name="desktop_animation_default">0</string>
     
     <string name="launcher_dock">Dok</string>
     <string name="dock_columns">Kolumny</string>
-    <string name="dock_columns_default">5</string>
     <string name="disable_dock_stage">Ukryj tło</string>
     <string name="disable_dock_reflection">Ukryj odbicie</string>
     <string name="large_dock_reflection">Mocne odbicie</string>
     
     <string name="launcher_folders">Foldery</string>
     <string name="folder_columns">Kolumny</string>
-    <string name="folder_columns_default">4</string>
     <string name="folder_auto_close">Automatyczne zamykanie</string>
     <string name="folder_disable_labels">@string/desktop_disable_labels</string>
     <string name="folder_multiline_labels">@string/desktop_multiline_labels</string>
@@ -72,9 +67,7 @@
     <string name="enable_drawer_background_summary">Włącz tryb pełnoekranowy i przeźroczysty pasek systemowy dla lepszego efektu.</string>
     <string name="drawer_background">Kolor tła</string>
     <string name="drawer_rows">Wiersze</string>
-    <string name="drawer_rows_default">5</string>
     <string name="drawer_columns">Kolumny</string>
-    <string name="drawer_columns_default">4</string>
     <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
     <string name="drawer_disable_pagination">@string/desktop_disable_pagination</string>
     <string name="drawer_autohide_pagination">@string/desktop_autohide_pagination</string>
@@ -83,7 +76,6 @@
     <string name="drawer_menu_opacity">Przeźroczystość menu</string>
     <string name="menu_dark_bars">Ciemne paski menu nawigacji</string>
     <string name="drawer_animation">@string/desktop_animation</string>
-    <string name="drawer_animation_default">7</string>
     
     <string name="lockscreen">Ustawienia blokady ekranu</string>
     <string name="reboot_phone_lockscreen">Uwaga</string>
@@ -113,7 +105,6 @@
     <string name="systemui_status_gradient">Gradient</string>
     <string name="systemui_status_gradient_summary">Włącz KitKatowy gradient.</string>
     <string name="systemui_status_color_set">Ustaw kolor</string>
-    <string name="systemui_status_color_set_default">systemowy</string>
     <string name="systemui_dark_background">Ciemny</string>
     <string name="systemui_light_background">Jasny</string>
     <string name="systemui_translucent_background">Przeźroczysty</string>
@@ -122,7 +113,6 @@
     <string name="systemui_nav_gradient">@string/systemui_status_gradient</string>
     <string name="systemui_nav_gradient_summary">@string/systemui_status_gradient_summary</string>
     <string name="systemui_nav_color_set">Ustaw kolor</string>
-    <string name="systemui_nav_color_set_default">Taki jak pasek stanu</string>
     <string name="systemui_same_nav_colors">Taki jak pasek stanu</string>
     <string name="systemui_nav_dark_background">Ciemny</string>
     <string name="systemui_nav_light_background">Jasny</string>
@@ -138,14 +128,11 @@
     <string name="systemui_app_settings_note_summary">Przeźroczysty SystemUI działa tylko dla aplikacji, które go obsługują, np.: launchery.</string>
     <string name="systemui_app_color">Wygląd SystemUI</string>
     <string name="systemui_app_rounded_corners">Zaokrąglone narożniki</string>
-    <string name="systemui_color_default">Domyślny</string>
-    <string name="systemui_rounded_corners_default">Domyślnie</string>
     
     <string name="about">O...</string>
     <string name="about_app_summary">Autor - greg2001@XDA. Dotknij, aby odwiedzić temat na XDA.</string>
     <string name="about_xposed">Xposed Framework</string>
     <string name="about_xposed_summary">Autor - rovo89@XDA. Dotknij, aby odwiedzić temat na XDA.</string>
     <string name="about_theme">Motyw</string>
-    <string name="about_theme_default">jasny</string>
   
 </resources>

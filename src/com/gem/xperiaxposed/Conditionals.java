@@ -12,10 +12,13 @@ public class Conditionals
 {
   public static final boolean KITKAT = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT;
   public static final boolean JELLYBEAN = !KITKAT;
+  public static boolean Z3_KITKAT_LAUNCHER;
   public static boolean NEW_KITKAT_LAUNCHER;
   public static boolean KITKAT_LAUNCHER;
   public static boolean JELLYBEAN_LAUNCHER;
   public static boolean LAUNCHER_HAS_ANIMATIONS;
+  public static String SE_HOME_PACKAGE;
+  public static String SE_HOME_VERSION;
   
   private static boolean inited = false;
   
@@ -27,24 +30,21 @@ public class Conditionals
     
     try
     {
-      String version;
-      try
-      {
-        version = context.getPackageManager().getPackageInfo(SE_HOME, 0).versionName;
-      }
-      catch(Throwable ex)
+      for(String pkg: SE_HOME)
       {
         try
         {
-          version = context.getPackageManager().getPackageInfo(SE_HOME+".z1", 0).versionName;
+          SE_HOME_VERSION = context.getPackageManager().getPackageInfo(pkg, 0).versionName;
+          SE_HOME_PACKAGE = pkg;
+          break;
         }
-        catch(Throwable exx)
+        catch(Throwable ex)
         {
-          version = context.getPackageManager().getPackageInfo(SE_HOME+".z2", 0).versionName;
         }
       }
-      Log.i(TAG, "Xperia launcher version: " + version);
-      JELLYBEAN_LAUNCHER = version.startsWith("6.1");
+      Log.i(TAG, "Xperia launcher package: " + SE_HOME_PACKAGE);
+      Log.i(TAG, "Xperia launcher version: " + SE_HOME_VERSION);
+      JELLYBEAN_LAUNCHER = SE_HOME_VERSION.startsWith("6.1");
       KITKAT_LAUNCHER = !JELLYBEAN_LAUNCHER;
     }
     catch(Throwable ex)
@@ -64,22 +64,26 @@ public class Conditionals
     {
       Class.forName("com.sonymobile.home.configprovider.ConfigProvider");
       KITKAT_LAUNCHER = true;
-      JELLYBEAN_LAUNCHER = false;
       try
       {
         Class.forName("com.sonymobile.home.LifeCycle");
-        NEW_KITKAT_LAUNCHER = false;
       }
       catch(Throwable ex)
       {
         NEW_KITKAT_LAUNCHER = true;
+        try
+        {
+          Class.forName("com.sonymobile.home.MainViewSwitcher");
+          Z3_KITKAT_LAUNCHER = true;
+        }
+        catch(Throwable exx)
+        {
+        }
       }
     }
     catch(Throwable ex)
     {
-      KITKAT_LAUNCHER = false;
       JELLYBEAN_LAUNCHER = true;
-      NEW_KITKAT_LAUNCHER = false;
     }
     
     try
@@ -101,6 +105,7 @@ public class Conditionals
     XposedBridge.log("JELLYBEAN_LAUNCHER: " + JELLYBEAN_LAUNCHER);
     XposedBridge.log("KITKAT_LAUNCHER: " + KITKAT_LAUNCHER);
     XposedBridge.log("NEW_KITKAT_LAUNCHER: " + NEW_KITKAT_LAUNCHER);
+    XposedBridge.log("Z3_KITKAT_LAUNCHER: " + Z3_KITKAT_LAUNCHER);
     XposedBridge.log("LAUNCHER_HAS_ANIMATIONS: " + LAUNCHER_HAS_ANIMATIONS);
   }
 }

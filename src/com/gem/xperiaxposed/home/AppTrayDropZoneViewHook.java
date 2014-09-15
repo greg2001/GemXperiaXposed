@@ -16,7 +16,6 @@ import com.sonymobile.flix.components.Image;
 import com.sonymobile.flix.components.Scene;
 import com.sonymobile.flix.components.util.Layouter;
 import com.sonymobile.flix.debug.Logx;
-import com.sonymobile.home.apptray.AppTray;
 import com.sonymobile.home.apptray.AppTrayDropZoneView;
 import com.sonymobile.home.apptray.AppTrayModel;
 import com.sonymobile.home.apptray.AppTraySorter;
@@ -57,9 +56,8 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
         {
           if(transferable.getItem() instanceof ActivityItem)
           {
-            AppTray appTray = getAppTray(thiz);
-            AppTrayModel model = getField(appTray, "mAppTrayModel");
-            AppTraySorter sorter = getField(appTray.getPresenter(), "mAppTraySorter");
+            AppTrayModel model = getField(HomeHooks.appTray, "mAppTrayModel");
+            AppTraySorter sorter = getField(HomeHooks.appTrayPresenter, "mAppTraySorter");
             AppTrayModelHook modelHook = AppTrayModelHook.getHook(model);
             modelHook.setHidden(transferable.getItem(), sorter.getSortMode() != HIDDEN);
           }
@@ -98,7 +96,7 @@ public class AppTrayDropZoneViewHook extends ClassHook<AppTrayDropZoneView>
       {
         if(visible)
         {
-          AppTraySorter sorter = getField(getAppTray(thiz).getPresenter(), "mAppTraySorter");
+          AppTraySorter sorter = getField(HomeHooks.appTrayPresenter, "mAppTraySorter");
           mHideDropArea.setBackgroundColor(0);
           if(sorter.getSortMode() == HIDDEN)
             mHideIcon.setBitmap(mUnhideBitmap);

@@ -21,16 +21,6 @@
         <item>Slight windmill</item>
         <item>Simple</item>
     </string-array>
-    <string-array name="desktop_animation_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
     <string-array name="dock_columns_entries">
         <item>5</item>
         <item>7</item>
@@ -56,20 +46,7 @@
         <item>半透明</item>
         <item>全透明</item>
     </string-array>
-    <string-array name="systemui_gradient_values">
-        <item>暗色</item>
-        <item>亮色</item>
-        <item>半透明</item>
-        <item>半透明</item>
-    </string-array>
     <string-array name="systemui_color_entries">
-        <item>默认</item>
-        <item>暗色</item>
-        <item>亮色</item>
-        <item>半透明</item>
-        <item>全透明</item>
-    </string-array>
-        <string-array name="systemui_color_values">
         <item>默认</item>
         <item>暗色</item>
         <item>亮色</item>
@@ -81,62 +58,33 @@
         <item>启用</item>
         <item>关闭</item>
     </string-array>
-    <string-array name="systemui_rounded_corners_values">
-        <item>默认</item>
-        <item>启用</item>
-        <item>关闭</item>
-    </string-array>
     <string-array name="about_theme_entries">
         <item>Holo亮色</item>
         <item>Holo暗色</item>
     </string-array>
-    <string-array name="about_theme_values">
-        <item>亮色</item>
-        <item>暗色</item>
-    </string-array>
     <string-array name="systemui_status_color_set_entries">
         <item>自定义</item>
         <item>随系统或主题</item>
-    </string-array>
-    <string-array name="systemui_status_color_set_values">
-        <item>自定义</item>
-        <item>系统</item>
     </string-array>
     <string-array name="systemui_nav_color_set_entries">
         <item>自定义</item>
         <item>随系統或主题</item>
         <item>随状态栏</item>
         </string-array>
-    <string-array name="systemui_nav_color_set_values">
-        <item>自定义</item>
-        <item>系统</item>
-        <item>状态栏</item>
-    </string-array>
 
     <string-array name="tutorial_settings_menu_titles">
         <item></item>
     </string-array>
-    <array name="tutorial_settings_menu_drawables">
-        <item>@drawable/experimental_settings</item>
-    </array>
     
     <string-array name="tutorial_alphabetical_badge_titles">
         <item></item>
     </string-array>
-    <array name="tutorial_alphabetical_badge_drawables">
-        <item>@drawable/experimental_alphabetical_badge</item>
-    </array>
     
     <string-array name="tutorial_hide_apps_titles">
         <item>隐藏应用程序</item>
         <item>已隐藏的应用</item>
         <item>取消隐藏应用</item>
     </string-array>
-    <array name="tutorial_hide_apps_drawables">
-        <item>@drawable/experimental_hide_app</item>
-        <item>@drawable/experimental_hidden_apps</item>
-        <item>@drawable/experimental_unhide_app</item>
-    </array>
     
     <string-array name="tutorial_unread_count_titles">
         <item></item>
@@ -144,12 +92,6 @@
         <item>启用通知访问</item>
         <item>配置Missed It!</item>
     </string-array>
-    <array name="tutorial_unread_count_drawables">
-        <item>@drawable/experimental_unread_badges</item>
-        <item>@drawable/experimental_install_missedit</item>
-        <item>@drawable/experimental_enable_missedit</item>
-        <item>@drawable/experimental_configure_missedit</item>
-    </array>
     
     <string-array name="tutorial_fullscreen_layout_titles">
         <item>全屏导航键菜单</item>
@@ -158,13 +100,6 @@
         <item>抽屉背景颜色#7f0000ff</item>
         <item>抽屉背景颜色#ff000000</item>
     </string-array>
-    <array name="tutorial_fullscreen_layout_drawables">
-        <item>@drawable/fullscreen_navigation_menu</item>
-        <item>@drawable/drawer_background_00000000</item>
-        <item>@drawable/drawer_background_7f000000</item>
-        <item>@drawable/drawer_background_7f0000ff</item>
-        <item>@drawable/drawer_background_ff000000</item>
-    </array>
     
     <string-array name="empty_array"></string-array>
 

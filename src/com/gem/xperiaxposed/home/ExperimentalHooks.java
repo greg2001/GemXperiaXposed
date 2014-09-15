@@ -20,13 +20,13 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 
 import com.gem.xposed.AutoHook;
 import com.gem.xposed.ClassHook;
 import com.gem.xposed.ReflectionUtils;
 import com.sonymobile.flix.components.Scene;
 import com.sonymobile.home.MainView;
-import com.sonymobile.home.apptray.AppTray;
 import com.sonymobile.home.apptray.AppTrayAdapter;
 import com.sonymobile.home.apptray.AppTrayDrawerAdapter;
 import com.sonymobile.home.apptray.AppTrayDrawerAdapter.AppTrayDrawerItemData;
@@ -95,7 +95,7 @@ public class ExperimentalHooks extends AutoHook
 
   public void before_setModelItems(AppTrayAdapter thiz, List<Item> items, boolean b, MethodHookParam param)
   {
-    AppTraySorter sorter = getField(getAppTray(thiz), "mAppTraySorter");
+    AppTraySorter sorter = getField(HomeHooks.appTray, "mAppTraySorter");
     if(sorter.getSortMode() == SortMode.OWN_ORDER)
     {
       if(items != null)
@@ -192,7 +192,15 @@ public class ExperimentalHooks extends AutoHook
   private void injectAppTrayDrawerItems(AppTrayDrawerLoadHelper loadHelper, SortMode sortMode, Map<String, List<AppTrayDrawerItemData>> map)
   {
     Resources res = getResources(loadHelper);
-    int iconSize = res.getDimensionPixelSize(res.getIdentifier("apptray_drawer_icon_width", "dimen", SE_HOME_PACKAGE));
+    int iconSize;
+    try
+    {
+      iconSize = res.getDimensionPixelSize(res.getIdentifier("apptray_drawer_icon_width", "dimen", SE_HOME_PACKAGE));
+    }
+    catch(Exception ex)
+    {
+      iconSize = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 28.0f, res.getDisplayMetrics());
+    }
     Drawable hiddenIcon = res.getDrawable(Ids.drawer_icn_hidden);
     Drawable settingsIcon = res.getDrawable(Ids.drawer_icn_settings);
     
@@ -279,11 +287,6 @@ public class ExperimentalHooks extends AutoHook
     return (MainView)getScene(o).getView();
   }
 
-  public static AppTray getAppTray(Object o)
-  {
-    return getField(getMainView(o), "mAppTray");
-  }
-  
 ////////////////////////////////////////////////////////////
   
 }

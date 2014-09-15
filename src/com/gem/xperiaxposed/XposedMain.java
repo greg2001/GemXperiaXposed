@@ -4,6 +4,9 @@ import static com.gem.xperiaxposed.Conditionals.*;
 import static com.gem.xperiaxposed.Constants.*;
 import static de.robv.android.xposed.XposedBridge.*;
 import static de.robv.android.xposed.XposedHelpers.*;
+
+import java.util.Arrays;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.XResources;
@@ -116,7 +119,7 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
         param.res.setReplacement(SE_LOCK, "integer", "blinds_affected_by_touch", 10);
       }
     }    
-    else if(param.packageName.equals(SE_HOME) || param.packageName.equals(SE_HOME+".z1") || param.packageName.equals(SE_HOME+".z2"))
+    else if(Arrays.asList(SE_HOME).contains(param.packageName))
     {
       SE_HOME_PACKAGE = param.packageName;
       prefs.reload();
@@ -149,13 +152,14 @@ public class XposedMain implements IXposedHookZygoteInit, IXposedHookLoadPackage
       prefs.reload();
       SystemUIHooks.hookSystemUI(param);
     }
-    else if(param.packageName.equals(SE_HOME) || param.packageName.equals(SE_HOME+".z1") || param.packageName.equals(SE_HOME+".z2"))
+    else if(Arrays.asList(SE_HOME).contains(param.packageName))
     {
       SE_HOME_PACKAGE = param.packageName;
       prefs.reload();
 
       setupClassLoader(param);
       Conditionals.initLauncher();
+      com.gem.xperiaxposed.home.HomeHooks.hookInitial(param);
       com.gem.xperiaxposed.home.HomeHooks.hookTransparency(param);
       com.gem.xperiaxposed.home.HomeHooks.hookFont(param);
       com.gem.xperiaxposed.home.HomeHooks.hookLayout(param);

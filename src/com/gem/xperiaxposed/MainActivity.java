@@ -45,7 +45,7 @@ public static class SettingsFragment extends GemPreferenceFragment
       {
         try
         {
-          Runtime.getRuntime().exec("su -c pkill " + SE_HOME).waitFor();
+          Runtime.getRuntime().exec("su -c pkill " + Conditionals.SE_HOME_PACKAGE).waitFor();
         }
         catch(Exception ex)
         {

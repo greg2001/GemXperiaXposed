@@ -12,7 +12,9 @@ import java.util.WeakHashMap;
 
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.View;
@@ -37,6 +39,8 @@ import com.sonymobile.home.bitmap.MirrorBitmapDrawable;
 import com.sonymobile.home.cui.CuiWidgetLoadHelper;
 import com.sonymobile.home.data.Item;
 import com.sonymobile.home.desktop.Desktop;
+import com.sonymobile.home.desktop.DesktopPageIndicatorView;
+import com.sonymobile.home.desktop.DesktopPresenter;
 import com.sonymobile.home.desktop.DesktopView;
 import com.sonymobile.home.folder.FolderOpener;
 import com.sonymobile.home.folder.OpenFolderAdapter;
@@ -48,6 +52,7 @@ import com.sonymobile.home.presenter.view.ShortcutItemView;
 import com.sonymobile.home.stage.StageView;
 import com.sonymobile.home.textview.TextViewUtilities;
 import com.sonymobile.home.ui.pageview.PageViewInteractionListener;
+import com.sonymobile.home.ui.widget.AdvWidgetProviderHelper;
 import com.sonymobile.home.ui.widget.HomeAdvWidget;
 import com.sonymobile.home.ui.widget.HomeAdvWidgetManager;
 import com.sonymobile.home.ui.widget.HomeAppWidgetManager;
@@ -62,6 +67,39 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class HomeHooks
 {
 
+////////////////////////////////////////////////////////////
+  
+  public static Desktop desktop;
+  public static AppTray appTray;
+  public static DesktopPresenter desktopPresenter;
+  public static AppTrayPresenter appTrayPresenter;
+  
+////////////////////////////////////////////////////////////
+  
+  @SuppressWarnings("unused")
+  public static void hookInitial(XC_LoadPackage.LoadPackageParam param)
+  {
+    new AutoHook()
+    {
+      public void after_all_constructors(Desktop thiz)
+      {
+        desktop = thiz;
+      }
+      public void after_all_constructors(AppTray thiz)
+      {
+        appTray = thiz;
+      }
+      public void after_all_constructors(DesktopPresenter thiz)
+      {
+        desktopPresenter = thiz;
+      }
+      public void after_all_constructors(AppTrayPresenter thiz)
+      {
+        appTrayPresenter = thiz;
+      }
+    };
+  }  
+  
 ////////////////////////////////////////////////////////////
 
   @SuppressWarnings("unused")
@@ -252,13 +290,15 @@ public class HomeHooks
         {
           if(desktop_disable_pagination)
           {
-            Desktop desktop = (Desktop)getObjectField(thiz, "mDesktop");
-            desktop.getView().removeChild(desktop.getPresenter().getPageIndicatorView());
+            DesktopView view = getField(desktop, "mDesktopView");
+            DesktopPageIndicatorView pageIndicator = getField(desktopPresenter, "mPageIndicatorView");
+            view.removeChild(pageIndicator);
           }
           if(drawer_disable_pagination)
           {
-            AppTray appTray = (AppTray)getObjectField(thiz, "mAppTray");
-            appTray.getView().removeChild(appTray.getPresenter().getPageIndicatorView());
+            AppTrayView view = getField(appTray, "mAppTrayView");
+            AppTrayPageIndicatorView pageIndicator = getField(appTrayPresenter, "mPageIndicatorView");
+            view.removeChild(pageIndicator);
           }
         }
       };
@@ -318,6 +358,7 @@ public class HomeHooks
     {
       new AutoHook()
       {
+        @DisableIf("Z3_KITKAT_LAUNCHER")
         public void before_layoutDesktop(MainView thiz)
         {
           setFloatField(thiz, "mDesktopPaginationVerticalOffset", getFloatField(thiz, "mDesktopPaginationVerticalOffset")*0.75f);
@@ -424,6 +465,7 @@ public class HomeHooks
     {
       new AutoHook()
       {
+        @DisableIf("Z3_KITKAT_LAUNCHER")
         public void before_layoutAppTray(MainView thiz)
         {
           setFloatField(thiz, "mApptrayPaginationVerticalOffset", getFloatField(thiz, "mApptrayPaginationVerticalOffset")*0.75f);
@@ -617,11 +659,18 @@ public class HomeHooks
         {
           return AppWidgetProviderInfo.RESIZE_BOTH;
         }
-
+        
+        @DisableIf("Z3_KITKAT_LAUNCHER")
         public void after_createAppWidgetInfo(HomeAdvWidget thiz, PackageManager pm)
         {
           AppWidgetProviderInfo info = (AppWidgetProviderInfo)getObjectField(thiz, "mAppWidgetProviderInfo");
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
+        }
+        
+        @EnableIf("Z3_KITKAT_LAUNCHER")
+        public int before_getResizeMode(AdvWidgetProviderHelper thiz, ActivityInfo activityInfo, Resources resources)
+        {
+          return AppWidgetProviderInfo.RESIZE_BOTH;
         }
 
         @EnableIf("JELLYBEAN_LAUNCHER")
