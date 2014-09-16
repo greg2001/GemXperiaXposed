@@ -9,7 +9,7 @@
     <string name="action_settings">Настройки</string>
     <string name="launcher">Рабочий стол</string>
     <string name="restart_launcher">Перезапуск рабочего стола</string>
-    <string name="restart_launcher_summary">Перезапустите рабочий стол для вступления изменений в силу (необходим ROOT)</string>
+    <string name="restart_launcher_summary">Перезапустите рабочий стол для вступления изменений в силу (необходим root)</string>
     <string name="launcher_experimental">Экспериментальные настройки</string>
     <string name="enable_experimental">Экспериментальные настройки</string>
     <string name="fullscreen_layout">Полноэкранный режим</string>
@@ -53,13 +53,14 @@
     <string name="drawer_background">Цвет фона</string>
     <string name="drawer_rows">Количество строк</string>
     <string name="drawer_columns">Количество колонок</string>
+    <string name="folder_auto_close">Автозакрывание</string>
     <string name="drawer_disable_labels">@string/desktop_disable_labels</string>
     <string name="drawer_disable_pagination">@string/desktop_disable_pagination</string>
     <string name="drawer_autohide_pagination">@string/desktop_autohide_pagination</string>
     <string name="disable_drawer_backplate">Скрыть фон под значками</string>
     <string name="remember_drawer_page">Запоминать текущую страницу</string>
     <string name="drawer_menu_opacity">Непрозрачность бокового меню</string>
-    <string name="menu_dark_bars">Темные строки бокового меню</string>
+    <string name="menu_dark_bars">Темные системные строки бокового меню</string>
     <string name="drawer_animation">@string/desktop_animation</string>
     <string name="lockscreen">Экран блокировки</string>
     <string name="reboot_phone_lockscreen">Внимание</string>
@@ -81,7 +82,7 @@
     <string name="systemui">Системный ИП</string>
     <string name="systemui_colors">Цвета</string>
     <string name="restart_systemui">Перезапуск системного ИП</string>
-    <string name="restart_systemui_summary">Перезапустите системный ИП для вступления изменений в силу (необходим ROOT)</string>
+    <string name="restart_systemui_summary">Перезапустите системный ИП для вступления изменений в силу (необходим root)</string>
     <string name="reset_to_default">Восстановить значения по умолчанию</string>
     <string name="systemui_status_colors">Строка состояния</string>
     <string name="systemui_status_gradient">Градиент</string>
