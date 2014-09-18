@@ -666,12 +666,6 @@ public class HomeHooks
           AppWidgetProviderInfo info = (AppWidgetProviderInfo)getObjectField(thiz, "mAppWidgetProviderInfo");
           info.resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
         }
-        
-        @EnableIf("Z3_KITKAT_LAUNCHER")
-        public int before_getResizeMode(AdvWidgetProviderHelper thiz, ActivityInfo activityInfo, Resources resources)
-        {
-          return AppWidgetProviderInfo.RESIZE_BOTH;
-        }
 
         @EnableIf("JELLYBEAN_LAUNCHER")
         public void before_getVanillaSpanXY(CuiWidgetLoadHelper thiz, Context context, AppWidgetProviderInfo info)
@@ -696,6 +690,18 @@ public class HomeHooks
             return NONE;
         }
       };
+
+      if(Z3_KITKAT_LAUNCHER)
+      {
+        new AutoHook()
+        {
+          @EnableIf("Z3_KITKAT_LAUNCHER")
+          public int before_getResizeMode(AdvWidgetProviderHelper thiz, ActivityInfo activityInfo, Resources resources)
+          {
+            return AppWidgetProviderInfo.RESIZE_BOTH;
+          }
+        };
+      }
     }
   }
  
